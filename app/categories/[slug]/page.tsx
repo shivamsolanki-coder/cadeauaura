@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
 import { productCategories } from '@/data/productCategories';
+import { products } from '@/data/products';
 
 export function generateStaticParams() {
   return productCategories.map((category) => ({
@@ -40,6 +41,10 @@ export default async function CategoryDetailPage({
   if (!category) {
     notFound();
   }
+
+  const categoryProducts = products.filter(
+    (product) => product.categorySlug === category.slug
+  );
 
   const relatedCategories = productCategories
     .filter((item) => item.slug !== category.slug)
@@ -102,8 +107,8 @@ export default async function CategoryDetailPage({
 
             <p className="mt-4 text-sm leading-7 text-stone-700">
               This collection is designed for people who want their gift to feel personal,
-              premium and emotionally memorable. You can use these ideas for curated boxes,
-              affiliate products, custom hampers and AI gift recommendations.
+              premium and emotionally memorable. Explore curated gift ideas with pricing,
+              use-case clarity and beautiful presentation.
             </p>
 
             <div className="mt-6 grid gap-3 sm:grid-cols-3">
@@ -122,6 +127,83 @@ export default async function CategoryDetailPage({
             className="min-h-[360px] rounded-[2rem] border border-[#ead8c7] bg-cover bg-center shadow-xl"
             style={{ backgroundImage: `url('${category.image}')` }}
           />
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-4 pb-12 sm:px-6">
+        <div className="mb-7 flex flex-col justify-between gap-4 md:flex-row md:items-end">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#8a4a2d]">
+              Curated products
+            </p>
+            <h2 className="mt-3 font-serif text-4xl leading-tight text-[#5a1722] sm:text-5xl">
+              Explore gift ideas in this collection
+            </h2>
+            <p className="mt-3 max-w-2xl text-sm leading-7 text-stone-700">
+              Browse meaningful product ideas with price range, purpose and emotional fit.
+            </p>
+          </div>
+
+          <Link
+            href="/contact"
+            className="rounded-full bg-[#8f1431] px-6 py-3 text-sm font-semibold text-white transition hover:-translate-y-1 hover:bg-[#a51c3c]"
+          >
+            Enquire Now →
+          </Link>
+        </div>
+
+        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+          {categoryProducts.map((product) => (
+            <article
+              key={product.slug}
+              className="group overflow-hidden rounded-[2rem] border border-[#ead8c7] bg-[#fff7ef] shadow-sm transition hover:-translate-y-1 hover:shadow-2xl"
+            >
+              <div
+                className="relative min-h-[240px] bg-cover bg-center transition duration-700 group-hover:scale-105"
+                style={{ backgroundImage: `url('${product.image}')` }}
+              >
+                <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(22,6,6,0.04),rgba(22,6,6,0.72))]" />
+
+                <div className="absolute left-5 top-5 rounded-full border border-[#d7a25d]/40 bg-[#160606]/70 px-3 py-1 text-xs font-bold uppercase tracking-[0.22em] text-[#f3c982] backdrop-blur">
+                  {product.badge}
+                </div>
+
+                <div className="absolute bottom-5 left-5 right-5">
+                  <h3 className="font-serif text-3xl leading-tight text-[#fff7ef]">
+                    {product.name}
+                  </h3>
+                </div>
+              </div>
+
+              <div className="p-6">
+                <p className="text-sm leading-7 text-stone-700">
+                  {product.description}
+                </p>
+
+                <div className="mt-5 rounded-2xl border border-[#ead8c7] bg-white p-4">
+                  <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#8a4a2d]">
+                    Best for
+                  </p>
+                  <p className="mt-2 text-sm font-semibold text-[#5a1722]">
+                    {product.bestFor}
+                  </p>
+                </div>
+
+                <div className="mt-5 flex items-center justify-between gap-4">
+                  <span className="font-serif text-3xl font-bold text-[#5a1722]">
+                    {product.price}
+                  </span>
+
+                  <Link
+                    href="/contact"
+                    className="rounded-full bg-[#6f0f22] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#8f1431]"
+                  >
+                    Enquire →
+                  </Link>
+                </div>
+              </div>
+            </article>
+          ))}
         </div>
       </section>
 
