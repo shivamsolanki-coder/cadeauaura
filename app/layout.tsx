@@ -18,9 +18,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
+      <body className="min-h-screen overflow-x-hidden">
         <Header />
-        <main className="mx-auto min-h-[calc(100vh-180px)] w-full max-w-6xl px-4 py-10 sm:px-6">{children}</main>
+        <div className="min-h-[calc(100vh-180px)] w-full">
+          {children}
+        </div>
         <Footer />
       </body>
     </html>
