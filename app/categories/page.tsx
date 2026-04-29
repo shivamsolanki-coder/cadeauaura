@@ -1,6 +1,23 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 
 import { productCategories } from '@/data/productCategories';
+
+export const metadata: Metadata = {
+  title: 'Gift Categories',
+  description:
+    'Explore CadeauAura gift categories for birthdays, anniversaries, weddings, festivals, parents, couples, corporate gifting and luxury packaging.',
+  alternates: {
+    canonical: '/categories',
+  },
+  openGraph: {
+    title: 'Gift Categories | CadeauAura',
+    description:
+      'Browse premium and meaningful gift categories by occasion, relationship and emotion.',
+    url: '/categories',
+    images: ['/culture-diya.jpg.png'],
+  },
+};
 
 export default function CategoriesPage() {
   return (
