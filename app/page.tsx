@@ -59,7 +59,7 @@ export default function HomePage() {
   return (
     <main className="overflow-hidden">
       {/* HERO */}
-     <section className="relative -mt-24 min-h-[720px] overflow-hidden bg-[#160606] px-4 pt-24 text-white">
+    <section className="relative min-h-[720px] overflow-hidden bg-[#160606] px-4 text-white">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_20%,rgba(226,151,91,0.35),transparent_28%),radial-gradient(circle_at_20%_30%,rgba(128,16,39,0.45),transparent_30%),linear-gradient(135deg,#210707_0%,#4b0d18_42%,#120404_100%)]" />
         <div className="absolute inset-0 opacity-[0.35] [background-image:linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(rgba(255,255,255,0.04)_1px,transparent_1px)] [background-size:80px_80px]" />
 
