@@ -35,16 +35,22 @@ const testimonials = [
     quote: 'The gift box was beyond beautiful — every little detail felt so personal.',
     name: 'Ananya S.',
     city: 'Bengaluru',
+    avatar: '/avatar-1.jpg.png',
+    initials: 'AS',
   },
   {
     quote: 'Finally, a brand that understands the meaning behind gifting. Truly heartfelt!',
     name: 'Rohit M.',
     city: 'Mumbai',
+    avatar: null,
+    initials: 'RM',
   },
   {
     quote: 'The meaning card added tears to our celebration. So thoughtful!',
     name: 'Meera K.',
     city: 'Pune',
+    avatar: null,
+    initials: 'MK',
   },
 ];
 
@@ -294,8 +300,25 @@ export default function HomePage() {
                 <p className="text-3xl text-[#e8b36f]">“</p>
                 <p className="text-sm leading-7 text-white/80">{item.quote}</p>
                 <div className="mt-5 text-[#f8c56e]">★★★★★</div>
-                <p className="mt-3 font-semibold">{item.name}</p>
-                <p className="text-sm text-white/[0.55]">{item.city}</p>
+
+                <div className="mt-5 flex items-center gap-3">
+                  {item.avatar ? (
+                    <img
+                      src={item.avatar}
+                      alt={item.name}
+                      className="h-12 w-12 rounded-full border border-[#e8b36f]/40 object-cover"
+                    />
+                  ) : (
+                    <div className="flex h-12 w-12 items-center justify-center rounded-full border border-[#e8b36f]/40 bg-[#fff7ef]/10 text-sm font-bold text-[#f3c982]">
+                      {item.initials}
+                    </div>
+                  )}
+
+                  <div>
+                    <p className="font-semibold">{item.name}</p>
+                    <p className="text-sm text-white/[0.55]">{item.city}</p>
+                  </div>
+                </div>
               </article>
             ))}
           </div>
