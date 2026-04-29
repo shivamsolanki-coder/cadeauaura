@@ -27,7 +27,7 @@ export function Header() {
             <Link
               key={href}
               href={href}
-              className="relative transition hover:text-[#f3c982]"
+              className="transition hover:text-[#f3c982]"
             >
               {label}
             </Link>
@@ -35,7 +35,10 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-5 text-[#f7e6d8]">
-          <Link href="/gift-finder" className="hidden text-sm font-semibold text-[#f3c982] md:inline">
+          <Link
+            href="/gift-finder"
+            className="hidden text-sm font-semibold text-[#f3c982] md:inline"
+          >
             Find a Gift
           </Link>
           <Link href="/contact" className="text-sm font-semibold">
