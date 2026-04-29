@@ -8,7 +8,6 @@ const links = [
   ['Messages', '/messages'],
   ['Care Notes', '/care-notes'],
   ['About', '/about'],
-  ['Contact', '/contact'],
 ] as const;
 
 export function Header() {
@@ -34,14 +33,17 @@ export function Header() {
           ))}
         </nav>
 
-        <div className="flex items-center gap-5 text-[#f7e6d8]">
+        <div className="flex items-center gap-4 text-[#f7e6d8]">
           <Link
             href="/gift-finder"
-            className="hidden text-sm font-semibold text-[#f3c982] md:inline"
+            className="hidden rounded-full border border-[#d7a25d]/40 px-5 py-2 text-sm font-semibold text-[#f3c982] transition hover:bg-[#d7a25d] hover:text-[#160606] md:inline-flex"
           >
             Find a Gift
           </Link>
-          <Link href="/contact" className="text-sm font-semibold">
+          <Link
+            href="/contact"
+            className="rounded-full bg-[#fff7ef] px-5 py-2 text-sm font-semibold text-[#4b0d18] transition hover:bg-[#f3c982]"
+          >
             Contact
           </Link>
         </div>
