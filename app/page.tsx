@@ -60,7 +60,7 @@ export default function HomePage() {
   return (
     <main className="overflow-hidden">
       {/* HERO */}
-      <section className="relative min-h-[720px] overflow-hidden bg-[#160606] px-4 text-white">
+      <section className="relative min-h-[640px] overflow-hidden bg-[#160606] px-4 text-white">
         <div
           className="absolute inset-0 bg-cover bg-center opacity-80"
           style={{ backgroundImage: "url('/hero-gift.jpg.png')" }}
@@ -68,7 +68,7 @@ export default function HomePage() {
         <div className="absolute inset-0 bg-[linear-gradient(90deg,#170405_0%,rgba(35,5,10,0.94)_34%,rgba(52,7,14,0.58)_62%,rgba(22,6,6,0.14)_100%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(143,20,49,0.38),transparent_30%),radial-gradient(circle_at_80%_30%,rgba(215,162,93,0.18),transparent_32%)]" />
 
-        <div className="relative mx-auto grid min-h-[640px] max-w-7xl items-center gap-10 py-12 lg:grid-cols-[1fr_1.1fr]">
+        <div className="relative mx-auto grid min-h-[540px] max-w-7xl items-center gap-10 py-8 lg:grid-cols-[1fr_1.1fr]">
           <div className="max-w-2xl aura-fade-up">
             <div className="mb-5 inline-flex items-center gap-3 rounded-full border border-[#d7a25d]/35 bg-[#fff7ef]/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.35em] text-[#f0c98f] backdrop-blur-md">
               <span>♡</span>
@@ -102,8 +102,8 @@ export default function HomePage() {
             </div>
           </div>
 
-          <div className="relative hidden min-h-[520px] lg:block">
-            <div className="absolute left-8 top-16 space-y-5">
+          <div className="relative hidden min-h-[500px] lg:block">
+            <div className="absolute left-8 top-14 space-y-5">
               {quickCards.map((card) => (
                 <Link
                   href={card.href}
@@ -121,7 +121,7 @@ export default function HomePage() {
           </div>
         </div>
 
-        <div className="relative mx-auto -mt-16 mb-10 max-w-7xl rounded-3xl border border-[#e2b271]/25 bg-black/30 p-4 backdrop-blur-xl">
+        <div className="relative mx-auto -mt-12 mb-8 max-w-7xl rounded-3xl border border-[#e2b271]/25 bg-black/30 p-4 backdrop-blur-xl">
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
             {trustPoints.map((point, index) => (
               <div key={point} className="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm text-[#f7e8db]">
@@ -141,9 +141,11 @@ export default function HomePage() {
           <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#8a4a2d]">
             Find the perfect gift
           </p>
+
           <h2 className="mt-5 font-serif text-4xl leading-tight text-[#5a1722]">
             A heartfelt gift starts with the right choice
           </h2>
+
           <p className="mt-4 text-sm leading-7 text-stone-700">
             Answer a few simple questions and we’ll help you find something truly meaningful.
           </p>
@@ -175,14 +177,16 @@ export default function HomePage() {
           className="relative min-h-[360px] overflow-hidden rounded-[2rem] border border-[#ead8c7] bg-cover bg-center p-8 shadow-sm"
           style={{ backgroundImage: "url('/culture-diya.jpg.png')" }}
         >
-          <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(255,245,236,0.96),rgba(255,245,236,0.75),rgba(255,245,236,0.12))]" />
+          <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(255,245,236,0.88),rgba(255,245,236,0.55),rgba(255,245,236,0.06))]" />
           <div className="relative max-w-sm">
             <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#8a4a2d]">
               Rooted in culture
             </p>
+
             <h2 className="mt-5 font-serif text-4xl leading-tight text-[#5a1722]">
               Celebrate traditions that bring us closer
             </h2>
+
             <p className="mt-4 text-sm leading-7 text-stone-700">
               Explore rituals, stories and symbols behind meaningful gifting.
             </p>
@@ -200,14 +204,16 @@ export default function HomePage() {
           className="relative min-h-[360px] overflow-hidden rounded-[2rem] border border-[#ead8c7] bg-cover bg-center p-8 shadow-sm"
           style={{ backgroundImage: "url('/meaning-card.jpg.png')" }}
         >
-          <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(255,247,239,0.94),rgba(255,247,239,0.68),rgba(255,247,239,0.18))]" />
+          <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(255,247,239,0.86),rgba(255,247,239,0.50),rgba(255,247,239,0.08))]" />
           <div className="relative max-w-sm">
             <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#8a4a2d]">
               Premium gift collections
             </p>
+
             <h2 className="mt-5 font-serif text-4xl leading-tight text-[#5a1722]">
               Curated boxes for every emotion
             </h2>
+
             <p className="mt-4 text-sm leading-7 text-stone-700">
               Handpicked gifts. Beautifully packaged. Made to be remembered.
             </p>
@@ -230,12 +236,15 @@ export default function HomePage() {
               <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#e8b36f]">
                 Stories that inspire
               </p>
+
               <h2 className="mt-4 font-serif text-4xl leading-tight">
                 Gifts that tell a story, every time.
               </h2>
+
               <p className="mt-4 text-sm leading-7 text-white/70">
                 Watch how meaningful gifts create moments that last beyond the present.
               </p>
+
               <Link
                 href="/about"
                 className="mt-6 inline-flex rounded-full bg-[#fff3e8] px-6 py-3 text-sm font-semibold text-[#4b0c16]"
@@ -261,12 +270,15 @@ export default function HomePage() {
               <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#e8b36f]">
                 Loved by many
               </p>
+
               <h2 className="mt-4 font-serif text-4xl leading-tight">
                 Real stories. Real emotions.
               </h2>
+
               <p className="mt-4 text-sm leading-7 text-white/70">
                 From first-time givers to lifelong celebrations — our community trusts CadeauAura.
               </p>
+
               <Link href="/messages" className="mt-6 inline-block text-sm font-semibold text-[#e8b36f]">
                 Read More Stories →
               </Link>
@@ -275,7 +287,10 @@ export default function HomePage() {
 
           <div className="mt-8 grid gap-5 lg:grid-cols-3">
             {testimonials.map((item) => (
-              <article key={item.name} className="rounded-3xl border border-white/10 bg-white/[0.08] p-6 backdrop-blur">
+              <article
+                key={item.name}
+                className="rounded-3xl border border-white/10 bg-white/[0.08] p-6 backdrop-blur"
+              >
                 <p className="text-3xl text-[#e8b36f]">“</p>
                 <p className="text-sm leading-7 text-white/80">{item.quote}</p>
                 <div className="mt-5 text-[#f8c56e]">★★★★★</div>
