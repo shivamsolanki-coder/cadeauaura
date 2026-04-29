@@ -6,6 +6,7 @@ import { useState } from 'react';
 const links = [
   ['Home', '/'],
   ['Gift Finder', '/gift-finder'],
+  ['Categories', '/categories'],
   ['Meaning Cards', '/meaning-cards'],
   ['Culture & Tradition', '/culture-tradition'],
   ['Messages', '/messages'],
@@ -26,9 +27,13 @@ export function Header() {
           </span>
         </Link>
 
-        <nav className="hidden items-center gap-7 text-sm font-medium text-[#f7e6d8]/85 lg:flex">
+        <nav className="hidden items-center gap-6 text-sm font-medium text-[#f7e6d8]/85 lg:flex">
           {links.map(([label, href]) => (
-            <Link key={href} href={href} className="transition hover:text-[#f3c982]">
+            <Link
+              key={href}
+              href={href}
+              className="transition hover:text-[#f3c982]"
+            >
               {label}
             </Link>
           ))}
