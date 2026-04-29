@@ -74,7 +74,7 @@ export default function HomePage() {
               Where emotion becomes a beautiful gift
             </h1>
 
-            <p className="mt-6 max-w-xl text-base leading-8 text-[#f6dfd0]/85 sm:text-lg">
+            <p className="mt-6 max-w-xl text-base leading-8 text-[#f6dfd0]/[0.85] sm:text-lg">
               Thoughtful gifting, guided by emotion, culture and connection — so every moment you celebrate becomes unforgettable.
             </p>
 
@@ -231,7 +231,7 @@ export default function HomePage() {
 
           <div className="relative min-h-[260px] overflow-hidden rounded-3xl border border-white/10 bg-[radial-gradient(circle_at_50%_20%,rgba(255,214,157,0.35),transparent_28%),linear-gradient(135deg,#8d4a32,#250609)]">
             <div className="absolute inset-0 bg-black/20" />
-            <div className="absolute left-1/2 top-1/2 flex h-20 w-20 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-white/50 bg-white/15 text-3xl backdrop-blur">
+            <div className="absolute left-1/2 top-1/2 flex h-20 w-20 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-white/50 bg-white/[0.15] text-3xl backdrop-blur">
               ▶
             </div>
             <div className="absolute bottom-6 left-6 rounded-2xl bg-black/25 px-5 py-3 text-sm backdrop-blur">
@@ -257,12 +257,12 @@ export default function HomePage() {
 
         <div className="mt-8 grid gap-5 lg:grid-cols-3">
           {testimonials.map((item) => (
-            <article key={item.name} className="rounded-3xl border border-white/10 bg-white/8 p-6 backdrop-blur">
+            <article key={item.name} className="rounded-3xl border border-white/10 bg-white/[0.08] p-6 backdrop-blur">
               <p className="text-3xl text-[#e8b36f]">“</p>
               <p className="text-sm leading-7 text-white/80">{item.quote}</p>
               <div className="mt-5 text-[#f8c56e]">★★★★★</div>
               <p className="mt-3 font-semibold">{item.name}</p>
-              <p className="text-sm text-white/55">{item.city}</p>
+              <p className="text-sm text-white/[0.55]">{item.city}</p>
             </article>
           ))}
         </div>
