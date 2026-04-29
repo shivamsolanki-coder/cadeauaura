@@ -4,6 +4,13 @@ import { notFound } from 'next/navigation';
 import { productCategories } from '@/data/productCategories';
 import { products } from '@/data/products';
 
+const whatsappNumber = '919205089044';
+
+function getWhatsAppLink(productName: string) {
+  const message = `Hi CadeauAura, I am interested in ${productName}. Please share more details.`;
+  return `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+}
+
 export function generateStaticParams() {
   return productCategories.map((category) => ({
     slug: category.slug,
@@ -144,12 +151,16 @@ export default async function CategoryDetailPage({
             </p>
           </div>
 
-          <Link
-            href="/contact"
+          <a
+            href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
+              `Hi CadeauAura, I am interested in ${category.title}. Please share more details.`
+            )}`}
+            target="_blank"
+            rel="noreferrer"
             className="rounded-full bg-[#8f1431] px-6 py-3 text-sm font-semibold text-white transition hover:-translate-y-1 hover:bg-[#a51c3c]"
           >
-            Enquire Now →
-          </Link>
+            WhatsApp Enquiry →
+          </a>
         </div>
 
         <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
@@ -194,12 +205,14 @@ export default async function CategoryDetailPage({
                     {product.price}
                   </span>
 
-                  <Link
-                    href="/contact"
+                  <a
+                    href={getWhatsAppLink(product.name)}
+                    target="_blank"
+                    rel="noreferrer"
                     className="rounded-full bg-[#6f0f22] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#8f1431]"
                   >
-                    Enquire →
-                  </Link>
+                    WhatsApp →
+                  </a>
                 </div>
               </div>
             </article>
