@@ -99,7 +99,7 @@ export default function HomePage() {
 
   return (
     <main className="overflow-hidden">
-      <section className="relative -mx-4 -mt-10 min-h-[720px] overflow-hidden bg-[#160606] px-4 py-16 text-white sm:-mx-6 sm:px-6 lg:-mx-8 lg:min-h-[640px]">
+      <section className="relative -mx-4 -mt-10 min-h-[620px] overflow-hidden bg-[#160606] px-5 py-10 text-white sm:-mx-6 sm:min-h-[680px] sm:px-6 sm:py-14 lg:-mx-8 lg:min-h-[640px] lg:py-16">
         <div
           className="absolute inset-0 scale-105 bg-cover bg-center opacity-75"
           style={{ backgroundImage: "url('/hero-gift.jpg.png')" }}
@@ -110,40 +110,40 @@ export default function HomePage() {
 
         <div className="relative mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[1fr_0.85fr]">
           <div className="aura-fade-up">
-            <div className="inline-flex items-center gap-3 rounded-full border border-[#d7a25d]/35 bg-white/10 px-4 py-2 text-xs font-bold uppercase tracking-[0.35em] text-[#f3c982] backdrop-blur">
+            <div className="inline-flex items-center gap-3 rounded-full border border-[#d7a25d]/35 bg-white/10 px-4 py-2 text-xs font-bold uppercase tracking-[0.28em] text-[#f3c982] backdrop-blur sm:tracking-[0.35em]">
               <span>♡</span>
               Gifts that speak from the heart
             </div>
 
-            <h1 className="mt-7 max-w-4xl font-serif text-5xl leading-[0.95] text-[#fff7ef] sm:text-6xl lg:text-7xl">
+            <h1 className="mt-6 max-w-4xl font-serif text-[2.75rem] leading-[0.98] text-[#fff7ef] sm:text-6xl lg:text-7xl">
               Where emotion becomes a beautiful gift
             </h1>
 
-            <p className="mt-6 max-w-2xl text-base leading-8 text-[#f6dfd0]/90 sm:text-lg">
+            <p className="mt-5 max-w-2xl text-sm leading-7 text-[#f6dfd0]/90 sm:text-lg sm:leading-8">
               Thoughtful gifting inspired by emotion, culture and connection — so every moment you celebrate becomes unforgettable.
             </p>
 
-            <div className="mt-8 flex flex-wrap gap-4">
+            <div className="mt-7 flex flex-wrap gap-3 sm:gap-4">
               <Link
                 href="/categories"
-                className="rounded-full bg-[#9f1239] px-7 py-4 text-sm font-semibold text-white shadow-2xl shadow-[#9f1239]/30 transition hover:-translate-y-1 hover:bg-[#b01543]"
+                className="rounded-full bg-[#9f1239] px-6 py-4 text-sm font-semibold text-white shadow-2xl shadow-[#9f1239]/30 transition hover:-translate-y-1 hover:bg-[#b01543]"
               >
                 Explore Gift Ideas →
               </Link>
 
               <Link
                 href="/gift-finder"
-                className="rounded-full border border-[#d7a25d]/45 bg-[#fff7ef] px-7 py-4 text-sm font-semibold text-[#4b0d18] shadow-xl transition hover:-translate-y-1 hover:bg-[#f3c982]"
+                className="rounded-full border border-[#d7a25d]/45 bg-[#fff7ef] px-6 py-4 text-sm font-semibold text-[#4b0d18] shadow-xl transition hover:-translate-y-1 hover:bg-[#f3c982]"
               >
                 Try Gift Finder ✦
               </Link>
             </div>
 
-            <div className="mt-10 grid max-w-3xl gap-3 sm:grid-cols-3">
+            <div className="mt-8 grid max-w-3xl gap-2 sm:grid-cols-3 sm:gap-3">
               {['Curated with care', 'Rooted in culture', 'Beautifully packaged'].map((item) => (
                 <div
                   key={item}
-                  className="rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-xs font-semibold text-[#f6dfd0]/80 backdrop-blur"
+                  className="rounded-2xl border border-white/10 bg-black/20 px-4 py-2.5 text-xs font-semibold text-[#f6dfd0]/80 backdrop-blur"
                 >
                   {item}
                 </div>
@@ -193,7 +193,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
+      <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10">
         <div className="grid overflow-hidden rounded-[2rem] border border-[#ead8c7] bg-[#fff7ef] shadow-xl md:grid-cols-2 xl:grid-cols-4">
           {trustItems.map((item) => (
             <div
@@ -242,7 +242,7 @@ export default function HomePage() {
             <Link
               key={item.title}
               href={item.href}
-              className="group relative min-h-[320px] overflow-hidden rounded-[2rem] border border-[#ead8c7] shadow-xl transition hover:-translate-y-1 hover:shadow-2xl"
+              className="group relative min-h-[300px] overflow-hidden rounded-[2rem] border border-[#ead8c7] shadow-xl transition hover:-translate-y-1 hover:shadow-2xl sm:min-h-[320px]"
             >
               <div
                 className="absolute inset-0 bg-cover bg-center transition duration-700 group-hover:scale-110"
@@ -329,7 +329,7 @@ export default function HomePage() {
       </section>
 
       <section className="mx-auto grid max-w-7xl gap-6 px-4 py-8 sm:px-6 lg:grid-cols-[0.95fr_1.05fr]">
-        <div className="relative min-h-[420px] overflow-hidden rounded-[2.5rem] border border-[#ead8c7] shadow-xl">
+        <div className="relative min-h-[360px] overflow-hidden rounded-[2.5rem] border border-[#ead8c7] shadow-xl sm:min-h-[420px]">
           <div
             className="absolute inset-0 bg-cover bg-center"
             style={{ backgroundImage: "url('/meaning-card.jpg.png')" }}
@@ -415,7 +415,7 @@ export default function HomePage() {
           </div>
 
           <div
-            className="min-h-[420px] bg-cover bg-center"
+            className="min-h-[360px] bg-cover bg-center sm:min-h-[420px]"
             style={{ backgroundImage: "url('/culture-diya.jpg.png')" }}
           />
         </div>
