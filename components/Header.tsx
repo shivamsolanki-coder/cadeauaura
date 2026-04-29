@@ -5,6 +5,7 @@ const links = [
   ['Heartfelt Idea Finder', '/gift-finder'],
   ['Meaning Cards', '/meaning-cards'],
   ['Culture & Tradition', '/culture-tradition'],
+  ['Categories', '/categories'],
   ['Messages', '/messages'],
   ['Care Notes', '/care-notes'],
   ['About', '/about'],
