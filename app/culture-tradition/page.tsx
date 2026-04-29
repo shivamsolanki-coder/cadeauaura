@@ -1,46 +1,64 @@
+import type { Metadata } from 'next';
+
 import { SectionLabel } from '@/components/SectionLabel';
 
-const traditions = [
-  {
-    culture: 'Indian',
-    note: 'Gifting often reflects blessings, family honor, and auspicious beginnings. Include respectful colors and heartfelt handwritten wishes.'
+export const metadata: Metadata = {
+  title: 'Culture & Tradition',
+  description:
+    'Explore Indian gifting traditions, festive rituals, diya-inspired aesthetics and culturally meaningful celebrations with CadeauAura.',
+  alternates: {
+    canonical: '/culture-tradition',
   },
-  {
-    culture: 'Japanese',
-    note: 'Thoughtful wrapping, subtle elegance, and timing communicate deep respect. Simplicity can carry profound meaning.'
+  openGraph: {
+    title: 'Culture & Tradition | CadeauAura',
+    description:
+      'Celebrate gifting inspired by Indian traditions, rituals and emotional connection.',
+    url: '/culture-tradition',
+    images: ['/culture-diya.jpg.png'],
   },
-  {
-    culture: 'Middle Eastern',
-    note: 'Hospitality and generosity are central. Quality presentation and sincere language signal appreciation and dignity.'
-  },
-  {
-    culture: 'African',
-    note: 'Community storytelling and heritage symbolism can make a gesture deeply resonant and family-centered.'
-  },
-  {
-    culture: 'Latin',
-    note: 'Warmth, celebration, and expressive sentiment are often valued. Shared moments are as meaningful as the keepsake itself.'
-  },
-  {
-    culture: 'Global',
-    note: 'Lead with empathy, respect boundaries, and acknowledge personal preferences to make every gesture meaningful.'
-  }
-];
+};
 
 export default function CultureTraditionPage() {
   return (
     <section>
       <SectionLabel label="Culture & Tradition" />
-      <h1 className="mt-4 font-serif text-4xl text-deep-rose">Honor roots with respectful gestures</h1>
-      <p className="mt-3 max-w-2xl text-stone-700">
-        CadeauAura celebrates cultural nuance so your gift ideas feel thoughtful and appropriate.
+
+      <h1 className="mt-4 font-serif text-4xl text-deep-rose">
+        Gifts rooted in culture and emotion
+      </h1>
+
+      <p className="mt-3 max-w-3xl text-stone-700">
+        CadeauAura celebrates gifting traditions inspired by Indian rituals,
+        festivals, diya warmth, blessings and meaningful human connection.
       </p>
-      <div className="mt-8 grid gap-4 md:grid-cols-2">
-        {traditions.map((item) => (
-          <article key={item.culture} className="rounded-2xl border border-rose-200 bg-white p-5">
-            <h2 className="font-serif text-2xl text-deep-rose">{item.culture}</h2>
-            <p className="mt-2 text-sm leading-6 text-stone-700">{item.note}</p>
-          </article>
+
+      <div className="mt-10 grid gap-6 md:grid-cols-3">
+        {[
+          {
+            title: 'Diwali Gifting',
+            text: 'Warm lights, diya aesthetics and premium festive presentation.',
+          },
+          {
+            title: 'Wedding Rituals',
+            text: 'Elegant gifts inspired by blessings, family and celebration.',
+          },
+          {
+            title: 'Meaningful Packaging',
+            text: 'Luxury wrapping and emotional presentation that feels memorable.',
+          },
+        ].map((item) => (
+          <div
+            key={item.title}
+            className="rounded-[2rem] border border-[#ead8c7] bg-[#fff7ef] p-6 shadow-sm"
+          >
+            <h2 className="font-serif text-2xl text-[#5a1722]">
+              {item.title}
+            </h2>
+
+            <p className="mt-3 text-sm leading-7 text-stone-700">
+              {item.text}
+            </p>
+          </div>
         ))}
       </div>
     </section>
