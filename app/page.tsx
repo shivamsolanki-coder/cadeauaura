@@ -1,322 +1,454 @@
 import Link from 'next/link';
 
-const quickCards = [
+import { productCategories } from '@/data/productCategories';
+
+const trustItems = [
   {
-    title: 'Personalized for You',
-    text: 'Thoughtful picks, crafted around your moments and loved ones.',
+    icon: '♡',
+    title: 'Curated with care and meaning',
+    text: 'Every idea is thoughtfully selected to create emotion and lasting memories.',
+  },
+  {
+    icon: '✦',
+    title: 'Rooted in culture, made personal',
+    text: 'Inspired by traditions and crafted to reflect your unique story.',
+  },
+  {
+    icon: '👥',
+    title: 'Thoughtful ideas for every bond',
+    text: 'Find the right gift to express love, gratitude and celebration.',
+  },
+  {
+    icon: '🎁',
+    title: 'Premium quality, beautifully packaged',
+    text: 'Elegant presentation, warm details and memorable finishing touches.',
+  },
+];
+
+const pathways = [
+  {
+    title: 'By Occasion',
+    text: 'Explore gifts for birthdays, anniversaries, weddings and festivals.',
+    href: '/categories',
+    image: '/culture-diya.jpg.png',
+  },
+  {
+    title: 'By Relationship',
+    text: 'Discover thoughtful ideas for partners, parents, friends and family.',
     href: '/gift-finder',
-    cta: 'Find gifts',
+    image: '/story-unboxing.jpg.png',
   },
   {
-    title: 'Meaning Cards',
-    text: 'Words that stay long after the moment fades.',
+    title: 'By Meaning',
+    text: 'Choose gifts that express love, gratitude, care or celebration.',
     href: '/meaning-cards',
-    cta: 'Explore cards',
+    image: '/meaning-card.jpg.png',
+  },
+  {
+    title: 'Premium Collections',
+    text: 'Luxury gift boxes and elegant curated sets for memorable moments.',
+    href: '/categories/luxury-packaging',
+    image: '/hero-gift.jpg.png',
   },
 ];
 
-const trustPoints = [
-  'Curated with care and meaning',
-  'Rooted in culture, made personal',
-  'Thoughtful ideas for every bond',
-  'Premium quality, beautifully packaged',
-  'Secure, reliable & on-time delivery',
+const featuredSlugs = [
+  'birthday-gifts',
+  'anniversary-gifts',
+  'wedding-gifts',
+  'festive-gifts',
 ];
 
-const finderOptions = [
-  'Who is it for?',
-  'Occasion',
-  'Personality',
-  'Budget',
+const meaningCards = [
+  {
+    title: 'Love',
+    text: 'For words that feel warm, intimate and deeply remembered.',
+  },
+  {
+    title: 'Gratitude',
+    text: 'For saying thank you in a way that feels personal and graceful.',
+  },
+  {
+    title: 'Celebration',
+    text: 'For birthdays, milestones and moments that deserve joy.',
+  },
 ];
 
 const testimonials = [
   {
-    quote: 'The gift box was beyond beautiful — every little detail felt so personal.',
+    quote: 'The gift felt personal, premium and full of meaning.',
     name: 'Ananya S.',
     city: 'Bengaluru',
-    avatar: '/avatar-1.jpg.png',
-    initials: 'AS',
   },
   {
-    quote: 'Finally, a brand that understands the meaning behind gifting. Truly heartfelt!',
+    quote: 'Finally, a gifting experience that understands emotion.',
     name: 'Rohit M.',
     city: 'Mumbai',
-    avatar: null,
-    initials: 'RM',
   },
   {
-    quote: 'The meaning card added tears to our celebration. So thoughtful!',
+    quote: 'The meaning card made the moment unforgettable.',
     name: 'Meera K.',
     city: 'Pune',
-    avatar: null,
-    initials: 'MK',
   },
-];
-
-const stats = [
-  ['10,000+', 'Happy Customers'],
-  ['4.9 ★', 'Average Rating'],
-  ['100+', 'Curated Experiences'],
-  ['Worldwide', 'Delivery'],
-  ['Sustainable', 'Packaging'],
 ];
 
 export default function HomePage() {
+  const featuredCategories = productCategories.filter((category) =>
+    featuredSlugs.includes(category.slug)
+  );
+
   return (
     <main className="overflow-hidden">
-      {/* HERO */}
-      <section className="relative min-h-[640px] overflow-hidden bg-[#160606] px-4 text-white">
+      <section className="relative -mx-4 -mt-10 min-h-[720px] overflow-hidden bg-[#160606] px-4 py-16 text-white sm:-mx-6 sm:px-6 lg:-mx-8 lg:min-h-[640px]">
         <div
-          className="absolute inset-0 bg-cover bg-center opacity-80"
+          className="absolute inset-0 scale-105 bg-cover bg-center opacity-75"
           style={{ backgroundImage: "url('/hero-gift.jpg.png')" }}
         />
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,#170405_0%,rgba(35,5,10,0.94)_34%,rgba(52,7,14,0.58)_62%,rgba(22,6,6,0.14)_100%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(143,20,49,0.38),transparent_30%),radial-gradient(circle_at_80%_30%,rgba(215,162,93,0.18),transparent_32%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_20%,rgba(215,162,93,0.28),transparent_28rem),linear-gradient(90deg,#170405_0%,rgba(54,5,15,0.96)_42%,rgba(22,6,6,0.42)_100%)]" />
+        <div className="absolute left-12 top-28 h-32 w-32 rounded-full bg-[#d7a25d]/20 blur-3xl" />
+        <div className="absolute bottom-24 right-20 h-48 w-48 rounded-full bg-[#8f1431]/35 blur-3xl" />
 
-        <div className="relative mx-auto grid min-h-[540px] max-w-7xl items-center gap-10 py-8 lg:grid-cols-[1fr_1.1fr]">
-          <div className="max-w-2xl aura-fade-up">
-            <div className="mb-5 inline-flex items-center gap-3 rounded-full border border-[#d7a25d]/35 bg-[#fff7ef]/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.35em] text-[#f0c98f] backdrop-blur-md">
+        <div className="relative mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[1fr_0.85fr]">
+          <div className="aura-fade-up">
+            <div className="inline-flex items-center gap-3 rounded-full border border-[#d7a25d]/35 bg-white/10 px-4 py-2 text-xs font-bold uppercase tracking-[0.35em] text-[#f3c982] backdrop-blur">
               <span>♡</span>
               Gifts that speak from the heart
             </div>
 
-            <h1 className="font-serif text-5xl leading-[0.95] tracking-tight text-[#fff7ef] sm:text-6xl lg:text-7xl">
+            <h1 className="mt-7 max-w-4xl font-serif text-5xl leading-[0.95] text-[#fff7ef] sm:text-6xl lg:text-7xl">
               Where emotion becomes a beautiful gift
             </h1>
 
-            <p className="mt-6 max-w-xl text-base leading-8 text-[#f6dfd0]/[0.9] sm:text-lg">
-              Thoughtful gifting, guided by emotion, culture and connection — so every moment you celebrate becomes unforgettable.
+            <p className="mt-6 max-w-2xl text-base leading-8 text-[#f6dfd0]/90 sm:text-lg">
+              Thoughtful gifting inspired by emotion, culture and connection — so every moment you celebrate becomes unforgettable.
             </p>
 
-            <div className="mt-9 flex flex-wrap gap-4">
+            <div className="mt-8 flex flex-wrap gap-4">
               <Link
-                href="/gift-finder"
-                className="group rounded-full bg-[#8f1431] px-7 py-4 text-sm font-semibold text-white shadow-2xl shadow-[#8f1431]/30 transition hover:-translate-y-1 hover:bg-[#a51c3c]"
+                href="/categories"
+                className="rounded-full bg-[#9f1239] px-7 py-4 text-sm font-semibold text-white shadow-2xl shadow-[#9f1239]/30 transition hover:-translate-y-1 hover:bg-[#b01543]"
               >
-                Explore Gift Ideas
-                <span className="ml-3 inline-block transition group-hover:translate-x-1">→</span>
+                Explore Gift Ideas →
               </Link>
 
               <Link
                 href="/gift-finder"
-                className="group rounded-full border border-[#ead6c5] bg-[#fff7ef] px-7 py-4 text-sm font-semibold text-[#4b1720] shadow-2xl shadow-black/20 transition hover:-translate-y-1"
+                className="rounded-full border border-[#d7a25d]/45 bg-[#fff7ef] px-7 py-4 text-sm font-semibold text-[#4b0d18] shadow-xl transition hover:-translate-y-1 hover:bg-[#f3c982]"
               >
-                Try Gift Finder
-                <span className="ml-3 text-[#c38a52]">✦</span>
+                Try Gift Finder ✦
               </Link>
             </div>
-          </div>
 
-          <div className="relative hidden min-h-[500px] lg:block">
-            <div className="absolute left-8 top-14 space-y-5">
-              {quickCards.map((card) => (
-                <Link
-                  href={card.href}
-                  key={card.title}
-                  className="block w-72 rounded-2xl border border-[#d7a25d]/40 bg-[#2c0b10]/55 p-5 shadow-2xl backdrop-blur-xl transition hover:-translate-y-1 hover:bg-[#4b1720]/70"
+            <div className="mt-10 grid max-w-3xl gap-3 sm:grid-cols-3">
+              {['Curated with care', 'Rooted in culture', 'Beautifully packaged'].map((item) => (
+                <div
+                  key={item}
+                  className="rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-xs font-semibold text-[#f6dfd0]/80 backdrop-blur"
                 >
-                  <h3 className="font-serif text-xl text-[#fff7ef]">{card.title}</h3>
-                  <p className="mt-2 text-sm leading-6 text-white/75">{card.text}</p>
-                  <span className="mt-4 inline-block text-sm text-[#f0c98f]">
-                    {card.cta} →
-                  </span>
-                </Link>
+                  {item}
+                </div>
               ))}
             </div>
           </div>
+
+          <div className="relative hidden min-h-[520px] lg:block">
+            <div className="aura-float absolute right-0 top-10 h-[420px] w-[520px] rounded-[3rem] border border-[#d7a25d]/25 bg-[#fff7ef]/10 shadow-2xl shadow-black/40 backdrop-blur-md" />
+
+            <div className="absolute right-10 top-28 w-80 rounded-[2rem] border border-[#d7a25d]/35 bg-[#321016]/75 p-6 shadow-2xl backdrop-blur-xl">
+              <div className="flex items-center gap-4">
+                <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#9f1239] text-2xl">
+                  🎁
+                </span>
+                <div>
+                  <h2 className="font-serif text-2xl text-[#fff7ef]">
+                    Personalized for You
+                  </h2>
+                  <p className="mt-2 text-sm leading-6 text-[#f6dfd0]/75">
+                    Thoughtful picks, crafted around your moments and loved ones.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="absolute bottom-24 right-20 w-80 rounded-[2rem] border border-[#d7a25d]/35 bg-[#321016]/75 p-6 shadow-2xl backdrop-blur-xl">
+              <div className="flex items-center gap-4">
+                <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#7f1d1d] text-2xl">
+                  ✍️
+                </span>
+                <div>
+                  <h2 className="font-serif text-2xl text-[#fff7ef]">
+                    Meaning Cards
+                  </h2>
+                  <p className="mt-2 text-sm leading-6 text-[#f6dfd0]/75">
+                    Words that stay long after the moment fades.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="absolute bottom-2 right-0 rounded-[2rem] border border-[#d7a25d]/25 bg-black/25 px-6 py-4 text-sm text-[#f3c982] backdrop-blur-xl">
+              Premium gifting made memorable
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
+        <div className="grid overflow-hidden rounded-[2rem] border border-[#ead8c7] bg-[#fff7ef] shadow-xl md:grid-cols-2 xl:grid-cols-4">
+          {trustItems.map((item) => (
+            <div
+              key={item.title}
+              className="border-b border-[#ead8c7] p-6 last:border-b-0 md:border-r md:last:border-r-0 xl:border-b-0"
+            >
+              <div className="flex items-start gap-4">
+                <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-[#ead8c7] bg-white text-2xl text-[#8f1431] shadow-sm">
+                  {item.icon}
+                </span>
+                <div>
+                  <h2 className="font-serif text-xl leading-tight text-[#5a1722]">
+                    {item.title}
+                  </h2>
+                  <p className="mt-2 text-sm leading-6 text-stone-600">
+                    {item.text}
+                  </p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
+        <div className="mb-7 flex flex-col justify-between gap-4 md:flex-row md:items-end">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#8a4a2d]">
+              Find the perfect gift
+            </p>
+            <h2 className="mt-3 font-serif text-4xl leading-tight text-[#5a1722] sm:text-5xl">
+              Explore your way
+            </h2>
+          </div>
+
+          <Link
+            href="/categories"
+            className="text-sm font-bold text-[#8f1431] transition hover:text-[#5a1722]"
+          >
+            View all categories →
+          </Link>
         </div>
 
-        <div className="relative mx-auto -mt-12 mb-8 max-w-7xl rounded-3xl border border-[#e2b271]/25 bg-black/30 p-4 backdrop-blur-xl">
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-            {trustPoints.map((point, index) => (
-              <div key={point} className="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm text-[#f7e8db]">
-                <span className="text-xl text-[#e7b56e]">
-                  {['♢', '♧', '🎁', '✦', '☑'][index]}
+        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+          {pathways.map((item) => (
+            <Link
+              key={item.title}
+              href={item.href}
+              className="group relative min-h-[320px] overflow-hidden rounded-[2rem] border border-[#ead8c7] shadow-xl transition hover:-translate-y-1 hover:shadow-2xl"
+            >
+              <div
+                className="absolute inset-0 bg-cover bg-center transition duration-700 group-hover:scale-110"
+                style={{ backgroundImage: `url('${item.image}')` }}
+              />
+              <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(22,6,6,0.08),rgba(22,6,6,0.88))]" />
+
+              <div className="absolute inset-x-0 bottom-0 p-6">
+                <span className="mb-4 flex h-12 w-12 items-center justify-center rounded-full border border-[#d7a25d]/40 bg-[#160606]/65 text-xl text-[#f3c982] backdrop-blur">
+                  ✦
                 </span>
-                {point}
+                <h3 className="font-serif text-3xl leading-tight text-[#fff7ef]">
+                  {item.title}
+                </h3>
+                <p className="mt-2 text-sm leading-6 text-[#f6dfd0]/75">
+                  {item.text}
+                </p>
+                <p className="mt-4 text-sm font-bold text-[#f3c982]">
+                  Explore →
+                </p>
               </div>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
+        <div className="rounded-[2.5rem] bg-[#4a0716] p-6 text-white shadow-2xl shadow-[#4a0716]/20 sm:p-8 lg:p-10">
+          <div className="flex flex-col justify-between gap-5 md:flex-row md:items-end">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#e8b36f]">
+                Featured collections
+              </p>
+              <h2 className="mt-3 font-serif text-4xl leading-tight sm:text-5xl">
+                Gifts for every meaningful occasion
+              </h2>
+              <p className="mt-3 max-w-2xl text-sm leading-7 text-white/70">
+                Start with the moment, then choose a gift that carries emotion, beauty and story.
+              </p>
+            </div>
+
+            <Link
+              href="/categories"
+              className="rounded-full border border-[#e8b36f]/40 px-5 py-3 text-sm font-semibold text-[#e8b36f] transition hover:bg-[#e8b36f] hover:text-[#430816]"
+            >
+              Browse all
+            </Link>
+          </div>
+
+          <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+            {featuredCategories.map((category) => (
+              <Link
+                key={category.slug}
+                href={category.href}
+                className="group overflow-hidden rounded-3xl border border-white/10 bg-white/[0.08] backdrop-blur transition hover:-translate-y-1 hover:bg-white/[0.12]"
+              >
+                <div
+                  className="min-h-[220px] bg-cover bg-center transition duration-700 group-hover:scale-105"
+                  style={{ backgroundImage: `url('${category.image}')` }}
+                />
+                <div className="p-5">
+                  <p className="text-xs font-bold uppercase tracking-[0.24em] text-[#e8b36f]">
+                    {category.badge}
+                  </p>
+                  <h3 className="mt-3 font-serif text-2xl text-[#fff7ef]">
+                    {category.title}
+                  </h3>
+                  <p className="mt-3 text-sm leading-6 text-white/65">
+                    {category.description}
+                  </p>
+                  <div className="mt-5 flex items-center justify-between gap-3">
+                    <span className="text-sm font-bold text-[#e8b36f]">
+                      {category.priceRange}
+                    </span>
+                    <span className="rounded-full bg-[#fff7ef] px-4 py-2 text-sm font-semibold text-[#4a0716]">
+                      View →
+                    </span>
+                  </div>
+                </div>
+              </Link>
             ))}
           </div>
         </div>
       </section>
 
-      {/* GIFT FINDER + CULTURE + MEANING */}
-      <section className="mx-auto grid max-w-7xl gap-5 px-4 py-6 lg:grid-cols-[1.05fr_1fr_1.05fr]">
-        <div className="rounded-[2rem] border border-[#ead8c7] bg-[#fff5ec] p-8 shadow-sm">
+      <section className="mx-auto grid max-w-7xl gap-6 px-4 py-8 sm:px-6 lg:grid-cols-[0.95fr_1.05fr]">
+        <div className="relative min-h-[420px] overflow-hidden rounded-[2.5rem] border border-[#ead8c7] shadow-xl">
+          <div
+            className="absolute inset-0 bg-cover bg-center"
+            style={{ backgroundImage: "url('/meaning-card.jpg.png')" }}
+          />
+          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(22,6,6,0.02),rgba(22,6,6,0.62))]" />
+          <button
+            type="button"
+            className="absolute left-1/2 top-1/2 flex h-20 w-20 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-white/30 bg-white/20 text-3xl text-white shadow-2xl backdrop-blur-xl"
+          >
+            ▶
+          </button>
+          <p className="absolute bottom-6 left-6 right-6 rounded-2xl bg-black/35 px-5 py-4 text-sm font-semibold text-white backdrop-blur">
+            Unboxing memories, not just products.
+          </p>
+        </div>
+
+        <div className="rounded-[2.5rem] border border-[#ead8c7] bg-[#fff7ef] p-7 shadow-xl sm:p-10">
           <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#8a4a2d]">
-            Find the perfect gift
+            Words that stay
           </p>
-
-          <h2 className="mt-5 font-serif text-4xl leading-tight text-[#5a1722]">
-            A heartfelt gift starts with the right choice
+          <h2 className="mt-4 font-serif text-4xl leading-tight text-[#5a1722] sm:text-5xl">
+            Meaning cards for the emotions gifts cannot say alone
           </h2>
-
           <p className="mt-4 text-sm leading-7 text-stone-700">
-            Answer a few simple questions and we’ll help you find something truly meaningful.
+            Add heartfelt message lines for love, gratitude, healing and celebration. Because the right words can turn a simple gift into a lifelong memory.
           </p>
 
-          <div className="mt-6 grid grid-cols-2 gap-3">
-            {finderOptions.map((item) => (
-              <Link
-                href="/gift-finder"
-                key={item}
-                className="rounded-2xl border border-[#ead8c7] bg-white/80 p-4 text-center shadow-sm transition hover:-translate-y-1 hover:shadow-xl"
+          <div className="mt-7 grid gap-4 sm:grid-cols-3">
+            {meaningCards.map((card) => (
+              <div
+                key={card.title}
+                className="rounded-3xl border border-[#ead8c7] bg-white p-5 shadow-sm"
               >
-                <div className="text-2xl text-[#9c5a37]">
-                  {item === 'Who is it for?' ? '👥' : item === 'Occasion' ? '♡' : item === 'Personality' ? '☆' : '🎁'}
-                </div>
-                <p className="mt-3 text-xs font-semibold text-[#4a2d23]">{item}</p>
-              </Link>
+                <h3 className="font-serif text-2xl text-[#5a1722]">
+                  {card.title}
+                </h3>
+                <p className="mt-3 text-sm leading-6 text-stone-600">
+                  {card.text}
+                </p>
+              </div>
             ))}
           </div>
 
           <Link
-            href="/gift-finder"
-            className="mt-6 inline-flex rounded-full bg-[#6f0f22] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#8f1431]"
+            href="/meaning-cards"
+            className="mt-8 inline-flex rounded-full bg-[#8f1431] px-7 py-4 text-sm font-semibold text-white transition hover:-translate-y-1 hover:bg-[#a51c3c]"
           >
-            Find My Gift →
+            Explore Meaning Cards →
           </Link>
         </div>
+      </section>
 
-        <div
-          className="relative min-h-[360px] overflow-hidden rounded-[2rem] border border-[#ead8c7] bg-cover bg-center p-8 shadow-sm"
-          style={{ backgroundImage: "url('/culture-diya.jpg.png')" }}
-        >
-          <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(255,245,236,0.88),rgba(255,245,236,0.55),rgba(255,245,236,0.06))]" />
-          <div className="relative max-w-sm">
-            <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#8a4a2d]">
+      <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
+        <div className="grid overflow-hidden rounded-[2.5rem] bg-[#5a0718] text-white shadow-2xl lg:grid-cols-[0.9fr_1.1fr]">
+          <div className="p-8 sm:p-10 lg:p-12">
+            <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#e8b36f]">
               Rooted in culture
             </p>
-
-            <h2 className="mt-5 font-serif text-4xl leading-tight text-[#5a1722]">
-              Celebrate traditions that bring us closer
+            <h2 className="mt-4 font-serif text-4xl leading-tight sm:text-5xl">
+              Gifts inspired by Indian warmth, ritual and celebration
             </h2>
-
-            <p className="mt-4 text-sm leading-7 text-stone-700">
-              Explore rituals, stories and symbols behind meaningful gifting.
+            <p className="mt-5 text-sm leading-7 text-white/75">
+              From diya-lit festive moments to elegant message cards, CadeauAura blends cultural warmth with modern premium gifting.
             </p>
+
+            <div className="mt-7 space-y-3">
+              {['Festive presentation', 'Ritual-inspired details', 'Elegant keepsakes'].map((item) => (
+                <div
+                  key={item}
+                  className="rounded-2xl border border-white/10 bg-white/[0.08] px-5 py-4 text-sm font-semibold text-[#fff7ef]"
+                >
+                  {item}
+                </div>
+              ))}
+            </div>
 
             <Link
               href="/culture-tradition"
-              className="mt-6 inline-flex rounded-full bg-[#6f0f22] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#8f1431]"
+              className="mt-8 inline-flex rounded-full border border-[#e8b36f]/45 px-7 py-4 text-sm font-semibold text-[#e8b36f] transition hover:bg-[#e8b36f] hover:text-[#4a0716]"
             >
               Explore Culture →
             </Link>
           </div>
-        </div>
 
-        <div
-          className="relative min-h-[360px] overflow-hidden rounded-[2rem] border border-[#ead8c7] bg-cover bg-center p-8 shadow-sm"
-          style={{ backgroundImage: "url('/meaning-card.jpg.png')" }}
-        >
-          <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(255,247,239,0.86),rgba(255,247,239,0.50),rgba(255,247,239,0.08))]" />
-          <div className="relative max-w-sm">
-            <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#8a4a2d]">
-              Premium gift collections
-            </p>
-
-            <h2 className="mt-5 font-serif text-4xl leading-tight text-[#5a1722]">
-              Curated boxes for every emotion
-            </h2>
-
-            <p className="mt-4 text-sm leading-7 text-stone-700">
-              Handpicked gifts. Beautifully packaged. Made to be remembered.
-            </p>
-
-            <Link
-              href="/meaning-cards"
-              className="mt-6 inline-flex rounded-full bg-[#6f0f22] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#8f1431]"
-            >
-              Explore Cards →
-            </Link>
-          </div>
+          <div
+            className="min-h-[420px] bg-cover bg-center"
+            style={{ backgroundImage: "url('/culture-diya.jpg.png')" }}
+          />
         </div>
       </section>
 
-      {/* CINEMATIC STORY */}
-      <section className="mx-auto max-w-7xl px-4 pb-8">
-        <div className="rounded-[2rem] bg-[#430816] p-6 text-white shadow-2xl shadow-[#430816]/20 lg:p-10">
-          <div className="grid gap-8 lg:grid-cols-[1fr_1.35fr_1fr]">
-            <div>
-              <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#e8b36f]">
-                Stories that inspire
-              </p>
-
-              <h2 className="mt-4 font-serif text-4xl leading-tight">
-                Gifts that tell a story, every time.
-              </h2>
-
-              <p className="mt-4 text-sm leading-7 text-white/70">
-                Watch how meaningful gifts create moments that last beyond the present.
-              </p>
-
-              <Link
-                href="/about"
-                className="mt-6 inline-flex rounded-full bg-[#fff3e8] px-6 py-3 text-sm font-semibold text-[#4b0c16]"
-              >
-                Watch Video ▶
-              </Link>
-            </div>
-
-            <div
-              className="relative min-h-[280px] overflow-hidden rounded-3xl border border-white/10 bg-cover bg-center"
-              style={{ backgroundImage: "url('/story-unboxing.jpg.png')" }}
-            >
-              <div className="absolute inset-0 bg-black/20" />
-              <div className="absolute left-1/2 top-1/2 flex h-20 w-20 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-white/50 bg-white/[0.15] text-3xl backdrop-blur">
-                ▶
-              </div>
-              <div className="absolute bottom-6 left-6 rounded-2xl bg-black/35 px-5 py-3 text-sm backdrop-blur">
-                Unboxing memories, not just products.
-              </div>
-            </div>
-
-            <div>
-              <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#e8b36f]">
-                Loved by many
-              </p>
-
-              <h2 className="mt-4 font-serif text-4xl leading-tight">
-                Real stories. Real emotions.
-              </h2>
-
-              <p className="mt-4 text-sm leading-7 text-white/70">
-                From first-time givers to lifelong celebrations — our community trusts CadeauAura.
-              </p>
-
-              <Link href="/messages" className="mt-6 inline-block text-sm font-semibold text-[#e8b36f]">
-                Read More Stories →
-              </Link>
-            </div>
+      <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
+        <div className="rounded-[2.5rem] border border-[#ead8c7] bg-[#fff7ef] p-7 shadow-xl sm:p-10">
+          <div className="text-center">
+            <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#8a4a2d]">
+              Loved by many
+            </p>
+            <h2 className="mt-3 font-serif text-4xl leading-tight text-[#5a1722] sm:text-5xl">
+              Real stories. Real emotions.
+            </h2>
           </div>
 
-          <div className="mt-8 grid gap-5 lg:grid-cols-3">
+          <div className="mt-8 grid gap-5 md:grid-cols-3">
             {testimonials.map((item) => (
               <article
                 key={item.name}
-                className="rounded-3xl border border-white/10 bg-white/[0.08] p-6 backdrop-blur"
+                className="rounded-3xl border border-[#ead8c7] bg-white p-6 shadow-sm"
               >
-                <p className="text-3xl text-[#e8b36f]">“</p>
-                <p className="text-sm leading-7 text-white/80">{item.quote}</p>
-                <div className="mt-5 text-[#f8c56e]">★★★★★</div>
-
-                <div className="mt-5 flex items-center gap-3">
-                  {item.avatar ? (
-                    <img
-                      src={item.avatar}
-                      alt={item.name}
-                      className="h-12 w-12 rounded-full border border-[#e8b36f]/40 object-cover"
-                    />
-                  ) : (
-                    <div className="flex h-12 w-12 items-center justify-center rounded-full border border-[#e8b36f]/40 bg-[#fff7ef]/10 text-sm font-bold text-[#f3c982]">
-                      {item.initials}
-                    </div>
-                  )}
-
+                <p className="font-serif text-4xl text-[#d7a25d]">“</p>
+                <p className="mt-2 text-sm leading-7 text-stone-700">
+                  {item.quote}
+                </p>
+                <div className="mt-6 flex items-center gap-3">
+                  <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[#5a1722] font-bold text-[#f3c982]">
+                    {item.name.charAt(0)}
+                  </span>
                   <div>
-                    <p className="font-semibold">{item.name}</p>
-                    <p className="text-sm text-white/[0.55]">{item.city}</p>
+                    <p className="font-bold text-[#5a1722]">{item.name}</p>
+                    <p className="text-sm text-stone-500">{item.city}</p>
                   </div>
                 </div>
               </article>
@@ -325,16 +457,40 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* STATS */}
-      <section className="mx-auto mb-10 max-w-5xl px-4">
-        <div className="rounded-[2rem] border border-[#ead8c7] bg-[#fff5ec] p-6 shadow-xl">
-          <div className="grid gap-6 text-center sm:grid-cols-2 lg:grid-cols-5">
-            {stats.map(([value, label]) => (
-              <div key={label}>
-                <p className="font-serif text-3xl text-[#5a1722]">{value}</p>
-                <p className="mt-1 text-sm text-stone-600">{label}</p>
-              </div>
-            ))}
+      <section className="mx-auto max-w-7xl px-4 pb-12 pt-8 sm:px-6">
+        <div className="relative overflow-hidden rounded-[2.5rem] bg-[#160606] p-8 text-white shadow-2xl sm:p-12">
+          <div
+            className="absolute inset-0 bg-cover bg-center opacity-30"
+            style={{ backgroundImage: "url('/story-unboxing.jpg.png')" }}
+          />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(215,162,93,0.22),transparent_24rem)]" />
+
+          <div className="relative max-w-3xl">
+            <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#e8b36f]">
+              Make every moment memorable
+            </p>
+            <h2 className="mt-4 font-serif text-4xl leading-tight sm:text-5xl">
+              Ready to find a gift that truly feels personal?
+            </h2>
+            <p className="mt-4 text-sm leading-7 text-white/75">
+              Browse curated ideas, explore meaningful message cards, and discover gifts that feel warm, thoughtful and unforgettable.
+            </p>
+
+            <div className="mt-8 flex flex-wrap gap-4">
+              <Link
+                href="/gift-finder"
+                className="rounded-full bg-[#9f1239] px-7 py-4 text-sm font-semibold text-white transition hover:-translate-y-1 hover:bg-[#b01543]"
+              >
+                Use Gift Finder →
+              </Link>
+
+              <Link
+                href="/categories"
+                className="rounded-full bg-[#fff7ef] px-7 py-4 text-sm font-semibold text-[#4b0d18] transition hover:-translate-y-1 hover:bg-[#f3c982]"
+              >
+                Start Exploring
+              </Link>
+            </div>
           </div>
         </div>
       </section>
