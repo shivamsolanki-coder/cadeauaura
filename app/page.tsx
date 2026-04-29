@@ -61,7 +61,7 @@ export default function HomePage() {
       {/* HERO */}
       <section className="relative -mx-4 -mt-6 min-h-[720px] overflow-hidden bg-[#160606] px-4 text-white sm:-mx-6 lg:-mx-8">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_20%,rgba(226,151,91,0.35),transparent_28%),radial-gradient(circle_at_20%_30%,rgba(128,16,39,0.45),transparent_30%),linear-gradient(135deg,#210707_0%,#4b0d18_42%,#120404_100%)]" />
-        <div className="absolute inset-0 opacity-35 [background-image:linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(rgba(255,255,255,0.04)_1px,transparent_1px)] [background-size:80px_80px]" />
+        <div className="absolute inset-0 opacity-[0.35] [background-image:linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(rgba(255,255,255,0.04)_1px,transparent_1px)] [background-size:80px_80px]" />
 
         <div className="relative mx-auto grid min-h-[720px] max-w-7xl items-center gap-10 py-16 lg:grid-cols-[1fr_1.1fr]">
           <div className="max-w-2xl">
@@ -125,7 +125,7 @@ export default function HomePage() {
                 <Link
                   href={card.href}
                   key={card.title}
-                  className="block w-72 rounded-2xl border border-[#d7a25d]/30 bg-white/10 p-5 shadow-2xl backdrop-blur-xl transition hover:-translate-y-1 hover:bg-white/15"
+                  className="block w-72 rounded-2xl border border-[#d7a25d]/30 bg-white/10 p-5 shadow-2xl backdrop-blur-xl transition hover:-translate-y-1 hover:bg-white/[0.15]"
                 >
                   <h3 className="font-serif text-xl text-[#fff7ef]">{card.title}</h3>
                   <p className="mt-2 text-sm leading-6 text-white/70">{card.text}</p>
