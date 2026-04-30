@@ -8,6 +8,45 @@ import './globals.css';
 
 const siteUrl = 'https://cadeauaura.vercel.app';
 
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Organization',
+      '@id': `${siteUrl}/#organization`,
+      name: 'CadeauAura',
+      url: siteUrl,
+      logo: `${siteUrl}/icon.svg`,
+      description:
+        'CadeauAura helps people discover meaningful gifts inspired by emotion, culture and connection.',
+      contactPoint: {
+        '@type': 'ContactPoint',
+        telephone: '+91-9205089044',
+        contactType: 'customer support',
+        areaServed: 'IN',
+        availableLanguage: ['English', 'Hindi'],
+      },
+    },
+    {
+      '@type': 'WebSite',
+      '@id': `${siteUrl}/#website`,
+      url: siteUrl,
+      name: 'CadeauAura',
+      publisher: {
+        '@id': `${siteUrl}/#organization`,
+      },
+      description:
+        'Discover meaningful gifts, premium gift boxes, message cards and culture-inspired gifting ideas.',
+      inLanguage: 'en-IN',
+      potentialAction: {
+        '@type': 'SearchAction',
+        target: `${siteUrl}/categories?search={search_term_string}`,
+        'query-input': 'required name=search_term_string',
+      },
+    },
+  ],
+};
+
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
@@ -47,7 +86,7 @@ export const metadata: Metadata = {
     siteName: 'CadeauAura',
     images: [
       {
-        url: '/hero-gift.jpg.png',
+        url: '/opengraph-image',
         width: 1200,
         height: 630,
         alt: 'CadeauAura premium meaningful gifting experience',
@@ -61,7 +100,7 @@ export const metadata: Metadata = {
     title: 'CadeauAura | Meaningful Gifts for Every Emotion',
     description:
       'Discover premium gifting ideas inspired by emotion, culture and connection.',
-    images: ['/hero-gift.jpg.png'],
+    images: ['/twitter-image'],
   },
   robots: {
     index: true,
@@ -88,10 +127,19 @@ export default function RootLayout({
   return (
     <html lang="en-IN">
       <body className="min-h-screen overflow-x-hidden">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(structuredData),
+          }}
+        />
+
         <Header />
+
         <div className="min-h-[calc(100vh-180px)] w-full">
           {children}
         </div>
+
         <Footer />
       </body>
     </html>
