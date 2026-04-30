@@ -22,7 +22,7 @@ export default function OpenGraphImage() {
           overflow: 'hidden',
           background: '#160606',
           color: '#fff7ef',
-          fontFamily: 'serif',
+          fontFamily: 'sans-serif',
         }}
       >
         <div
@@ -30,7 +30,7 @@ export default function OpenGraphImage() {
             position: 'absolute',
             inset: 0,
             background:
-              'radial-gradient(circle at 18% 20%, rgba(243,201,130,0.28), transparent 28%), radial-gradient(circle at 82% 18%, rgba(143,20,49,0.55), transparent 34%), linear-gradient(135deg, #160606 0%, #4b0d18 52%, #160606 100%)',
+              'radial-gradient(circle at 18% 20%, rgba(243,201,130,0.24), transparent 28%), radial-gradient(circle at 82% 18%, rgba(143,20,49,0.55), transparent 34%), linear-gradient(135deg, #160606 0%, #4b0d18 52%, #160606 100%)',
           }}
         />
 
@@ -74,24 +74,47 @@ export default function OpenGraphImage() {
               display: 'flex',
               alignItems: 'center',
               gap: 18,
-              color: '#f3c982',
-              fontSize: 36,
-              fontWeight: 700,
-              letterSpacing: '-0.02em',
             }}
           >
-            <span style={{ fontSize: 42 }}>✦</span>
-            CadeauAura
+            <div
+              style={{
+                width: 54,
+                height: 54,
+                borderRadius: 18,
+                background: '#f3c982',
+                color: '#4b0d18',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: 22,
+                fontWeight: 900,
+                letterSpacing: '-0.06em',
+                boxShadow: '0 18px 50px rgba(243,201,130,0.22)',
+              }}
+            >
+              CA
+            </div>
+
+            <div
+              style={{
+                color: '#f3c982',
+                fontSize: 36,
+                fontWeight: 800,
+                letterSpacing: '-0.04em',
+              }}
+            >
+              CadeauAura
+            </div>
           </div>
 
           <div
             style={{
               marginTop: 34,
-              maxWidth: 850,
-              fontSize: 78,
+              maxWidth: 880,
+              fontSize: 76,
               lineHeight: 0.98,
-              letterSpacing: '-0.055em',
-              fontWeight: 700,
+              letterSpacing: '-0.06em',
+              fontWeight: 900,
             }}
           >
             Meaningful Gifts for Every Emotion
@@ -104,7 +127,6 @@ export default function OpenGraphImage() {
               fontSize: 30,
               lineHeight: 1.35,
               color: '#f6dfd0',
-              fontFamily: 'sans-serif',
             }}
           >
             Premium gifting ideas inspired by emotion, culture and connection.
@@ -115,10 +137,9 @@ export default function OpenGraphImage() {
               display: 'flex',
               gap: 16,
               marginTop: 42,
-              fontFamily: 'sans-serif',
               fontSize: 22,
               color: '#4b0d18',
-              fontWeight: 700,
+              fontWeight: 800,
             }}
           >
             <div
