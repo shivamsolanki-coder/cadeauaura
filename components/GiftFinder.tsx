@@ -1,16 +1,20 @@
 'use client';
 
+import Link from 'next/link';
 import { useMemo, useState } from 'react';
 
 import { giftIdeas } from '@/data/giftIdeas';
+import { products } from '@/data/products';
 import {
   Culture,
   Emotion,
   GestureFeeling,
   Occasion,
   Personality,
-  Relationship
+  Relationship,
 } from '@/lib/types';
+
+const whatsappNumber = '919205089044';
 
 const relationships: Relationship[] = [
   'Partner',
@@ -19,7 +23,7 @@ const relationships: Relationship[] = [
   'Friend',
   'Mentor',
   'Colleague',
-  'Grandparent'
+  'Grandparent',
 ];
 
 const occasions: Occasion[] = [
@@ -29,7 +33,7 @@ const occasions: Occasion[] = [
   'Festival',
   'Thank You',
   'Just Because',
-  'New Beginning'
+  'New Beginning',
 ];
 
 const emotions: Emotion[] = [
@@ -38,7 +42,7 @@ const emotions: Emotion[] = [
   'Pride',
   'Comfort',
   'Joy',
-  'Hope'
+  'Hope',
 ];
 
 const cultures: Culture[] = [
@@ -47,7 +51,7 @@ const cultures: Culture[] = [
   'Japanese',
   'Middle Eastern',
   'African',
-  'Latin'
+  'Latin',
 ];
 
 const personalities: Personality[] = [
@@ -56,7 +60,7 @@ const personalities: Personality[] = [
   'Creative',
   'Elegant',
   'Traditional',
-  'Adventurous'
+  'Adventurous',
 ];
 
 const gestures: GestureFeeling[] = [
@@ -64,7 +68,7 @@ const gestures: GestureFeeling[] = [
   'Warm',
   'Grand',
   'Reflective',
-  'Playful'
+  'Playful',
 ];
 
 interface FinderState {
@@ -82,7 +86,7 @@ const initialState: FinderState = {
   emotion: null,
   culture: null,
   personality: null,
-  gesture: null
+  gesture: null,
 };
 
 const steps = [
@@ -91,51 +95,124 @@ const steps = [
     title: 'Who is it for?',
     eyebrow: 'Relationship',
     options: relationships,
-    icon: '👥'
+    icon: '👥',
   },
   {
     key: 'occasion',
     title: 'What is the moment?',
     eyebrow: 'Occasion',
     options: occasions,
-    icon: '♡'
+    icon: '♡',
   },
   {
     key: 'emotion',
     title: 'What should they feel?',
     eyebrow: 'Emotion',
     options: emotions,
-    icon: '✦'
+    icon: '✦',
   },
   {
     key: 'culture',
     title: 'Cultural mood',
     eyebrow: 'Culture',
     options: cultures,
-    icon: '🪔'
+    icon: '🪔',
   },
   {
     key: 'personality',
     title: 'Their personality',
     eyebrow: 'Personality',
     options: personalities,
-    icon: '☆'
+    icon: '☆',
   },
   {
     key: 'gesture',
     title: 'Gesture style',
     eyebrow: 'Feeling',
     options: gestures,
-    icon: '🎁'
-  }
+    icon: '🎁',
+  },
 ] as const;
+
+const occasionCategoryBoost: Record<Occasion, string[]> = {
+  Birthday: ['birthday-gifts'],
+  Anniversary: ['anniversary-gifts', 'couple-gifts'],
+  Graduation: ['birthday-gifts', 'corporate-gifts'],
+  Festival: ['festive-gifts', 'wedding-gifts'],
+  'Thank You': ['parent-gifts', 'corporate-gifts', 'luxury-packaging'],
+  'Just Because': ['couple-gifts', 'parent-gifts', 'birthday-gifts'],
+  'New Beginning': ['wedding-gifts', 'parent-gifts', 'corporate-gifts'],
+};
+
+const relationshipCategoryBoost: Record<Relationship, string[]> = {
+  Partner: ['anniversary-gifts', 'couple-gifts'],
+  Parent: ['parent-gifts', 'festive-gifts'],
+  Sibling: ['birthday-gifts', 'festive-gifts'],
+  Friend: ['birthday-gifts', 'couple-gifts'],
+  Mentor: ['corporate-gifts', 'parent-gifts'],
+  Colleague: ['corporate-gifts', 'birthday-gifts'],
+  Grandparent: ['parent-gifts', 'festive-gifts'],
+};
+
+const emotionKeywords: Record<Emotion, string[]> = {
+  Gratitude: ['gratitude', 'appreciation', 'parent', 'blessing', 'client'],
+  Love: ['romantic', 'love', 'couple', 'memory', 'proposal'],
+  Pride: ['keepsake', 'frame', 'premium', 'professional'],
+  Comfort: ['family', 'parent', 'memory', 'hamper'],
+  Joy: ['birthday', 'celebration', 'festive', 'surprise'],
+  Hope: ['blessing', 'wedding', 'new', 'proposal', 'message'],
+};
+
+const personalityKeywords: Record<Personality, string[]> = {
+  Minimalist: ['card', 'frame', 'packaging', 'ribbon'],
+  Sentimental: ['memory', 'gratitude', 'blessing', 'message'],
+  Creative: ['personalized', 'custom', 'card', 'keepsake'],
+  Elegant: ['premium', 'luxury', 'elegant', 'wedding'],
+  Traditional: ['festive', 'diya', 'tradition', 'blessing'],
+  Adventurous: ['surprise', 'celebration', 'hamper', 'date'],
+};
+
+const gestureKeywords: Record<GestureFeeling, string[]> = {
+  Quiet: ['card', 'frame', 'message', 'keepsake'],
+  Warm: ['gratitude', 'family', 'festive', 'parent'],
+  Grand: ['premium', 'luxury', 'wedding', 'hamper'],
+  Reflective: ['memory', 'blessing', 'keepsake', 'message'],
+  Playful: ['birthday', 'surprise', 'date', 'celebration'],
+};
+
+function getSearchText(product: (typeof products)[number]) {
+  return `${product.name} ${product.description} ${product.badge} ${product.bestFor} ${product.categorySlug}`.toLowerCase();
+}
+
+function countKeywordMatches(text: string, keywords: string[]) {
+  return keywords.reduce((score, keyword) => {
+    return text.includes(keyword.toLowerCase()) ? score + 1 : score;
+  }, 0);
+}
+
+function buildPreferenceSummary(state: FinderState) {
+  const entries = Object.entries(state).filter(([, value]) => Boolean(value));
+
+  if (!entries.length) {
+    return 'No specific preferences selected yet';
+  }
+
+  return entries
+    .map(([key, value]) => `${key}: ${value}`)
+    .join(', ');
+}
+
+function getWhatsAppLink(message: string) {
+  return `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+}
 
 export function GiftFinder() {
   const [state, setState] = useState<FinderState>(initialState);
 
   const activeCount = Object.values(state).filter(Boolean).length;
+  const preferenceSummary = buildPreferenceSummary(state);
 
-  const results = useMemo(() => {
+  const ideaResults = useMemo(() => {
     return giftIdeas
       .map((idea) => {
         let score = 0;
@@ -150,13 +227,60 @@ export function GiftFinder() {
         return { idea, score };
       })
       .sort((a, b) => b.score - a.score)
-      .slice(0, activeCount ? 6 : 3);
+      .slice(0, activeCount ? 3 : 3);
+  }, [state, activeCount]);
+
+  const productResults = useMemo(() => {
+    const scoredProducts = products
+      .map((product) => {
+        const text = getSearchText(product);
+        let score = 0;
+
+        if (
+          state.occasion &&
+          occasionCategoryBoost[state.occasion].includes(product.categorySlug)
+        ) {
+          score += 5;
+        }
+
+        if (
+          state.relationship &&
+          relationshipCategoryBoost[state.relationship].includes(product.categorySlug)
+        ) {
+          score += 5;
+        }
+
+        if (state.emotion) {
+          score += countKeywordMatches(text, emotionKeywords[state.emotion]) * 2;
+        }
+
+        if (state.personality) {
+          score += countKeywordMatches(text, personalityKeywords[state.personality]);
+        }
+
+        if (state.gesture) {
+          score += countKeywordMatches(text, gestureKeywords[state.gesture]);
+        }
+
+        if (state.culture === 'Indian' && ['festive-gifts', 'wedding-gifts', 'parent-gifts'].includes(product.categorySlug)) {
+          score += 2;
+        }
+
+        return { product, score };
+      })
+      .sort((a, b) => b.score - a.score);
+
+    const matchedProducts = activeCount
+      ? scoredProducts.filter((item) => item.score > 0)
+      : scoredProducts;
+
+    return (matchedProducts.length ? matchedProducts : scoredProducts).slice(0, 6);
   }, [state, activeCount]);
 
   const update = <K extends keyof FinderState>(key: K, value: FinderState[K]) => {
     setState((prev) => ({
       ...prev,
-      [key]: prev[key] === value ? null : value
+      [key]: prev[key] === value ? null : value,
     }));
   };
 
@@ -175,7 +299,7 @@ export function GiftFinder() {
           <div>
             <div className="inline-flex items-center gap-3 rounded-full border border-[#d7a25d]/35 bg-white/10 px-4 py-2 text-xs font-bold uppercase tracking-[0.35em] text-[#f3c982] backdrop-blur">
               <span>✦</span>
-              AI Gift Finder
+              Gift Finder
             </div>
 
             <h1 className="mt-6 max-w-3xl font-serif text-5xl leading-[0.95] text-[#fff7ef] sm:text-6xl lg:text-7xl">
@@ -183,7 +307,9 @@ export function GiftFinder() {
             </h1>
 
             <p className="mt-6 max-w-2xl text-base leading-8 text-[#f6dfd0]/85 sm:text-lg">
-              Choose the relationship, occasion and emotion. CadeauAura will surface thoughtful gift ideas that match the meaning behind your moment.
+              Choose the relationship, occasion and emotion. CadeauAura will
+              suggest thoughtful gift directions and product options you can
+              enquire for on WhatsApp.
             </p>
 
             <div className="mt-8 flex flex-wrap gap-3">
@@ -213,10 +339,12 @@ export function GiftFinder() {
               {Object.entries(state).map(([key, value]) => (
                 <div
                   key={key}
-                  className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3 text-sm"
+                  className="flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3 text-sm"
                 >
                   <span className="capitalize text-white/60">{key}</span>
-                  <span className="font-semibold text-[#fff7ef]">{value || 'Not selected'}</span>
+                  <span className="text-right font-semibold text-[#fff7ef]">
+                    {value || 'Not selected'}
+                  </span>
                 </div>
               ))}
             </div>
@@ -224,7 +352,8 @@ export function GiftFinder() {
             <div className="mt-5 rounded-2xl border border-[#d7a25d]/25 bg-black/20 p-4 text-sm text-[#f6dfd0]/80">
               {activeCount ? (
                 <p>
-                  {activeCount} preference{activeCount > 1 ? 's' : ''} selected. Results are ranked by emotional match.
+                  {activeCount} preference{activeCount > 1 ? 's' : ''} selected.
+                  Product suggestions and idea cards are updated below.
                 </p>
               ) : (
                 <p>
@@ -232,6 +361,17 @@ export function GiftFinder() {
                 </p>
               )}
             </div>
+
+            <a
+              href={getWhatsAppLink(
+                `Hi CadeauAura, I need help choosing a gift. My preferences are: ${preferenceSummary}. Please guide me.`
+              )}
+              target="_blank"
+              rel="noreferrer"
+              className="mt-5 inline-flex w-full justify-center rounded-full bg-[#25D366] px-5 py-4 text-sm font-bold text-white transition hover:-translate-y-1 hover:bg-[#1ebe5d]"
+            >
+              Send my preferences on WhatsApp
+            </a>
           </div>
         </div>
       </section>
@@ -283,18 +423,105 @@ export function GiftFinder() {
         </div>
       </section>
 
+      <section className="mx-auto max-w-7xl px-4 pb-8 sm:px-6">
+        <div className="rounded-[2rem] border border-[#ead8c7] bg-[#fff7ef] p-6 shadow-xl lg:p-10">
+          <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#8a4a2d]">
+                Product recommendations
+              </p>
+              <h2 className="mt-3 font-serif text-4xl leading-tight text-[#5a1722]">
+                Gift options you can enquire for
+              </h2>
+              <p className="mt-3 max-w-2xl text-sm leading-7 text-stone-700">
+                These product suggestions are matched with your selected
+                relationship, occasion, emotion and gifting style.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={reset}
+              className="rounded-full border border-[#d7a25d]/50 bg-white px-5 py-3 text-sm font-semibold text-[#5a1722] transition hover:bg-[#fff2df]"
+            >
+              Clear all
+            </button>
+          </div>
+
+          <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+            {productResults.map(({ product, score }) => (
+              <article
+                key={product.slug}
+                className="group overflow-hidden rounded-[2rem] border border-[#ead8c7] bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-2xl"
+              >
+                <div
+                  className="relative min-h-[230px] bg-cover bg-center transition duration-700 group-hover:scale-[1.03]"
+                  style={{ backgroundImage: `url('${product.image}')` }}
+                >
+                  <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(22,6,6,0.05),rgba(22,6,6,0.72))]" />
+
+                  <div className="absolute left-5 top-5 rounded-full border border-[#d7a25d]/40 bg-[#160606]/70 px-3 py-1 text-xs font-bold uppercase tracking-[0.22em] text-[#f3c982] backdrop-blur">
+                    {score > 0 ? `${score} match` : product.badge}
+                  </div>
+
+                  <div className="absolute bottom-5 left-5 right-5">
+                    <h3 className="font-serif text-3xl leading-tight text-[#fff7ef]">
+                      {product.name}
+                    </h3>
+                    <p className="mt-2 text-sm font-bold text-[#f3c982]">
+                      {product.price}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="p-6">
+                  <p className="text-sm leading-7 text-stone-700">
+                    {product.description}
+                  </p>
+
+                  <p className="mt-4 rounded-2xl bg-[#fff7ef] px-4 py-3 text-sm font-semibold text-[#5a1722]">
+                    Best for: {product.bestFor}
+                  </p>
+
+                  <div className="mt-5 flex flex-wrap gap-3">
+                    <a
+                      href={getWhatsAppLink(
+                        `Hi CadeauAura, Gift Finder recommended "${product.name}" (${product.price}). My preferences are: ${preferenceSummary}. Please share real photos, customization options and delivery details.`
+                      )}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="rounded-full bg-[#25D366] px-5 py-3 text-sm font-bold text-white transition hover:-translate-y-1 hover:bg-[#1ebe5d]"
+                    >
+                      Enquire on WhatsApp
+                    </a>
+
+                    <Link
+                      href={`/categories/${product.categorySlug}`}
+                      className="rounded-full border border-[#d7a25d]/50 bg-white px-5 py-3 text-sm font-bold text-[#5a1722] transition hover:bg-[#fff2df]"
+                    >
+                      View category
+                    </Link>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section className="mx-auto max-w-7xl px-4 pb-12 sm:px-6">
         <div className="rounded-[2rem] bg-[#430816] p-6 text-white shadow-2xl shadow-[#430816]/20 lg:p-10">
           <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
             <div>
               <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#e8b36f]">
-                Recommended for you
+                Idea direction
               </p>
               <h2 className="mt-3 font-serif text-4xl leading-tight">
-                Thoughtful gift ideas
+                Thoughtful concepts for your gift
               </h2>
               <p className="mt-3 max-w-2xl text-sm leading-7 text-white/70">
-                These suggestions are ranked using your selected relationship, occasion, emotion, culture, personality and gesture style.
+                These ideas help you explain the emotion behind the gift. You can
+                share any idea directly on WhatsApp and ask for available options.
               </p>
             </div>
 
@@ -308,10 +535,10 @@ export function GiftFinder() {
           </div>
 
           <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-            {results.map(({ idea, score }) => (
+            {ideaResults.map(({ idea, score }) => (
               <article
                 key={idea.id}
-                className="flex min-h-[320px] flex-col rounded-3xl border border-white/10 bg-white/[0.08] p-6 backdrop-blur transition hover:-translate-y-1 hover:bg-white/[0.12]"
+                className="flex min-h-[360px] flex-col rounded-3xl border border-white/10 bg-white/[0.08] p-6 backdrop-blur transition hover:-translate-y-1 hover:bg-white/[0.12]"
               >
                 <div className="flex items-start justify-between gap-4">
                   <h3 className="font-serif text-2xl leading-tight text-[#fff7ef]">
@@ -336,9 +563,23 @@ export function GiftFinder() {
                   </p>
                 </div>
 
-                <p className="mt-auto pt-5 text-xs leading-6 text-white/55">
-                  <span className="font-semibold text-[#e8b36f]">Care note:</span> {idea.careNote}
+                <p className="mt-5 text-xs leading-6 text-white/55">
+                  <span className="font-semibold text-[#e8b36f]">
+                    Care note:
+                  </span>{' '}
+                  {idea.careNote}
                 </p>
+
+                <a
+                  href={getWhatsAppLink(
+                    `Hi CadeauAura, Gift Finder suggested the idea "${idea.title}". My preferences are: ${preferenceSummary}. Please recommend available gift options for this idea.`
+                  )}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-auto inline-flex justify-center rounded-full bg-[#25D366] px-5 py-3 text-sm font-bold text-white transition hover:-translate-y-1 hover:bg-[#1ebe5d]"
+                >
+                  Ask for this idea on WhatsApp
+                </a>
               </article>
             ))}
           </div>
