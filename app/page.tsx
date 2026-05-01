@@ -1,54 +1,112 @@
 import Link from 'next/link';
 
 import { productCategories } from '@/data/productCategories';
+import { products } from '@/data/products';
+
+const whatsappNumber = '919205089044';
+
+function getWhatsAppLink(productName?: string) {
+  const message = productName
+    ? `Hi CadeauAura, I am interested in ${productName}. Please share photos, price details and customization options.`
+    : 'Hi CadeauAura, I want help choosing a meaningful gift. Please guide me.';
+
+  return `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+}
 
 const trustItems = [
   {
-    icon: '♡',
-    title: 'Curated with care and meaning',
-    text: 'Every idea is thoughtfully selected to create emotion and lasting memories.',
-  },
-  {
-    icon: '✦',
-    title: 'Rooted in culture, made personal',
-    text: 'Inspired by traditions and crafted to reflect your unique story.',
-  },
-  {
-    icon: '👥',
-    title: 'Thoughtful ideas for every bond',
-    text: 'Find the right gift to express love, gratitude and celebration.',
+    icon: '💬',
+    title: 'WhatsApp-based enquiry',
+    text: 'Share your occasion, budget and relationship. We help you choose the right gifting direction.',
   },
   {
     icon: '🎁',
-    title: 'Premium quality, beautifully packaged',
-    text: 'Elegant presentation, warm details and memorable finishing touches.',
+    title: 'Curated gift suggestions',
+    text: 'Explore products by occasion, relationship, emotion and cultural warmth.',
   },
+  {
+    icon: '✍️',
+    title: 'Custom message cards',
+    text: 'Add thoughtful lines that make the gift feel more personal and memorable.',
+  },
+  {
+    icon: '✨',
+    title: 'Premium packaging guidance',
+    text: 'Box, ribbon, card and presentation options are shared before final confirmation.',
+  },
+];
+
+const howItWorks = [
+  {
+    step: '01',
+    title: 'Choose the moment',
+    text: 'Select birthday, anniversary, wedding, festive, parent or corporate gifting.',
+  },
+  {
+    step: '02',
+    title: 'Pick a gift idea',
+    text: 'Browse gift boxes, hampers, keepsakes, message cards and packaging options.',
+  },
+  {
+    step: '03',
+    title: 'Enquire on WhatsApp',
+    text: 'Ask for real photos, customization options, final price and delivery details.',
+  },
+  {
+    step: '04',
+    title: 'Confirm the final gift',
+    text: 'Once everything is clear, you can finalize the gift as per your requirement.',
+  },
+];
+
+const featuredProductSlugs = [
+  'romantic-memory-box',
+  'birthday-surprise-box',
+  'wedding-blessing-box',
+  'diya-festive-box',
+  'client-appreciation-box',
+  'gratitude-box-for-parents',
 ];
 
 const pathways = [
   {
-    title: 'By Occasion',
-    text: 'Explore gifts for birthdays, anniversaries, weddings and festivals.',
-    href: '/categories',
-    image: '/culture-diya.jpg.png',
+    title: 'Birthday Gifts',
+    text: 'Thoughtful birthday boxes, cards and personalized surprises.',
+    href: '/categories/birthday-gifts',
+    image: '/hero-gift.jpg.png',
   },
   {
-    title: 'By Relationship',
-    text: 'Discover thoughtful ideas for partners, parents, friends and family.',
-    href: '/gift-finder',
-    image: '/story-unboxing.jpg.png',
-  },
-  {
-    title: 'By Meaning',
-    text: 'Choose gifts that express love, gratitude, care or celebration.',
-    href: '/meaning-cards',
+    title: 'Anniversary Gifts',
+    text: 'Romantic keepsakes and meaningful gifts for couples.',
+    href: '/categories/anniversary-gifts',
     image: '/meaning-card.jpg.png',
   },
   {
-    title: 'Premium Collections',
-    text: 'Luxury gift boxes and elegant curated sets for memorable moments.',
-    href: '/categories/luxury-packaging',
-    image: '/hero-gift.jpg.png',
+    title: 'Festive Gifts',
+    text: 'Warm Indian gifting ideas for celebrations and rituals.',
+    href: '/categories/festive-gifts',
+    image: '/culture-diya.jpg.png',
+  },
+  {
+    title: 'Corporate Gifts',
+    text: 'Professional gift boxes for clients, teams and events.',
+    href: '/categories/corporate-gifts',
+    image: '/story-unboxing.jpg.png',
+  },
+];
+
+const meaningCards = [
+  {
+    title: 'Love',
+    text: 'You make ordinary days feel special.',
+  },
+  {
+    title: 'Gratitude',
+    text: 'Thank you for being there in ways words cannot fully hold.',
+  },
+  {
+    title: 'Pride',
+    text: 'Seeing you grow makes this moment even more meaningful.',
   },
 ];
 
@@ -59,40 +117,11 @@ const featuredSlugs = [
   'festive-gifts',
 ];
 
-const meaningCards = [
-  {
-    title: 'Love',
-    text: 'For words that feel warm, intimate and deeply remembered.',
-  },
-  {
-    title: 'Gratitude',
-    text: 'For saying thank you in a way that feels personal and graceful.',
-  },
-  {
-    title: 'Celebration',
-    text: 'For birthdays, milestones and moments that deserve joy.',
-  },
-];
-
-const testimonials = [
-  {
-    quote: 'The gift felt personal, premium and full of meaning.',
-    name: 'Ananya S.',
-    city: 'Bengaluru',
-  },
-  {
-    quote: 'Finally, a gifting experience that understands emotion.',
-    name: 'Rohit M.',
-    city: 'Mumbai',
-  },
-  {
-    quote: 'The meaning card made the moment unforgettable.',
-    name: 'Meera K.',
-    city: 'Pune',
-  },
-];
-
 export default function HomePage() {
+  const featuredProducts = products.filter((product) =>
+    featuredProductSlugs.includes(product.slug)
+  );
+
   const featuredCategories = productCategories.filter((category) =>
     featuredSlugs.includes(category.slug)
   );
@@ -111,16 +140,18 @@ export default function HomePage() {
         <div className="relative mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[1fr_0.85fr]">
           <div className="aura-fade-up">
             <div className="inline-flex items-center gap-3 rounded-full border border-[#d7a25d]/35 bg-white/10 px-4 py-2 text-xs font-bold uppercase tracking-[0.28em] text-[#f3c982] backdrop-blur sm:tracking-[0.35em]">
-              <span>♡</span>
-              Gifts that speak from the heart
+              <span>🎁</span>
+              Meaningful gifting made personal
             </div>
 
             <h1 className="mt-6 max-w-4xl font-serif text-[2.75rem] leading-[0.98] text-[#fff7ef] sm:text-6xl lg:text-7xl">
-              Where emotion becomes a beautiful gift
+              Gifts that feel personal, thoughtful and beautifully presented
             </h1>
 
             <p className="mt-5 max-w-2xl text-sm leading-7 text-[#f6dfd0]/90 sm:text-lg sm:leading-8">
-              Thoughtful gifting inspired by emotion, culture and connection — so every moment you celebrate becomes unforgettable.
+              CadeauAura helps you discover curated gift ideas, message cards
+              and premium packaging options for birthdays, anniversaries,
+              weddings, festivals and meaningful relationships.
             </p>
 
             <div className="mt-7 flex flex-wrap gap-3 sm:gap-4">
@@ -128,19 +159,25 @@ export default function HomePage() {
                 href="/categories"
                 className="rounded-full bg-[#9f1239] px-6 py-4 text-sm font-semibold text-white shadow-2xl shadow-[#9f1239]/30 transition hover:-translate-y-1 hover:bg-[#b01543]"
               >
-                Explore Gift Ideas →
+                Explore Gift Categories →
               </Link>
 
-              <Link
-                href="/gift-finder"
+              <a
+                href={getWhatsAppLink()}
+                target="_blank"
+                rel="noreferrer"
                 className="rounded-full border border-[#d7a25d]/45 bg-[#fff7ef] px-6 py-4 text-sm font-semibold text-[#4b0d18] shadow-xl transition hover:-translate-y-1 hover:bg-[#f3c982]"
               >
-                Try Gift Finder ✦
-              </Link>
+                Enquire on WhatsApp
+              </a>
             </div>
 
             <div className="mt-8 grid max-w-3xl gap-2 sm:grid-cols-3 sm:gap-3">
-              {['Curated with care', 'Rooted in culture', 'Beautifully packaged'].map((item) => (
+              {[
+                'Product-wise enquiry',
+                'Custom message cards',
+                'Packaging guidance',
+              ].map((item) => (
                 <div
                   key={item}
                   className="rounded-2xl border border-white/10 bg-black/20 px-4 py-2.5 text-xs font-semibold text-[#f6dfd0]/80 backdrop-blur"
@@ -154,40 +191,46 @@ export default function HomePage() {
           <div className="relative hidden min-h-[520px] lg:block">
             <div className="aura-float absolute right-0 top-10 h-[420px] w-[520px] rounded-[3rem] border border-[#d7a25d]/25 bg-[#fff7ef]/10 shadow-2xl shadow-black/40 backdrop-blur-md" />
 
-            <div className="absolute right-10 top-28 w-80 rounded-[2rem] border border-[#d7a25d]/35 bg-[#321016]/75 p-6 shadow-2xl backdrop-blur-xl">
-              <div className="flex items-center gap-4">
-                <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#9f1239] text-2xl">
-                  🎁
-                </span>
-                <div>
-                  <h2 className="font-serif text-2xl text-[#fff7ef]">
-                    Personalized for You
-                  </h2>
-                  <p className="mt-2 text-sm leading-6 text-[#f6dfd0]/75">
-                    Thoughtful picks, crafted around your moments and loved ones.
-                  </p>
-                </div>
+            <div className="absolute right-10 top-24 w-80 rounded-[2rem] border border-[#d7a25d]/35 bg-[#321016]/80 p-6 shadow-2xl backdrop-blur-xl">
+              <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#f3c982]">
+                Featured gift
+              </p>
+              <h2 className="mt-3 font-serif text-3xl text-[#fff7ef]">
+                Romantic Memory Box
+              </h2>
+              <p className="mt-3 text-sm leading-6 text-[#f6dfd0]/75">
+                A keepsake box for photos, notes and small memories from your
+                love story.
+              </p>
+              <div className="mt-5 flex items-center justify-between">
+                <span className="font-bold text-[#f3c982]">₹1,499</span>
+                <a
+                  href={getWhatsAppLink('Romantic Memory Box')}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="rounded-full bg-[#fff7ef] px-4 py-2 text-sm font-bold text-[#4b0d18]"
+                >
+                  Enquire
+                </a>
               </div>
             </div>
 
-            <div className="absolute bottom-24 right-20 w-80 rounded-[2rem] border border-[#d7a25d]/35 bg-[#321016]/75 p-6 shadow-2xl backdrop-blur-xl">
-              <div className="flex items-center gap-4">
-                <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#7f1d1d] text-2xl">
-                  ✍️
-                </span>
-                <div>
-                  <h2 className="font-serif text-2xl text-[#fff7ef]">
-                    Meaning Cards
-                  </h2>
-                  <p className="mt-2 text-sm leading-6 text-[#f6dfd0]/75">
-                    Words that stay long after the moment fades.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="absolute bottom-2 right-0 rounded-[2rem] border border-[#d7a25d]/25 bg-black/25 px-6 py-4 text-sm text-[#f3c982] backdrop-blur-xl">
-              Premium gifting made memorable
+            <div className="absolute bottom-20 right-20 w-80 rounded-[2rem] border border-[#d7a25d]/35 bg-[#321016]/80 p-6 shadow-2xl backdrop-blur-xl">
+              <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#f3c982]">
+                Add-on
+              </p>
+              <h2 className="mt-3 font-serif text-3xl text-[#fff7ef]">
+                Meaning Cards
+              </h2>
+              <p className="mt-3 text-sm leading-6 text-[#f6dfd0]/75">
+                Add words that make your gift feel warmer and more personal.
+              </p>
+              <Link
+                href="/meaning-cards"
+                className="mt-5 inline-flex rounded-full border border-[#d7a25d]/40 px-4 py-2 text-sm font-bold text-[#f3c982]"
+              >
+                View examples →
+              </Link>
             </div>
           </div>
         </div>
@@ -222,18 +265,146 @@ export default function HomePage() {
         <div className="mb-7 flex flex-col justify-between gap-4 md:flex-row md:items-end">
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#8a4a2d]">
-              Find the perfect gift
+              Featured gifts
             </p>
             <h2 className="mt-3 font-serif text-4xl leading-tight text-[#5a1722] sm:text-5xl">
-              Explore your way
+              Real gift ideas you can enquire for
             </h2>
+            <p className="mt-3 max-w-2xl text-sm leading-7 text-stone-700">
+              Start with these popular gifting ideas. Ask for photos,
+              customization, packaging and delivery details on WhatsApp.
+            </p>
           </div>
 
           <Link
             href="/categories"
             className="text-sm font-bold text-[#8f1431] transition hover:text-[#5a1722]"
           >
-            View all categories →
+            Explore all gift categories →
+          </Link>
+        </div>
+
+        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+          {featuredProducts.map((product) => (
+            <article
+              key={product.slug}
+              className="group overflow-hidden rounded-[2rem] border border-[#ead8c7] bg-[#fff7ef] shadow-sm transition hover:-translate-y-1 hover:shadow-2xl"
+            >
+              <div
+                className="relative min-h-[250px] bg-cover bg-center transition duration-700 group-hover:scale-[1.03]"
+                style={{ backgroundImage: `url('${product.image}')` }}
+              >
+                <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(22,6,6,0.05),rgba(22,6,6,0.72))]" />
+
+                <div className="absolute left-5 top-5 rounded-full border border-[#d7a25d]/40 bg-[#160606]/70 px-3 py-1 text-xs font-bold uppercase tracking-[0.22em] text-[#f3c982] backdrop-blur">
+                  {product.badge}
+                </div>
+
+                <div className="absolute bottom-5 left-5 right-5">
+                  <h3 className="font-serif text-3xl leading-tight text-[#fff7ef]">
+                    {product.name}
+                  </h3>
+                  <p className="mt-2 text-sm font-bold text-[#f3c982]">
+                    {product.price}
+                  </p>
+                </div>
+              </div>
+
+              <div className="p-6">
+                <p className="text-sm leading-7 text-stone-700">
+                  {product.description}
+                </p>
+
+                <p className="mt-4 rounded-2xl bg-white px-4 py-3 text-sm font-semibold text-[#5a1722]">
+                  Best for: {product.bestFor}
+                </p>
+
+                <div className="mt-5 flex flex-wrap gap-3">
+                  <a
+                    href={getWhatsAppLink(product.name)}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="rounded-full bg-[#25D366] px-5 py-3 text-sm font-bold text-white transition hover:-translate-y-1 hover:bg-[#1ebe5d]"
+                  >
+                    Enquire on WhatsApp
+                  </a>
+
+                  <Link
+                    href={`/categories/${product.categorySlug}`}
+                    className="rounded-full border border-[#d7a25d]/50 bg-white px-5 py-3 text-sm font-bold text-[#5a1722] transition hover:bg-[#fff2df]"
+                  >
+                    View category
+                  </Link>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
+        <div className="rounded-[2.5rem] bg-[#4a0716] p-6 text-white shadow-2xl shadow-[#4a0716]/20 sm:p-8 lg:p-10">
+          <div className="flex flex-col justify-between gap-5 md:flex-row md:items-end">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#e8b36f]">
+                How it works
+              </p>
+              <h2 className="mt-3 font-serif text-4xl leading-tight sm:text-5xl">
+                Simple enquiry. Clear guidance. Better gifting.
+              </h2>
+              <p className="mt-3 max-w-2xl text-sm leading-7 text-white/70">
+                CadeauAura is built for people who want a thoughtful gift but
+                need help choosing the right option.
+              </p>
+            </div>
+
+            <a
+              href={getWhatsAppLink()}
+              target="_blank"
+              rel="noreferrer"
+              className="rounded-full border border-[#e8b36f]/40 px-5 py-3 text-sm font-semibold text-[#e8b36f] transition hover:bg-[#e8b36f] hover:text-[#430816]"
+            >
+              Ask for gift help
+            </a>
+          </div>
+
+          <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+            {howItWorks.map((item) => (
+              <div
+                key={item.step}
+                className="rounded-3xl border border-white/10 bg-white/[0.08] p-6 backdrop-blur"
+              >
+                <p className="text-sm font-black text-[#e8b36f]">
+                  {item.step}
+                </p>
+                <h3 className="mt-4 font-serif text-2xl text-[#fff7ef]">
+                  {item.title}
+                </h3>
+                <p className="mt-3 text-sm leading-7 text-white/65">
+                  {item.text}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
+        <div className="mb-7 flex flex-col justify-between gap-4 md:flex-row md:items-end">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#8a4a2d]">
+              Shop by need
+            </p>
+            <h2 className="mt-3 font-serif text-4xl leading-tight text-[#5a1722] sm:text-5xl">
+              Find gifts by occasion or relationship
+            </h2>
+          </div>
+
+          <Link
+            href="/gift-finder"
+            className="text-sm font-bold text-[#8f1431] transition hover:text-[#5a1722]"
+          >
+            Get gift suggestions →
           </Link>
         </div>
 
@@ -261,7 +432,7 @@ export default function HomePage() {
                   {item.text}
                 </p>
                 <p className="mt-4 text-sm font-bold text-[#f3c982]">
-                  Explore →
+                  View gift ideas →
                 </p>
               </div>
             </Link>
@@ -277,10 +448,10 @@ export default function HomePage() {
                 Featured collections
               </p>
               <h2 className="mt-3 font-serif text-4xl leading-tight sm:text-5xl">
-                Gifts for every meaningful occasion
+                Explore more gifting categories
               </h2>
               <p className="mt-3 max-w-2xl text-sm leading-7 text-white/70">
-                Start with the moment, then choose a gift that carries emotion, beauty and story.
+                Browse curated categories by occasion and gift purpose.
               </p>
             </div>
 
@@ -288,7 +459,7 @@ export default function HomePage() {
               href="/categories"
               className="rounded-full border border-[#e8b36f]/40 px-5 py-3 text-sm font-semibold text-[#e8b36f] transition hover:bg-[#e8b36f] hover:text-[#430816]"
             >
-              Browse all
+              Explore Gift Categories
             </Link>
           </div>
 
@@ -318,7 +489,7 @@ export default function HomePage() {
                       {category.priceRange}
                     </span>
                     <span className="rounded-full bg-[#fff7ef] px-4 py-2 text-sm font-semibold text-[#4a0716]">
-                      View →
+                      View ideas →
                     </span>
                   </div>
                 </div>
@@ -335,26 +506,21 @@ export default function HomePage() {
             style={{ backgroundImage: "url('/meaning-card.jpg.png')" }}
           />
           <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(22,6,6,0.02),rgba(22,6,6,0.62))]" />
-          <button
-            type="button"
-            className="absolute left-1/2 top-1/2 flex h-20 w-20 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-white/30 bg-white/20 text-3xl text-white shadow-2xl backdrop-blur-xl"
-          >
-            ▶
-          </button>
           <p className="absolute bottom-6 left-6 right-6 rounded-2xl bg-black/35 px-5 py-4 text-sm font-semibold text-white backdrop-blur">
-            Unboxing memories, not just products.
+            Meaning cards help your gift carry the right words.
           </p>
         </div>
 
         <div className="rounded-[2.5rem] border border-[#ead8c7] bg-[#fff7ef] p-7 shadow-xl sm:p-10">
           <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#8a4a2d]">
-            Words that stay
+            Words that feel real
           </p>
           <h2 className="mt-4 font-serif text-4xl leading-tight text-[#5a1722] sm:text-5xl">
-            Meaning cards for the emotions gifts cannot say alone
+            Meaning cards for emotions gifts cannot say alone
           </h2>
           <p className="mt-4 text-sm leading-7 text-stone-700">
-            Add heartfelt message lines for love, gratitude, healing and celebration. Because the right words can turn a simple gift into a lifelong memory.
+            Add short, heartfelt message lines for love, gratitude, pride and
+            celebration. These can be paired with gift boxes and hampers.
           </p>
 
           <div className="mt-7 grid gap-4 sm:grid-cols-3">
@@ -367,18 +533,29 @@ export default function HomePage() {
                   {card.title}
                 </h3>
                 <p className="mt-3 text-sm leading-6 text-stone-600">
-                  {card.text}
+                  “{card.text}”
                 </p>
               </div>
             ))}
           </div>
 
-          <Link
-            href="/meaning-cards"
-            className="mt-8 inline-flex rounded-full bg-[#8f1431] px-7 py-4 text-sm font-semibold text-white transition hover:-translate-y-1 hover:bg-[#a51c3c]"
-          >
-            Explore Meaning Cards →
-          </Link>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <Link
+              href="/meaning-cards"
+              className="rounded-full bg-[#8f1431] px-7 py-4 text-sm font-semibold text-white transition hover:-translate-y-1 hover:bg-[#a51c3c]"
+            >
+              View Meaning Card Examples →
+            </Link>
+
+            <a
+              href={getWhatsAppLink('Custom Message Card')}
+              target="_blank"
+              rel="noreferrer"
+              className="rounded-full border border-[#d7a25d]/50 bg-white px-7 py-4 text-sm font-semibold text-[#5a1722] transition hover:-translate-y-1 hover:bg-[#fff2df]"
+            >
+              Ask for card options
+            </a>
+          </div>
         </div>
       </section>
 
@@ -392,11 +569,16 @@ export default function HomePage() {
               Gifts inspired by Indian warmth, ritual and celebration
             </h2>
             <p className="mt-5 text-sm leading-7 text-white/75">
-              From diya-lit festive moments to elegant message cards, CadeauAura blends cultural warmth with modern premium gifting.
+              From diya-lit festive moments to elegant message cards,
+              CadeauAura blends cultural warmth with modern premium gifting.
             </p>
 
             <div className="mt-7 space-y-3">
-              {['Festive presentation', 'Ritual-inspired details', 'Elegant keepsakes'].map((item) => (
+              {[
+                'Festive presentation options',
+                'Ritual-inspired gift ideas',
+                'Elegant keepsake and card add-ons',
+              ].map((item) => (
                 <div
                   key={item}
                   className="rounded-2xl border border-white/10 bg-white/[0.08] px-5 py-4 text-sm font-semibold text-[#fff7ef]"
@@ -421,42 +603,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
-        <div className="rounded-[2.5rem] border border-[#ead8c7] bg-[#fff7ef] p-7 shadow-xl sm:p-10">
-          <div className="text-center">
-            <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#8a4a2d]">
-              Loved by many
-            </p>
-            <h2 className="mt-3 font-serif text-4xl leading-tight text-[#5a1722] sm:text-5xl">
-              Real stories. Real emotions.
-            </h2>
-          </div>
-
-          <div className="mt-8 grid gap-5 md:grid-cols-3">
-            {testimonials.map((item) => (
-              <article
-                key={item.name}
-                className="rounded-3xl border border-[#ead8c7] bg-white p-6 shadow-sm"
-              >
-                <p className="font-serif text-4xl text-[#d7a25d]">“</p>
-                <p className="mt-2 text-sm leading-7 text-stone-700">
-                  {item.quote}
-                </p>
-                <div className="mt-6 flex items-center gap-3">
-                  <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[#5a1722] font-bold text-[#f3c982]">
-                    {item.name.charAt(0)}
-                  </span>
-                  <div>
-                    <p className="font-bold text-[#5a1722]">{item.name}</p>
-                    <p className="text-sm text-stone-500">{item.city}</p>
-                  </div>
-                </div>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
       <section className="mx-auto max-w-7xl px-4 pb-12 pt-8 sm:px-6">
         <div className="relative overflow-hidden rounded-[2.5rem] bg-[#160606] p-8 text-white shadow-2xl sm:p-12">
           <div
@@ -467,13 +613,14 @@ export default function HomePage() {
 
           <div className="relative max-w-3xl">
             <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#e8b36f]">
-              Make every moment memorable
+              Start your gifting enquiry
             </p>
             <h2 className="mt-4 font-serif text-4xl leading-tight sm:text-5xl">
-              Ready to find a gift that truly feels personal?
+              Need help choosing the right gift?
             </h2>
             <p className="mt-4 text-sm leading-7 text-white/75">
-              Browse curated ideas, explore meaningful message cards, and discover gifts that feel warm, thoughtful and unforgettable.
+              Tell us the occasion, relationship and budget. CadeauAura will
+              guide you toward suitable gift ideas and message card options.
             </p>
 
             <div className="mt-8 flex flex-wrap gap-4">
@@ -481,15 +628,17 @@ export default function HomePage() {
                 href="/gift-finder"
                 className="rounded-full bg-[#9f1239] px-7 py-4 text-sm font-semibold text-white transition hover:-translate-y-1 hover:bg-[#b01543]"
               >
-                Use Gift Finder →
+                Get Gift Suggestions →
               </Link>
 
-              <Link
-                href="/categories"
+              <a
+                href={getWhatsAppLink()}
+                target="_blank"
+                rel="noreferrer"
                 className="rounded-full bg-[#fff7ef] px-7 py-4 text-sm font-semibold text-[#4b0d18] transition hover:-translate-y-1 hover:bg-[#f3c982]"
               >
-                Start Exploring
-              </Link>
+                Chat on WhatsApp
+              </a>
             </div>
           </div>
         </div>
