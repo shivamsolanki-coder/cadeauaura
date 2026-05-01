@@ -6,9 +6,12 @@ import { products } from '@/data/products';
 
 const whatsappNumber = '919205089044';
 
-function getWhatsAppLink(productName: string) {
-  const message = `Hi CadeauAura, I am interested in ${productName}. Please share more details.`;
+function getWhatsAppLink(message: string) {
   return `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+}
+
+function getProductWhatsAppMessage(productName: string, categoryTitle: string) {
+  return `Hi CadeauAura, I am interested in ${productName} from ${categoryTitle}. Please share real photos, customization options, final price and delivery details.`;
 }
 
 export function generateStaticParams() {
@@ -34,6 +37,15 @@ export async function generateMetadata({
   return {
     title: `${category.title} | CadeauAura`,
     description: category.description,
+    alternates: {
+      canonical: `/categories/${category.slug}`,
+    },
+    openGraph: {
+      title: `${category.title} | CadeauAura`,
+      description: category.description,
+      url: `/categories/${category.slug}`,
+      images: [category.image],
+    },
   };
 }
 
@@ -56,6 +68,33 @@ export default async function CategoryDetailPage({
   const relatedCategories = productCategories
     .filter((item) => item.slug !== category.slug)
     .slice(0, 3);
+
+  const categoryMessage = `Hi CadeauAura, I am exploring ${category.title}. Please suggest suitable gift options with photos, pricing, customization and delivery details.`;
+
+  const enquirySteps = [
+    {
+      step: '01',
+      title: 'Choose a gift idea',
+      text: 'Browse the products in this category and pick the option that matches your occasion.',
+    },
+    {
+      step: '02',
+      title: 'Send WhatsApp enquiry',
+      text: 'Click the product enquiry button and share your requirement with CadeauAura.',
+    },
+    {
+      step: '03',
+      title: 'Review details',
+      text: 'Ask for real photos, customization options, packaging, price and timeline before finalizing.',
+    },
+  ];
+
+  const trustNotes = [
+    'Product-wise WhatsApp enquiry',
+    'Customization details shared before confirmation',
+    'Message card and packaging options available',
+    'Final price and delivery timeline shared on request',
+  ];
 
   return (
     <main className="overflow-hidden">
@@ -87,6 +126,15 @@ export default async function CategoryDetailPage({
           </p>
 
           <div className="mt-8 flex flex-wrap gap-4">
+            <a
+              href={getWhatsAppLink(categoryMessage)}
+              target="_blank"
+              rel="noreferrer"
+              className="rounded-full bg-[#25D366] px-7 py-4 text-sm font-bold text-white shadow-2xl shadow-black/20 transition hover:-translate-y-1 hover:bg-[#1ebe5d]"
+            >
+              Enquire on WhatsApp →
+            </a>
+
             <Link
               href="/gift-finder"
               className="rounded-full bg-[#8f1431] px-7 py-4 text-sm font-semibold text-white shadow-2xl shadow-[#8f1431]/30 transition hover:-translate-y-1 hover:bg-[#a51c3c]"
@@ -113,18 +161,18 @@ export default async function CategoryDetailPage({
             </h2>
 
             <p className="mt-4 text-sm leading-7 text-stone-700">
-              This collection is designed for people who want their gift to feel personal,
-              premium and emotionally memorable. Explore curated gift ideas with pricing,
-              use-case clarity and beautiful presentation.
+              This collection is designed for people who want their gift to feel
+              personal, premium and emotionally memorable. Explore gift ideas,
+              compare use-cases, and enquire on WhatsApp before finalizing.
             </p>
 
-            <div className="mt-6 grid gap-3 sm:grid-cols-3">
-              {['Premium packaging', 'Emotional meaning', 'Curated ideas'].map((item) => (
+            <div className="mt-6 grid gap-3 sm:grid-cols-2">
+              {trustNotes.map((item) => (
                 <div
                   key={item}
                   className="rounded-2xl border border-[#ead8c7] bg-white p-4 text-sm font-semibold text-[#5a1722]"
                 >
-                  {item}
+                  ✓ {item}
                 </div>
               ))}
             </div>
@@ -134,6 +182,57 @@ export default async function CategoryDetailPage({
             className="min-h-[360px] rounded-[2rem] border border-[#ead8c7] bg-cover bg-center shadow-xl"
             style={{ backgroundImage: `url('${category.image}')` }}
           />
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-4 pb-10 sm:px-6">
+        <div className="rounded-[2rem] bg-[#430816] p-6 text-white shadow-2xl shadow-[#430816]/20 lg:p-10">
+          <div className="flex flex-col justify-between gap-5 md:flex-row md:items-end">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#e8b36f]">
+                How to enquire
+              </p>
+
+              <h2 className="mt-3 font-serif text-4xl leading-tight">
+                Simple enquiry flow before you finalize
+              </h2>
+
+              <p className="mt-3 max-w-2xl text-sm leading-7 text-white/70">
+                No fake promises. First check product details, customization,
+                final price and timeline clearly on WhatsApp.
+              </p>
+            </div>
+
+            <a
+              href={getWhatsAppLink(categoryMessage)}
+              target="_blank"
+              rel="noreferrer"
+              className="rounded-full border border-[#e8b36f]/40 px-5 py-3 text-sm font-semibold text-[#e8b36f] transition hover:bg-[#e8b36f] hover:text-[#430816]"
+            >
+              Ask for guidance
+            </a>
+          </div>
+
+          <div className="mt-8 grid gap-5 md:grid-cols-3">
+            {enquirySteps.map((item) => (
+              <div
+                key={item.step}
+                className="rounded-3xl border border-white/10 bg-white/[0.08] p-6 backdrop-blur"
+              >
+                <p className="text-sm font-black text-[#e8b36f]">
+                  {item.step}
+                </p>
+
+                <h3 className="mt-4 font-serif text-2xl text-[#fff7ef]">
+                  {item.title}
+                </h3>
+
+                <p className="mt-3 text-sm leading-7 text-white/65">
+                  {item.text}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -147,19 +246,18 @@ export default async function CategoryDetailPage({
               Explore gift ideas in this collection
             </h2>
             <p className="mt-3 max-w-2xl text-sm leading-7 text-stone-700">
-              Browse meaningful product ideas with price range, purpose and emotional fit.
+              Browse meaningful product ideas with price, purpose and emotional
+              fit. Use WhatsApp to request current photos and final details.
             </p>
           </div>
 
           <a
-            href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
-              `Hi CadeauAura, I am interested in ${category.title}. Please share more details.`
-            )}`}
+            href={getWhatsAppLink(categoryMessage)}
             target="_blank"
             rel="noreferrer"
-            className="rounded-full bg-[#8f1431] px-6 py-3 text-sm font-semibold text-white transition hover:-translate-y-1 hover:bg-[#a51c3c]"
+            className="rounded-full bg-[#25D366] px-6 py-3 text-sm font-bold text-white transition hover:-translate-y-1 hover:bg-[#1ebe5d]"
           >
-            WhatsApp Enquiry →
+            Category WhatsApp Enquiry →
           </a>
         </div>
 
@@ -183,6 +281,10 @@ export default async function CategoryDetailPage({
                   <h3 className="font-serif text-3xl leading-tight text-[#fff7ef]">
                     {product.name}
                   </h3>
+
+                  <p className="mt-2 text-sm font-bold text-[#f3c982]">
+                    {product.price}
+                  </p>
                 </div>
               </div>
 
@@ -200,19 +302,24 @@ export default async function CategoryDetailPage({
                   </p>
                 </div>
 
-                <div className="mt-5 flex items-center justify-between gap-4">
-                  <span className="font-serif text-3xl font-bold text-[#5a1722]">
-                    {product.price}
-                  </span>
-
+                <div className="mt-5 flex flex-wrap items-center gap-3">
                   <a
-                    href={getWhatsAppLink(product.name)}
+                    href={getWhatsAppLink(
+                      getProductWhatsAppMessage(product.name, category.title)
+                    )}
                     target="_blank"
                     rel="noreferrer"
-                    className="rounded-full bg-[#6f0f22] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#8f1431]"
+                    className="rounded-full bg-[#25D366] px-5 py-3 text-sm font-bold text-white transition hover:-translate-y-1 hover:bg-[#1ebe5d]"
                   >
-                    WhatsApp →
+                    Enquire on WhatsApp
                   </a>
+
+                  <Link
+                    href="/gift-finder"
+                    className="rounded-full border border-[#d7a25d]/50 bg-white px-5 py-3 text-sm font-bold text-[#5a1722] transition hover:bg-[#fff2df]"
+                  >
+                    Match gift
+                  </Link>
                 </div>
               </div>
             </article>
