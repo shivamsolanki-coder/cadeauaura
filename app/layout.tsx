@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 
 import { Footer } from '@/components/Footer';
 import { Header } from '@/components/Header';
+import { StickyWhatsApp } from '@/components/StickyWhatsApp';
 
 import './globals.css';
 
@@ -38,11 +39,6 @@ const structuredData = {
       description:
         'Discover meaningful gifts, premium gift boxes, message cards and culture-inspired gifting ideas.',
       inLanguage: 'en-IN',
-      potentialAction: {
-        '@type': 'SearchAction',
-        target: `${siteUrl}/categories?search={search_term_string}`,
-        'query-input': 'required name=search_term_string',
-      },
     },
   ],
 };
@@ -141,6 +137,7 @@ export default function RootLayout({
         </div>
 
         <Footer />
+        <StickyWhatsApp />
       </body>
     </html>
   );
