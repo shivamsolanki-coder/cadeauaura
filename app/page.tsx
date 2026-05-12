@@ -1,5 +1,6 @@
 import Link from 'next/link';
 
+import { HeroQuestion } from '@/components/marketing/HeroQuestion';
 import { productCategories } from '@/data/productCategories';
 import { products } from '@/data/products';
 
@@ -128,113 +129,7 @@ export default function HomePage() {
 
   return (
     <main className="overflow-hidden">
-      <section className="relative -mx-4 -mt-10 min-h-[620px] overflow-hidden bg-[#160606] px-5 py-10 text-white sm:-mx-6 sm:min-h-[680px] sm:px-6 sm:py-14 lg:-mx-8 lg:min-h-[640px] lg:py-16">
-        <div
-          className="absolute inset-0 scale-105 bg-cover bg-center opacity-75"
-          style={{ backgroundImage: "url('/hero-gift.jpg.png')" }}
-        />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_20%,rgba(215,162,93,0.28),transparent_28rem),linear-gradient(90deg,#170405_0%,rgba(54,5,15,0.96)_42%,rgba(22,6,6,0.42)_100%)]" />
-        <div className="absolute left-12 top-28 h-32 w-32 rounded-full bg-[#d7a25d]/20 blur-3xl" />
-        <div className="absolute bottom-24 right-20 h-48 w-48 rounded-full bg-[#8f1431]/35 blur-3xl" />
-
-        <div className="relative mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[1fr_0.85fr]">
-          <div className="aura-fade-up">
-            <div className="inline-flex items-center gap-3 rounded-full border border-[#d7a25d]/35 bg-white/10 px-4 py-2 text-xs font-bold uppercase tracking-[0.28em] text-[#f3c982] backdrop-blur sm:tracking-[0.35em]">
-              <span>🎁</span>
-              Meaningful gifting made personal
-            </div>
-
-            <h1 className="mt-6 max-w-4xl font-serif text-[2.75rem] leading-[0.98] text-[#fff7ef] sm:text-6xl lg:text-7xl">
-              Gifts that feel personal, thoughtful and beautifully presented
-            </h1>
-
-            <p className="mt-5 max-w-2xl text-sm leading-7 text-[#f6dfd0]/90 sm:text-lg sm:leading-8">
-              CadeauAura helps you discover curated gift ideas, message cards
-              and premium packaging options for birthdays, anniversaries,
-              weddings, festivals and meaningful relationships.
-            </p>
-
-            <div className="mt-7 flex flex-wrap gap-3 sm:gap-4">
-              <Link
-                href="/categories"
-                className="rounded-full bg-[#9f1239] px-6 py-4 text-sm font-semibold text-white shadow-2xl shadow-[#9f1239]/30 transition hover:-translate-y-1 hover:bg-[#b01543]"
-              >
-                Explore Gift Categories →
-              </Link>
-
-              <a
-                href={getWhatsAppLink()}
-                target="_blank"
-                rel="noreferrer"
-                className="rounded-full border border-[#d7a25d]/45 bg-[#fff7ef] px-6 py-4 text-sm font-semibold text-[#4b0d18] shadow-xl transition hover:-translate-y-1 hover:bg-[#f3c982]"
-              >
-                Enquire on WhatsApp
-              </a>
-            </div>
-
-            <div className="mt-8 grid max-w-3xl gap-2 sm:grid-cols-3 sm:gap-3">
-              {[
-                'Product-wise enquiry',
-                'Custom message cards',
-                'Packaging guidance',
-              ].map((item) => (
-                <div
-                  key={item}
-                  className="rounded-2xl border border-white/10 bg-black/20 px-4 py-2.5 text-xs font-semibold text-[#f6dfd0]/80 backdrop-blur"
-                >
-                  {item}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="relative hidden min-h-[520px] lg:block">
-            <div className="aura-float absolute right-0 top-10 h-[420px] w-[520px] rounded-[3rem] border border-[#d7a25d]/25 bg-[#fff7ef]/10 shadow-2xl shadow-black/40 backdrop-blur-md" />
-
-            <div className="absolute right-10 top-24 w-80 rounded-[2rem] border border-[#d7a25d]/35 bg-[#321016]/80 p-6 shadow-2xl backdrop-blur-xl">
-              <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#f3c982]">
-                Featured gift
-              </p>
-              <h2 className="mt-3 font-serif text-3xl text-[#fff7ef]">
-                Romantic Memory Box
-              </h2>
-              <p className="mt-3 text-sm leading-6 text-[#f6dfd0]/75">
-                A keepsake box for photos, notes and small memories from your
-                love story.
-              </p>
-              <div className="mt-5 flex items-center justify-between">
-                <span className="font-bold text-[#f3c982]">₹1,499</span>
-                <a
-                  href={getWhatsAppLink('Romantic Memory Box')}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="rounded-full bg-[#fff7ef] px-4 py-2 text-sm font-bold text-[#4b0d18]"
-                >
-                  Enquire
-                </a>
-              </div>
-            </div>
-
-            <div className="absolute bottom-20 right-20 w-80 rounded-[2rem] border border-[#d7a25d]/35 bg-[#321016]/80 p-6 shadow-2xl backdrop-blur-xl">
-              <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#f3c982]">
-                Add-on
-              </p>
-              <h2 className="mt-3 font-serif text-3xl text-[#fff7ef]">
-                Meaning Cards
-              </h2>
-              <p className="mt-3 text-sm leading-6 text-[#f6dfd0]/75">
-                Add words that make your gift feel warmer and more personal.
-              </p>
-              <Link
-                href="/meaning-cards"
-                className="mt-5 inline-flex rounded-full border border-[#d7a25d]/40 px-4 py-2 text-sm font-bold text-[#f3c982]"
-              >
-                View examples →
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
+      <HeroQuestion />
 
       <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10">
         <div className="grid overflow-hidden rounded-[2rem] border border-[#ead8c7] bg-[#fff7ef] shadow-xl md:grid-cols-2 xl:grid-cols-4">
