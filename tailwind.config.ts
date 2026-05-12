@@ -1,5 +1,7 @@
 import type { Config } from 'tailwindcss';
 
+import { colors as brandColors } from './config/tokens';
+
 const config: Config = {
   content: [
     './pages/**/*.{js,ts,jsx,tsx,mdx}',
@@ -13,10 +15,13 @@ const config: Config = {
         'ivory-cream': '#FFF9F5',
         'soft-rose': '#FFF1F2',
         'warm-amber': '#FEF3C7',
-        'stone-text': '#1C1917'
+        'stone-text': '#1C1917',
+        ...brandColors
       },
       fontFamily: {
-        serif: ['Georgia', 'Cambria', 'Times New Roman', 'Times', 'serif']
+        display: ['var(--font-display)','Fraunces','Georgia','Cambria','Times New Roman','Times','serif'],
+        serif: ['var(--font-display)','Fraunces','Georgia','Cambria','Times New Roman','Times','serif'],
+        sans: ['var(--font-ui)','Inter','-apple-system','BlinkMacSystemFont','Segoe UI','Roboto','Helvetica Neue','Arial','sans-serif']
       }
     }
   },
