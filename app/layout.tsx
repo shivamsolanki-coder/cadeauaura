@@ -4,6 +4,7 @@ import type { ReactNode } from 'react';
 import { Footer } from '@/components/Footer';
 import { Header } from '@/components/Header';
 import { StickyWhatsApp } from '@/components/StickyWhatsApp';
+import { fontDisplay, fontUI } from '@/lib/fonts';
 
 import './globals.css';
 
@@ -52,50 +53,29 @@ export const metadata: Metadata = {
   description:
     'CadeauAura helps you discover meaningful gifts inspired by emotion, culture and connection. Explore gift ideas, message cards, cultural gifting and premium curated collections.',
   keywords: [
-    'CadeauAura',
-    'meaningful gifts',
-    'premium gifts',
-    'personalized gifts',
-    'Indian gifting',
-    'birthday gifts',
-    'anniversary gifts',
-    'wedding gifts',
-    'festive gifts',
-    'gift finder',
-    'message cards',
-    'luxury gifts',
-    'curated gift boxes',
+    'CadeauAura','meaningful gifts','premium gifts','personalized gifts',
+    'Indian gifting','birthday gifts','anniversary gifts','wedding gifts',
+    'festive gifts','gift finder','message cards','luxury gifts','curated gift boxes',
   ],
   authors: [{ name: 'CadeauAura' }],
   creator: 'CadeauAura',
   publisher: 'CadeauAura',
   applicationName: 'CadeauAura',
   category: 'Gifting',
-  alternates: {
-    canonical: '/',
-  },
+  alternates: { canonical: '/' },
   openGraph: {
     title: 'CadeauAura | Meaningful Gifts for Every Emotion',
-    description:
-      'Premium gifting ideas inspired by emotion, culture and connection.',
+    description: 'Premium gifting ideas inspired by emotion, culture and connection.',
     url: siteUrl,
     siteName: 'CadeauAura',
-    images: [
-      {
-        url: '/opengraph-image',
-        width: 1200,
-        height: 630,
-        alt: 'CadeauAura premium meaningful gifting experience',
-      },
-    ],
+    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'CadeauAura premium meaningful gifting experience' }],
     locale: 'en_IN',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
     title: 'CadeauAura | Meaningful Gifts for Every Emotion',
-    description:
-      'Discover premium gifting ideas inspired by emotion, culture and connection.',
+    description: 'Discover premium gifting ideas inspired by emotion, culture and connection.',
     images: ['/twitter-image'],
   },
   robots: {
@@ -117,25 +97,18 @@ export const viewport: Viewport = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: ReactNode;
-}>) {
+}: Readonly<{ children: ReactNode }>) {
   return (
-    <html lang="en-IN">
-      <body className="min-h-screen overflow-x-hidden">
+    <html lang="en-IN" className={`${fontDisplay.variable} ${fontUI.variable}`}>
+      <body className="min-h-screen overflow-x-hidden font-sans">
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(structuredData),
-          }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
         />
-
         <Header />
-
         <div className="min-h-[calc(100vh-180px)] w-full">
           {children}
         </div>
-
         <Footer />
         <StickyWhatsApp />
       </body>
