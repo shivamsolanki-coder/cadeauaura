@@ -4,6 +4,7 @@ import type { ReactNode } from 'react';
 import { Footer } from '@/components/Footer';
 import { Header } from '@/components/Header';
 import { StickyWhatsApp } from '@/components/StickyWhatsApp';
+import { fontDisplay, fontUI } from '@/lib/fonts';
 
 import './globals.css';
 
@@ -121,8 +122,8 @@ export default function RootLayout({
   children: ReactNode;
 }>) {
   return (
-    <html lang="en-IN">
-      <body className="min-h-screen overflow-x-hidden">
+    <html lang="en-IN" className={`${fontDisplay.variable} ${fontUI.variable}`}>
+      <body className="min-h-screen overflow-x-hidden font-sans">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{

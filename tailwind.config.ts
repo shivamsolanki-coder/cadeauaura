@@ -16,7 +16,35 @@ const config: Config = {
         'stone-text': '#1C1917'
       },
       fontFamily: {
-        serif: ['Georgia', 'Cambria', 'Times New Roman', 'Times', 'serif']
+        display: [
+          'var(--font-display)',
+          'Fraunces',
+          'Georgia',
+          'Cambria',
+          'Times New Roman',
+          'Times',
+          'serif'
+        ],
+        serif: [
+          'var(--font-display)',
+          'Fraunces',
+          'Georgia',
+          'Cambria',
+          'Times New Roman',
+          'Times',
+          'serif'
+        ],
+        sans: [
+          'var(--font-ui)',
+          'Inter',
+          '-apple-system',
+          'BlinkMacSystemFont',
+          'Segoe UI',
+          'Roboto',
+          'Helvetica Neue',
+          'Arial',
+          'sans-serif'
+        ]
       }
     }
   },
