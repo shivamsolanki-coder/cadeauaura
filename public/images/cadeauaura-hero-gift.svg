@@ -1,0 +1,19 @@
+<svg width="900" height="760" viewBox="0 0 900 760" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="900" height="760" rx="64" fill="#090512"/>
+  <circle cx="695" cy="136" r="190" fill="#7C3AED" opacity="0.32"/>
+  <circle cx="245" cy="616" r="240" fill="#D7A84E" opacity="0.2"/>
+  <path d="M178 210C229 148 317 119 414 133C532 150 623 224 672 330C716 426 700 555 623 620C536 693 385 690 283 633C185 578 116 286 178 210Z" fill="url(#a)" opacity="0.55"/>
+  <rect x="224" y="342" width="452" height="250" rx="34" fill="#171025" stroke="#F8DF9B" stroke-width="4"/>
+  <rect x="421" y="342" width="58" height="250" fill="#D7A84E"/>
+  <rect x="192" y="285" width="516" height="92" rx="30" fill="#221432" stroke="#F8DF9B" stroke-width="4"/>
+  <rect x="421" y="285" width="58" height="92" fill="#F8DF9B"/>
+  <path d="M452 285C421 210 358 171 317 201C279 229 301 287 367 299C395 304 426 298 452 285Z" fill="#7C3AED" stroke="#F8DF9B" stroke-width="4"/>
+  <path d="M450 285C487 207 553 174 591 207C626 237 597 293 530 300C501 303 473 297 450 285Z" fill="#B678FF" stroke="#F8DF9B" stroke-width="4"/>
+  <path d="M289 434H381" stroke="#F8DF9B" stroke-width="8" stroke-linecap="round" opacity="0.85"/>
+  <path d="M519 434H611" stroke="#F8DF9B" stroke-width="8" stroke-linecap="round" opacity="0.85"/>
+  <circle cx="207" cy="246" r="8" fill="#FFF3C4"/>
+  <circle cx="710" cy="277" r="7" fill="#FFF3C4"/>
+  <circle cx="659" cy="618" r="10" fill="#B678FF"/>
+  <circle cx="290" cy="151" r="9" fill="#F8DF9B"/>
+  <defs><linearGradient id="a" x1="218" y1="168" x2="674" y2="649" gradientUnits="userSpaceOnUse"><stop stop-color="#F8DF9B"/><stop offset="0.45" stop-color="#7C3AED"/><stop offset="1" stop-color="#05030A"/></linearGradient></defs>
+</svg>
