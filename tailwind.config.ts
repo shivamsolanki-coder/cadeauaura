@@ -1,5 +1,7 @@
 import type { Config } from 'tailwindcss';
 
+import { colors as brandColors } from './config/tokens';
+
 const config: Config = {
   content: [
     './pages/**/*.{js,ts,jsx,tsx,mdx}',
@@ -9,11 +11,15 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        // Legacy tokens — still used across category, message, care pages.
+        // Will be migrated page-by-page in a later phase.
         'deep-rose': '#4C0519',
         'ivory-cream': '#FFF9F5',
         'soft-rose': '#FFF1F2',
         'warm-amber': '#FEF3C7',
-        'stone-text': '#1C1917'
+        'stone-text': '#1C1917',
+        // New brand palette — use these for all new components.
+        ...brandColors
       },
       fontFamily: {
         display: [
