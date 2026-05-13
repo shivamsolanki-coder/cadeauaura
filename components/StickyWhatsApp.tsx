@@ -1,3 +1,7 @@
+'use client';
+
+import { usePathname } from 'next/navigation';
+
 const whatsappNumber = '919205089044';
 
 const whatsappMessage =
@@ -7,7 +11,28 @@ const whatsappLink = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
   whatsappMessage
 )}`;
 
+/**
+ * Hidden on cinematic surfaces (homepage, Moment Builder, reveal
+ * pages) so the dark, quiet pages aren't broken by a bright green
+ * CTA. Still visible on /categories, /gift-finder, /contact, and
+ * every product or category detail page.
+ */
+function isCinematicRoute(pathname: string | null): boolean {
+  if (!pathname) return false;
+  if (pathname === '/') return true;
+  const cinematicPrefixes = ['/create', '/r'];
+  return cinematicPrefixes.some(
+    (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`)
+  );
+}
+
 export function StickyWhatsApp() {
+  const pathname = usePathname();
+
+  if (isCinematicRoute(pathname)) {
+    return null;
+  }
+
   return (
     <a
       href={whatsappLink}
