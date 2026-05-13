@@ -1,5 +1,6 @@
 import Link from 'next/link';
 
+import { HeroEcho } from '@/components/marketing/HeroEcho';
 import { HeroQuestion } from '@/components/marketing/HeroQuestion';
 import { productCategories } from '@/data/productCategories';
 import { products } from '@/data/products';
@@ -130,6 +131,7 @@ export default function HomePage() {
   return (
     <main className="overflow-hidden">
       <HeroQuestion />
+      <HeroEcho />
 
       <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10">
         <div className="grid overflow-hidden rounded-[2rem] border border-[#ead8c7] bg-[#fff7ef] shadow-xl md:grid-cols-2 xl:grid-cols-4">
