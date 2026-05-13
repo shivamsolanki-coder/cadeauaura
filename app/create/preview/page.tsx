@@ -83,11 +83,15 @@ export default function PreviewPage() {
 
       <div className="relative mx-auto w-full max-w-xl">
         <p className="text-xs font-light uppercase tracking-[0.32em] text-gold-300/70">
-          A preview, for you
+          A private rehearsal
         </p>
-        <h1 className="mt-3 font-display text-2xl font-light text-cream-50/80 sm:text-3xl">
-          This is what {draft.recipientName} will see.
+        <h1 className="mt-4 font-display text-3xl font-light leading-[1.15] tracking-[-0.01em] text-cream-50 sm:text-4xl">
+          This is your first draft of their moment.
         </h1>
+        <p className="mt-4 max-w-md text-sm leading-7 text-cream-50/55">
+          Below is what {draft.recipientName} will see. Take a breath, read it
+          back to yourself, edit anything that doesn&rsquo;t feel like you.
+        </p>
 
         <article className="mt-10 rounded-2xl border border-cream-50/12 bg-cream-50/[0.04] p-8 backdrop-blur-sm sm:p-12">
           <p className="text-xs font-light uppercase tracking-[0.32em] text-gold-300/70">
