@@ -3,9 +3,6 @@ import Link from 'next/link';
 /**
  * The first emotional impression. Near-black canvas, one question,
  * one quiet invitation. Pure CSS animation — no client JS required.
- *
- * The primary CTA currently routes to /gift-finder because /create
- * does not yet exist. Switch the href once the Moment Builder lands.
  */
 export function HeroQuestion() {
   return (
@@ -34,7 +31,7 @@ export function HeroQuestion() {
 
         <div className="hero-cta mt-12 flex flex-col items-center gap-4 sm:mt-14">
           <Link
-            href="/gift-finder"
+            href="/create"
             className="group inline-flex items-center gap-2 rounded-full bg-rose-500 px-7 py-4 text-sm font-medium text-cream-50 shadow-[0_18px_50px_-18px_rgba(143,20,49,0.7)] transition hover:bg-rose-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gold-300"
           >
             <span>Create their moment</span>
