@@ -12,16 +12,18 @@ const whatsappLink = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
 )}`;
 
 /**
- * Hidden on cinematic surfaces (homepage + Moment Builder) so the
- * dark, quiet pages aren't broken by a bright green CTA. Still
- * visible on /categories, /gift-finder, /contact, and every product
- * or category detail page.
+ * Hidden on cinematic surfaces (homepage, Moment Builder, reveal
+ * pages) so the dark, quiet pages aren't broken by a bright green
+ * CTA. Still visible on /categories, /gift-finder, /contact, and
+ * every product or category detail page.
  */
 function isCinematicRoute(pathname: string | null): boolean {
   if (!pathname) return false;
   if (pathname === '/') return true;
-  if (pathname === '/create' || pathname.startsWith('/create/')) return true;
-  return false;
+  const cinematicPrefixes = ['/create', '/r'];
+  return cinematicPrefixes.some(
+    (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`)
+  );
 }
 
 export function StickyWhatsApp() {
