@@ -101,16 +101,24 @@ export default function CreatePage() {
 
         <form
           onSubmit={handleSubmit}
-          className="mt-12 space-y-10"
+          className="mt-12 space-y-12 sm:mt-14 sm:space-y-14"
           aria-label="Moment builder"
         >
           <div>
-            <label
-              htmlFor="recipientName"
-              className="block text-xs font-light uppercase tracking-[0.28em] text-cream-50/55"
-            >
-              Their name
-            </label>
+            <div className="flex items-baseline gap-3">
+              <span
+                aria-hidden
+                className="text-[0.65rem] font-light tracking-[0.32em] text-gold-300/55"
+              >
+                01
+              </span>
+              <label
+                htmlFor="recipientName"
+                className="block text-xs font-light uppercase tracking-[0.28em] text-cream-50/55"
+              >
+                Name
+              </label>
+            </div>
             <input
               id="recipientName"
               name="recipientName"
@@ -119,15 +127,26 @@ export default function CreatePage() {
               value={draft.recipientName}
               onChange={(event) => update('recipientName', event.target.value)}
               placeholder="Aarav"
-              className="mt-3 w-full border-b border-cream-50/15 bg-transparent pb-3 font-display text-2xl text-cream-50 placeholder:text-cream-50/25 focus:border-gold-300/60 focus:outline-none sm:text-3xl"
+              className="mt-4 w-full border-b border-cream-50/15 bg-transparent pb-3 font-display text-2xl text-cream-50 placeholder:text-cream-50/25 focus:border-gold-300/60 focus:outline-none sm:text-3xl"
             />
           </div>
 
           <div>
-            <span className="block text-xs font-light uppercase tracking-[0.28em] text-cream-50/55">
+            <div className="flex items-baseline gap-3">
+              <span
+                aria-hidden
+                className="text-[0.65rem] font-light tracking-[0.32em] text-gold-300/55"
+              >
+                02
+              </span>
+              <span className="block text-xs font-light uppercase tracking-[0.28em] text-cream-50/55">
+                Feeling
+              </span>
+            </div>
+            <p className="mt-2 text-sm leading-7 text-cream-50/45">
               What do you want them to feel?
-            </span>
-            <div className="mt-4 flex flex-wrap gap-2">
+            </p>
+            <div className="mt-5 flex flex-wrap gap-2">
               {EMOTIONS.map((option) => {
                 const active = draft.emotion === option;
                 return (
@@ -150,12 +169,23 @@ export default function CreatePage() {
           </div>
 
           <div>
-            <label
-              htmlFor="message"
-              className="block text-xs font-light uppercase tracking-[0.28em] text-cream-50/55"
-            >
-              A few words for them
-            </label>
+            <div className="flex items-baseline gap-3">
+              <span
+                aria-hidden
+                className="text-[0.65rem] font-light tracking-[0.32em] text-gold-300/55"
+              >
+                03
+              </span>
+              <label
+                htmlFor="message"
+                className="block text-xs font-light uppercase tracking-[0.28em] text-cream-50/55"
+              >
+                Words
+              </label>
+            </div>
+            <p className="mt-2 text-sm leading-7 text-cream-50/45">
+              A few words for them. Anything that has been waiting.
+            </p>
             <textarea
               id="message"
               name="message"
@@ -164,18 +194,18 @@ export default function CreatePage() {
               value={draft.message}
               onChange={(event) => update('message', event.target.value)}
               placeholder="You held a year I almost lost. Thank you."
-              className="mt-3 w-full resize-none border-b border-cream-50/15 bg-transparent pb-3 font-display text-lg leading-8 text-cream-50 placeholder:text-cream-50/25 focus:border-gold-300/60 focus:outline-none"
+              className="mt-5 w-full resize-none border-b border-cream-50/15 bg-transparent pb-3 font-display text-lg leading-8 text-cream-50 placeholder:text-cream-50/25 focus:border-gold-300/60 focus:outline-none"
             />
             <p className="mt-2 text-right text-xs text-cream-50/35">
               {draft.message.length}/{MESSAGE_LIMIT}
             </p>
           </div>
 
-          <div className="flex flex-col items-start gap-4 pt-2 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col items-start gap-4 pt-4 sm:flex-row sm:items-center sm:justify-between">
             <button
               type="submit"
               disabled={!canPreview}
-              className="group inline-flex items-center gap-2 rounded-full bg-rose-500 px-7 py-4 text-sm font-medium text-cream-50 shadow-[0_18px_50px_-18px_rgba(143,20,49,0.7)] transition hover:bg-rose-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gold-300 disabled:cursor-not-allowed disabled:bg-cream-50/10 disabled:text-cream-50/30 disabled:shadow-none"
+              className="group inline-flex w-full items-center justify-center gap-2 rounded-full bg-rose-500 px-7 py-4 text-sm font-medium text-cream-50 shadow-[0_18px_50px_-18px_rgba(143,20,49,0.7)] transition hover:bg-rose-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gold-300 disabled:cursor-not-allowed disabled:bg-cream-50/10 disabled:text-cream-50/30 disabled:shadow-none sm:w-auto"
             >
               <span>Preview their moment</span>
               <span
@@ -187,9 +217,15 @@ export default function CreatePage() {
             </button>
 
             {hydrated ? (
-              <span className="text-xs uppercase tracking-[0.28em] text-cream-50/30">
-                Saved on this device
-              </span>
+              canPreview ? (
+                <span className="text-xs uppercase tracking-[0.28em] text-cream-50/30">
+                  Saved on this device
+                </span>
+              ) : (
+                <span className="text-xs leading-6 text-cream-50/45 sm:max-w-[18rem] sm:text-right">
+                  Add their name and choose a feeling to preview.
+                </span>
+              )
             ) : null}
           </div>
         </form>
