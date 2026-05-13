@@ -44,7 +44,7 @@ export default function DemoRevealPage() {
     if (stage !== 'sealed') return;
     setStage('opening');
     // Match the envelope fade-out so the card lands cleanly afterwards.
-    window.setTimeout(() => setStage('open'), 750);
+    window.setTimeout(() => setStage('open'), 1000);
   }
 
   if (!hydrated) {
@@ -90,11 +90,11 @@ export default function DemoRevealPage() {
       />
 
       <div className="relative mx-auto w-full max-w-xl">
-        <div className="relative flex min-h-[60svh] items-center justify-center">
+        <div className="relative flex min-h-[68svh] items-center justify-center">
           {/* Sealed envelope */}
           <div
             aria-hidden={stage !== 'sealed'}
-            className={`absolute inset-0 flex flex-col items-center justify-center transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+            className={`absolute inset-0 flex flex-col items-center justify-center transition-all duration-1000 ease-[cubic-bezier(0.22,1,0.36,1)] ${
               stage === 'sealed'
                 ? 'opacity-100 scale-100'
                 : 'pointer-events-none opacity-0 scale-95'
@@ -162,10 +162,10 @@ export default function DemoRevealPage() {
           {/* Opened card */}
           <div
             aria-hidden={stage !== 'open'}
-            className={`absolute inset-0 flex flex-col items-center justify-center transition-all duration-1000 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+            className={`absolute inset-0 flex flex-col items-center justify-center transition-all duration-[1400ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${
               stage === 'open'
-                ? 'translate-y-0 opacity-100'
-                : 'pointer-events-none translate-y-4 opacity-0'
+                ? 'translate-y-0 opacity-100 blur-0'
+                : 'pointer-events-none translate-y-4 opacity-0 blur-[6px]'
             }`}
           >
             <article className="w-full rounded-2xl border border-cream-50/12 bg-cream-50/[0.04] p-8 backdrop-blur-sm sm:p-12">
@@ -183,11 +183,15 @@ export default function DemoRevealPage() {
                 </p>
               ) : null}
             </article>
+
+            <p className="mt-8 text-center font-display text-sm italic font-light text-cream-50/55 sm:text-base">
+              Made for you, with care.
+            </p>
           </div>
         </div>
 
         <div
-          className={`mt-10 flex flex-wrap items-center gap-4 text-sm transition-opacity duration-700 ${
+          className={`mt-12 flex flex-wrap items-center gap-4 text-sm transition-opacity duration-1000 ${
             stage === 'open' ? 'opacity-100' : 'pointer-events-none opacity-0'
           }`}
         >
