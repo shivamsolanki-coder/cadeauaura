@@ -83,11 +83,15 @@ export default function PreviewPage() {
 
       <div className="relative mx-auto w-full max-w-xl">
         <p className="text-xs font-light uppercase tracking-[0.32em] text-gold-300/70">
-          A preview, for you
+          A private rehearsal
         </p>
-        <h1 className="mt-3 font-display text-2xl font-light text-cream-50/80 sm:text-3xl">
-          This is what {draft.recipientName} will see.
+        <h1 className="mt-4 font-display text-3xl font-light leading-[1.15] tracking-[-0.01em] text-cream-50 sm:text-4xl">
+          This is your first draft of their moment.
         </h1>
+        <p className="mt-4 max-w-md text-sm leading-7 text-cream-50/55">
+          Below is what {draft.recipientName} will see. Take a breath, read it
+          back to yourself, edit anything that doesn&rsquo;t feel like you.
+        </p>
 
         <article className="mt-10 rounded-2xl border border-cream-50/12 bg-cream-50/[0.04] p-8 backdrop-blur-sm sm:p-12">
           <p className="text-xs font-light uppercase tracking-[0.32em] text-gold-300/70">
@@ -106,6 +110,18 @@ export default function PreviewPage() {
         </article>
 
         <div className="mt-10 flex flex-wrap items-center gap-4 text-sm">
+          <Link
+            href="/r/demo"
+            className="group inline-flex items-center gap-2 rounded-full bg-rose-500 px-6 py-3 font-medium text-cream-50 shadow-[0_18px_50px_-18px_rgba(143,20,49,0.7)] transition hover:bg-rose-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gold-300"
+          >
+            <span>Open demo reveal</span>
+            <span
+              aria-hidden
+              className="transition-transform duration-300 group-hover:translate-x-1"
+            >
+              →
+            </span>
+          </Link>
           <Link
             href="/create"
             className="rounded-full border border-cream-50/20 px-6 py-3 font-light text-cream-50/80 transition hover:border-cream-50/45 hover:text-cream-50"
