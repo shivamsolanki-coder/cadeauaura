@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState, type FormEvent } from 'react';
+import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react';
 
 const EMOTIONS = [
   'Love',
@@ -18,15 +18,19 @@ type Emotion = (typeof EMOTIONS)[number];
 interface Draft {
   recipientName: string;
   emotion: Emotion | '';
+  senderTelling: string;
   message: string;
 }
 
 const STORAGE_KEY = 'cadeauaura.draft.v1';
 const MESSAGE_LIMIT = 280;
+const TELLING_LIMIT = 500;
+const TYPEWRITER_CPS = 27;
 
 const emptyDraft: Draft = {
   recipientName: '',
   emotion: '',
+  senderTelling: '',
   message: '',
 };
 
@@ -46,14 +50,34 @@ function writeDraft(draft: Draft) {
   try {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(draft));
   } catch {
-    // localStorage may be disabled or full; silent failure is fine here.
+    // silent
   }
+}
+
+async function fetchReflection(telling: string, attempt: number): Promise<string> {
+  const res = await fetch('/api/reflect', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ telling, attempt }),
+  });
+  if (!res.ok) throw new Error('reflect failed');
+  const data = (await res.json()) as { text: string };
+  return data.text;
 }
 
 export default function CreatePage() {
   const router = useRouter();
   const [draft, setDraft] = useState<Draft>(emptyDraft);
   const [hydrated, setHydrated] = useState(false);
+
+  const [reflectionFull, setReflectionFull] = useState('');
+  const [reflectionDisplayed, setReflectionDisplayed] = useState('');
+  const [reflectionLoading, setReflectionLoading] = useState(false);
+  const [attemptCount, setAttemptCount] = useState(0);
+
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const typewriterRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const displayIndexRef = useRef(0);
 
   useEffect(() => {
     setDraft(readDraft());
@@ -65,8 +89,80 @@ export default function CreatePage() {
     writeDraft(draft);
   }, [draft, hydrated]);
 
+  // Typewriter runner
+  useEffect(() => {
+    if (!reflectionFull) {
+      setReflectionDisplayed('');
+      return;
+    }
+    setReflectionDisplayed('');
+    displayIndexRef.current = 0;
+    if (typewriterRef.current) clearInterval(typewriterRef.current);
+
+    const interval = setInterval(() => {
+      displayIndexRef.current += 1;
+      setReflectionDisplayed(reflectionFull.slice(0, displayIndexRef.current));
+      if (displayIndexRef.current >= reflectionFull.length) {
+        clearInterval(interval);
+        typewriterRef.current = null;
+      }
+    }, Math.round(1000 / TYPEWRITER_CPS));
+
+    typewriterRef.current = interval;
+    return () => clearInterval(interval);
+  }, [reflectionFull]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (typewriterRef.current) clearInterval(typewriterRef.current);
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, []);
+
+  const triggerReflection = useCallback(async (telling: string, attempt: number) => {
+    if (telling.trim().length < 3) return;
+    setReflectionLoading(true);
+    setReflectionFull('');
+    try {
+      const text = await fetchReflection(telling.trim(), attempt);
+      setReflectionFull(text);
+    } finally {
+      setReflectionLoading(false);
+    }
+  }, []);
+
+  // Debounce telling changes
+  useEffect(() => {
+    if (!hydrated) return;
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+
+    const telling = draft.senderTelling;
+    if (telling.trim().length < 3) {
+      setReflectionFull('');
+      setReflectionDisplayed('');
+      return;
+    }
+
+    debounceRef.current = setTimeout(() => {
+      setAttemptCount(0);
+      void triggerReflection(telling, 0);
+    }, 600);
+
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, [draft.senderTelling, hydrated, triggerReflection]);
+
+  function handleTryAgain() {
+    const next = Math.min(attemptCount + 1, 5);
+    setAttemptCount(next);
+    void triggerReflection(draft.senderTelling, next);
+  }
+
   const canPreview =
-    draft.recipientName.trim().length > 0 && draft.emotion !== '';
+    draft.recipientName.trim().length > 0 &&
+    (draft.emotion !== '' || draft.senderTelling.trim().length > 0);
 
   function update<K extends keyof Draft>(key: K, value: Draft[K]) {
     setDraft((current) => ({ ...current, [key]: value }));
@@ -77,6 +173,8 @@ export default function CreatePage() {
     if (!canPreview) return;
     router.push('/create/preview');
   }
+
+  const showReflection = reflectionLoading || reflectionDisplayed.length > 0;
 
   return (
     <main className="relative min-h-[88svh] overflow-hidden bg-ink-950 px-6 py-16 text-cream-50 sm:px-10 sm:py-20">
@@ -95,7 +193,7 @@ export default function CreatePage() {
         </h1>
 
         <p className="mt-4 max-w-md text-sm leading-7 text-cream-50/60">
-          Three quiet questions. Nothing is sent until you say so. Your draft
+          A few quiet questions. Nothing is sent until you say so. Your draft
           is held on this device.
         </p>
 
@@ -104,6 +202,7 @@ export default function CreatePage() {
           className="mt-12 space-y-12 sm:mt-14 sm:space-y-14"
           aria-label="Moment builder"
         >
+          {/* 01 — Name */}
           <div>
             <div className="flex items-baseline gap-3">
               <span
@@ -131,6 +230,7 @@ export default function CreatePage() {
             />
           </div>
 
+          {/* 02 — Tell me about them */}
           <div>
             <div className="flex items-baseline gap-3">
               <span
@@ -139,8 +239,80 @@ export default function CreatePage() {
               >
                 02
               </span>
+              <label
+                htmlFor="senderTelling"
+                className="block text-xs font-light uppercase tracking-[0.28em] text-cream-50/55"
+              >
+                Tell me about them
+              </label>
+            </div>
+            <p className="mt-2 text-sm leading-7 text-cream-50/45">
+              A few words about who they are, or what they have held for you.
+            </p>
+            <textarea
+              id="senderTelling"
+              name="senderTelling"
+              rows={3}
+              maxLength={TELLING_LIMIT}
+              value={draft.senderTelling}
+              onChange={(event) => update('senderTelling', event.target.value)}
+              placeholder="She carried me through last year without making it a big deal."
+              className="mt-5 w-full resize-none border-b border-cream-50/15 bg-transparent pb-3 font-display text-lg leading-8 text-cream-50 placeholder:text-cream-50/25 focus:border-gold-300/60 focus:outline-none"
+            />
+            <p className="mt-2 text-right text-xs text-cream-50/35">
+              {draft.senderTelling.length}/{TELLING_LIMIT}
+            </p>
+
+            {/* Reflection panel */}
+            {showReflection && (
+              <div className="mt-6 border-t border-gold-300/15 pt-5">
+                {reflectionLoading ? (
+                  <div className="flex items-center gap-[5px]" aria-label="Listening">
+                    <span className="inline-block h-1 w-1 animate-pulse rounded-full bg-gold-300/50" />
+                    <span className="inline-block h-1 w-1 animate-pulse rounded-full bg-gold-300/50 [animation-delay:150ms]" />
+                    <span className="inline-block h-1 w-1 animate-pulse rounded-full bg-gold-300/50 [animation-delay:300ms]" />
+                  </div>
+                ) : (
+                  <>
+                    <p className="font-display text-base italic leading-7 text-cream-50/65">
+                      {reflectionDisplayed}
+                      {reflectionDisplayed.length < reflectionFull.length && (
+                        <span
+                          aria-hidden
+                          className="ml-[1px] inline-block h-[0.9em] w-px animate-pulse bg-cream-50/40 align-middle"
+                        />
+                      )}
+                    </p>
+                    {reflectionDisplayed === reflectionFull && reflectionFull.length > 0 && (
+                      <button
+                        type="button"
+                        onClick={handleTryAgain}
+                        disabled={attemptCount >= 5}
+                        className="mt-4 text-xs uppercase tracking-[0.28em] text-cream-50/35 underline-offset-4 transition hover:text-cream-50/60 hover:underline disabled:cursor-not-allowed disabled:opacity-30"
+                      >
+                        Try again
+                      </button>
+                    )}
+                  </>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* 03 — Feeling (secondary / optional) */}
+          <div>
+            <div className="flex items-baseline gap-3">
+              <span
+                aria-hidden
+                className="text-[0.65rem] font-light tracking-[0.32em] text-gold-300/55"
+              >
+                03
+              </span>
               <span className="block text-xs font-light uppercase tracking-[0.28em] text-cream-50/55">
                 Feeling
+              </span>
+              <span className="text-[0.6rem] font-light uppercase tracking-[0.2em] text-cream-50/30">
+                optional
               </span>
             </div>
             <p className="mt-2 text-sm leading-7 text-cream-50/45">
@@ -158,7 +330,7 @@ export default function CreatePage() {
                     className={`rounded-full border px-4 py-2 text-sm transition ${
                       active
                         ? 'border-cream-50 bg-cream-50 text-ink-900'
-                        : 'border-cream-50/20 text-cream-50/80 hover:border-cream-50/45 hover:text-cream-50'
+                        : 'border-cream-50/15 text-cream-50/55 hover:border-cream-50/35 hover:text-cream-50/80'
                     }`}
                   >
                     {option}
@@ -168,13 +340,14 @@ export default function CreatePage() {
             </div>
           </div>
 
+          {/* 04 — Words */}
           <div>
             <div className="flex items-baseline gap-3">
               <span
                 aria-hidden
                 className="text-[0.65rem] font-light tracking-[0.32em] text-gold-300/55"
               >
-                03
+                04
               </span>
               <label
                 htmlFor="message"
@@ -223,7 +396,7 @@ export default function CreatePage() {
                 </span>
               ) : (
                 <span className="text-xs leading-6 text-cream-50/45 sm:max-w-[18rem] sm:text-right">
-                  Add their name and choose a feeling to preview.
+                  Add their name and tell us about them to preview.
                 </span>
               )
             ) : null}
