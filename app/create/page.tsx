@@ -32,8 +32,6 @@ Khud say jo mil paye ga`;
 
 const PLAYFUL_MESSAGE = `Some souls are understood slowly, because their depth is not meant for hurried eyes. What seems quiet on the surface often holds a rare kind of strength within. And in the end, it is not the loudest presence that stays with us, but the one that lingers in the heart.
 
-just for fun`;
-
 const emptyDraft: Draft = {
   recipientName: '',
   emotion: '',
