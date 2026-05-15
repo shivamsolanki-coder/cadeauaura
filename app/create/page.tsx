@@ -2,176 +2,37 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 
-const EMOTIONS = [
-  'Love',
-  'Thanks',
-  'Pride',
-  'Apology',
-  'Welcome',
-  'Just because',
-] as const;
+import {
+  EMOTIONS,
+  emptyDraft,
+  readDraft,
+  writeDraft,
+  type Draft,
+} from '@/lib/draft';
+import { useComposer } from '@/lib/hooks/useComposer';
+import { useFollowUp } from '@/lib/hooks/useFollowUp';
+import { useReflection } from '@/lib/hooks/useReflection';
 
-type Emotion = (typeof EMOTIONS)[number];
-type Tone = '' | 'vague' | 'warm' | 'specific' | 'grief' | 'hurt';
-
-const KNOWN_TONES: readonly Tone[] = ['vague', 'warm', 'specific', 'grief', 'hurt'];
-
-interface Draft {
-  recipientName: string;
-  emotion: Emotion | '';
-  senderTelling: string;
-  message: string;
-  anchors: string[];
-  tone: Tone;
-}
-
-const STORAGE_KEY = 'cadeauaura.draft.v1';
 const MESSAGE_LIMIT = 280;
 const TELLING_LIMIT = 500;
-const TYPEWRITER_CPS = 27;
-const FOLLOW_UP_DELAY_MS = 700;
 
 const PLAYFUL_TELLING = `Andar tairay raaz kai hein
 Khud say jo mil paye ga`;
 
 const PLAYFUL_MESSAGE = `Some souls are understood slowly, because their depth is not meant for hurried eyes. What seems quiet on the surface often holds a rare kind of strength within. And in the end, it is not the loudest presence that stays with us, but the one that lingers in the heart.`;
 
-const emptyDraft: Draft = {
-  recipientName: '',
-  emotion: '',
-  senderTelling: '',
-  message: '',
-  anchors: [],
-  tone: '',
-};
-
 function isPlayfulRecipientName(name: string): boolean {
   const normalized = name.trim().toLowerCase();
   return normalized === 'ifra' || normalized === 'iffu' || normalized === 'chatgpt';
 }
 
-function readDraft(): Draft {
-  if (typeof window === 'undefined') return emptyDraft;
-
-  try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (!raw) return emptyDraft;
-
-    const parsed = JSON.parse(raw) as Partial<Draft>;
-
-    return {
-      ...emptyDraft,
-      ...parsed,
-      anchors: Array.isArray(parsed.anchors) ? parsed.anchors.slice(0, 4) : [],
-      tone: KNOWN_TONES.includes(parsed.tone as Tone) ? (parsed.tone as Tone) : '',
-    };
-  } catch {
-    return emptyDraft;
-  }
-}
-
-function writeDraft(draft: Draft) {
-  try {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(draft));
-  } catch {
-    // silent
-  }
-}
-
-async function fetchReflection(telling: string, attempt: number): Promise<string> {
-  const res = await fetch('/api/reflect', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ telling, attempt }),
-  });
-
-  if (!res.ok) throw new Error('reflect failed');
-
-  const data = (await res.json()) as { text: string };
-  return data.text;
-}
-
-interface FollowUpResponse {
-  followUp: string;
-  anchors: string[];
-  tone: Tone;
-}
-
-async function fetchFollowUp(telling: string, reflection: string): Promise<FollowUpResponse> {
-  const res = await fetch('/api/follow-up', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ telling, reflection }),
-  });
-
-  if (!res.ok) throw new Error('follow-up failed');
-
-  const data = (await res.json()) as { followUp: string; anchors: string[]; tone: string };
-  const tone: Tone = KNOWN_TONES.includes(data.tone as Tone) ? (data.tone as Tone) : '';
-
-  return {
-    followUp: data.followUp,
-    anchors: Array.isArray(data.anchors) ? data.anchors.slice(0, 4) : [],
-    tone,
-  };
-}
-
-interface ComposerInput {
-  recipientName: string;
-  telling: string;
-  anchors: string[];
-  tone: Tone;
-  emotion: string;
-}
-
-async function fetchComposerDrafts(input: ComposerInput): Promise<string[]> {
-  const res = await fetch('/api/compose', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      recipientName: input.recipientName,
-      telling: input.telling,
-      anchors: input.anchors,
-      tone: input.tone === '' ? null : input.tone,
-      emotion: input.emotion,
-    }),
-  });
-
-  if (!res.ok) throw new Error('compose failed');
-
-  const data = (await res.json()) as { drafts: string[] };
-  return Array.isArray(data.drafts) ? data.drafts.slice(0, 3) : [];
-}
-
 export default function CreatePage() {
   const router = useRouter();
-
   const [draft, setDraft] = useState<Draft>(emptyDraft);
   const [hydrated, setHydrated] = useState(false);
-
-  const [reflectionFull, setReflectionFull] = useState('');
-  const [reflectionDisplayed, setReflectionDisplayed] = useState('');
-  const [reflectionLoading, setReflectionLoading] = useState(false);
-  const [attemptCount, setAttemptCount] = useState(0);
-
-  const [followUpFull, setFollowUpFull] = useState('');
-  const [followUpDisplayed, setFollowUpDisplayed] = useState('');
-  const [followUpLoading, setFollowUpLoading] = useState(false);
-
-  const [composerDrafts, setComposerDrafts] = useState<string[]>([]);
-  const [composerLoading, setComposerLoading] = useState(false);
-
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const reflectionTypewriterRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const reflectionIndexRef = useRef(0);
-
-  const followUpTypewriterRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const followUpIndexRef = useRef(0);
-  const followUpDelayRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const followUpFetchKeyRef = useRef('');
+  const messageTextareaRef = useRef<HTMLTextAreaElement | null>(null);
 
   const autoTellingAppliedRef = useRef(false);
   const autoMessageAppliedRef = useRef(false);
@@ -187,6 +48,16 @@ export default function CreatePage() {
     writeDraft(draft);
   }, [draft, hydrated]);
 
+  const reflection = useReflection(draft.senderTelling, hydrated);
+  const followUp = useFollowUp({
+    telling: draft.senderTelling,
+    reflection: reflection.fullText,
+    reflectionDone: reflection.done,
+  });
+  const composer = useComposer();
+  const { reset: resetComposer } = composer;
+
+  // Keep hidden playful autofill state scoped to the current recipient name.
   useEffect(() => {
     const previous = previousRecipientRef.current;
     const current = draft.recipientName.trim().toLowerCase();
@@ -198,6 +69,8 @@ export default function CreatePage() {
     }
   }, [draft.recipientName]);
 
+  // Auto-fill senderTelling once for special recipient names, but never overwrite
+  // an existing manual value.
   useEffect(() => {
     if (!hydrated) return;
     if (!isPlayfulRecipientName(draft.recipientName)) return;
@@ -211,6 +84,8 @@ export default function CreatePage() {
     }));
   }, [draft.recipientName, draft.senderTelling, hydrated]);
 
+  // Auto-fill message once after a feeling is selected for special names,
+  // but never overwrite a manual message.
   useEffect(() => {
     if (!hydrated) return;
     if (!isPlayfulRecipientName(draft.recipientName)) return;
@@ -225,216 +100,24 @@ export default function CreatePage() {
     }));
   }, [draft.recipientName, draft.emotion, draft.message, hydrated]);
 
+  // Mirror anchors + tone from the follow-up hook back into the draft so
+  // they survive a refresh via localStorage. The hook produces; the draft
+  // is the source of truth.
   useEffect(() => {
-    if (!reflectionFull) {
-      setReflectionDisplayed('');
-      setFollowUpFull('');
-      setFollowUpDisplayed('');
-      setFollowUpLoading(false);
-      followUpFetchKeyRef.current = '';
+    setDraft((current) => {
+      const sameAnchors =
+        current.anchors.length === followUp.anchors.length &&
+        current.anchors.every((a, i) => a === followUp.anchors[i]);
 
-      if (followUpDelayRef.current) {
-        clearTimeout(followUpDelayRef.current);
-        followUpDelayRef.current = null;
-      }
+      if (sameAnchors && current.tone === followUp.tone) return current;
+      return { ...current, anchors: followUp.anchors, tone: followUp.tone };
+    });
+  }, [followUp.anchors, followUp.tone]);
 
-      return;
-    }
-
-    setReflectionDisplayed('');
-    reflectionIndexRef.current = 0;
-
-    if (reflectionTypewriterRef.current) clearInterval(reflectionTypewriterRef.current);
-
-    const interval = setInterval(() => {
-      reflectionIndexRef.current += 1;
-      setReflectionDisplayed(reflectionFull.slice(0, reflectionIndexRef.current));
-
-      if (reflectionIndexRef.current >= reflectionFull.length) {
-        clearInterval(interval);
-        reflectionTypewriterRef.current = null;
-      }
-    }, Math.round(1000 / TYPEWRITER_CPS));
-
-    reflectionTypewriterRef.current = interval;
-
-    return () => clearInterval(interval);
-  }, [reflectionFull]);
-
+  // Editing the telling invalidates any composer drafts on screen.
   useEffect(() => {
-    if (!followUpFull) {
-      setFollowUpDisplayed('');
-      return;
-    }
-
-    setFollowUpDisplayed('');
-    followUpIndexRef.current = 0;
-
-    if (followUpTypewriterRef.current) clearInterval(followUpTypewriterRef.current);
-
-    const interval = setInterval(() => {
-      followUpIndexRef.current += 1;
-      setFollowUpDisplayed(followUpFull.slice(0, followUpIndexRef.current));
-
-      if (followUpIndexRef.current >= followUpFull.length) {
-        clearInterval(interval);
-        followUpTypewriterRef.current = null;
-      }
-    }, Math.round(1000 / TYPEWRITER_CPS));
-
-    followUpTypewriterRef.current = interval;
-
-    return () => clearInterval(interval);
-  }, [followUpFull]);
-
-  useEffect(() => {
-    return () => {
-      if (reflectionTypewriterRef.current) clearInterval(reflectionTypewriterRef.current);
-      if (followUpTypewriterRef.current) clearInterval(followUpTypewriterRef.current);
-      if (debounceRef.current) clearTimeout(debounceRef.current);
-      if (followUpDelayRef.current) clearTimeout(followUpDelayRef.current);
-    };
-  }, []);
-
-  const triggerFollowUp = useCallback(async (telling: string, reflection: string) => {
-    if (telling.trim().length < 3 || !reflection) return;
-
-    setFollowUpLoading(true);
-    setFollowUpFull('');
-
-    try {
-      const result = await fetchFollowUp(telling.trim(), reflection);
-
-      setFollowUpFull(result.followUp);
-      setDraft((current) => ({
-        ...current,
-        anchors: result.anchors,
-        tone: result.tone,
-      }));
-    } catch {
-      // optional
-    } finally {
-      setFollowUpLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!reflectionFull) return;
-    if (reflectionDisplayed.length < reflectionFull.length) return;
-
-    const key = `${draft.senderTelling.trim()}::${reflectionFull}`;
-    if (followUpFetchKeyRef.current === key) return;
-    followUpFetchKeyRef.current = key;
-
-    if (followUpDelayRef.current) clearTimeout(followUpDelayRef.current);
-
-    followUpDelayRef.current = setTimeout(() => {
-      void triggerFollowUp(draft.senderTelling, reflectionFull);
-    }, FOLLOW_UP_DELAY_MS);
-
-    return () => {
-      if (followUpDelayRef.current) clearTimeout(followUpDelayRef.current);
-    };
-  }, [reflectionDisplayed, reflectionFull, draft.senderTelling, triggerFollowUp]);
-
-  const triggerReflection = useCallback(async (telling: string, attempt: number) => {
-    if (telling.trim().length < 3) return;
-
-    setReflectionLoading(true);
-    setReflectionFull('');
-    setFollowUpFull('');
-    setFollowUpDisplayed('');
-    setComposerDrafts([]);
-
-    try {
-      const text = await fetchReflection(telling.trim(), attempt);
-      setReflectionFull(text);
-    } finally {
-      setReflectionLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!hydrated) return;
-    if (debounceRef.current) clearTimeout(debounceRef.current);
-
-    const telling = draft.senderTelling;
-
-    if (telling.trim().length < 3) {
-      setReflectionFull('');
-      setReflectionDisplayed('');
-      setFollowUpFull('');
-      setFollowUpDisplayed('');
-      setComposerDrafts([]);
-      followUpFetchKeyRef.current = '';
-      return;
-    }
-
-    debounceRef.current = setTimeout(() => {
-      setAttemptCount(0);
-      void triggerReflection(telling, 0);
-    }, 600);
-
-    return () => {
-      if (debounceRef.current) clearTimeout(debounceRef.current);
-    };
-  }, [draft.senderTelling, hydrated, triggerReflection]);
-
-  function handleTryAgain() {
-    const next = Math.min(attemptCount + 1, 5);
-    setAttemptCount(next);
-    void triggerReflection(draft.senderTelling, next);
-  }
-
-  const triggerComposer = useCallback(async () => {
-    if (
-      draft.recipientName.trim().length === 0 ||
-      draft.senderTelling.trim().length < 10
-    ) {
-      return;
-    }
-
-    setComposerLoading(true);
-
-    try {
-      const drafts = await fetchComposerDrafts({
-        recipientName: draft.recipientName.trim(),
-        telling: draft.senderTelling.trim(),
-        anchors: draft.anchors,
-        tone: draft.tone,
-        emotion: draft.emotion,
-      });
-
-      setComposerDrafts(drafts);
-    } catch {
-      setComposerDrafts([]);
-    } finally {
-      setComposerLoading(false);
-    }
-  }, [
-    draft.recipientName,
-    draft.senderTelling,
-    draft.anchors,
-    draft.tone,
-    draft.emotion,
-  ]);
-
-  function chooseDraft(text: string) {
-    update('message', text);
-    setComposerDrafts([]);
-  }
-
-  function dismissComposer() {
-    setComposerDrafts([]);
-  }
-
-  const composerEligible =
-    draft.recipientName.trim().length > 0 &&
-    draft.senderTelling.trim().length >= 10;
-
-  const canPreview =
-    draft.recipientName.trim().length > 0 &&
-    (draft.emotion !== '' || draft.senderTelling.trim().length > 0);
+    resetComposer();
+  }, [draft.senderTelling, resetComposer]);
 
   function update<K extends keyof Draft>(key: K, value: Draft[K]) {
     setDraft((current) => ({ ...current, [key]: value }));
@@ -446,11 +129,40 @@ export default function CreatePage() {
     router.push('/create/preview');
   }
 
-  const showReflection = reflectionLoading || reflectionDisplayed.length > 0;
-  const reflectionDone =
-    reflectionDisplayed === reflectionFull && reflectionFull.length > 0;
+  function chooseDraft(text: string) {
+    update('message', text);
+    composer.dismiss();
+  }
+
+  function takeIntoWords() {
+    messageTextareaRef.current?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'center',
+    });
+
+    void composer.trigger({
+      recipientName: draft.recipientName.trim(),
+      telling: draft.senderTelling.trim(),
+      anchors: draft.anchors,
+      tone: draft.tone,
+      emotion: draft.emotion,
+    });
+  }
+
+  const canPreview =
+    draft.recipientName.trim().length > 0 &&
+    (draft.emotion !== '' || draft.senderTelling.trim().length > 0);
+
+  const composerEligible =
+    draft.recipientName.trim().length > 0 &&
+    draft.senderTelling.trim().length >= 10;
+
+  const showReflection =
+    reflection.loading || reflection.displayedText.length > 0;
   const showFollowUp =
-    reflectionDone && (followUpLoading || followUpDisplayed.length > 0);
+    reflection.done && (followUp.loading || followUp.displayedText.length > 0);
+  const showFollowUpCta =
+    followUp.done && composerEligible && composer.drafts.length === 0;
 
   return (
     <main className="relative min-h-[88svh] overflow-hidden bg-ink-950 px-6 py-16 text-cream-50 sm:px-10 sm:py-20">
@@ -478,6 +190,7 @@ export default function CreatePage() {
           className="mt-12 space-y-12 sm:mt-14 sm:space-y-14"
           aria-label="Moment builder"
         >
+          {/* 01 — Name */}
           <div>
             <div className="flex items-baseline gap-3">
               <span
@@ -505,6 +218,7 @@ export default function CreatePage() {
             />
           </div>
 
+          {/* 02 — Tell me about them */}
           <div>
             <div className="flex items-baseline gap-3">
               <span
@@ -537,9 +251,10 @@ export default function CreatePage() {
               {draft.senderTelling.length}/{TELLING_LIMIT}
             </p>
 
+            {/* Reflection panel */}
             {showReflection && (
               <div className="mt-6 border-t border-gold-300/15 pt-5">
-                {reflectionLoading ? (
+                {reflection.loading ? (
                   <div className="flex items-center gap-[5px]" aria-label="Listening">
                     <span className="inline-block h-1 w-1 animate-pulse rounded-full bg-gold-300/50" />
                     <span className="inline-block h-1 w-1 animate-pulse rounded-full bg-gold-300/50 [animation-delay:150ms]" />
@@ -548,8 +263,8 @@ export default function CreatePage() {
                 ) : (
                   <>
                     <p className="font-display text-base italic leading-7 text-cream-50/65">
-                      {reflectionDisplayed}
-                      {reflectionDisplayed.length < reflectionFull.length && (
+                      {reflection.displayedText}
+                      {reflection.displayedText.length < reflection.fullText.length && (
                         <span
                           aria-hidden
                           className="ml-[1px] inline-block h-[0.9em] w-px animate-pulse bg-cream-50/40 align-middle"
@@ -557,35 +272,49 @@ export default function CreatePage() {
                       )}
                     </p>
 
-                    {reflectionDone && (
+                    {reflection.done && (
                       <button
                         type="button"
-                        onClick={handleTryAgain}
-                        disabled={attemptCount >= 5}
+                        onClick={reflection.tryAgain}
+                        disabled={reflection.maxAttemptsReached}
                         className="mt-4 text-xs uppercase tracking-[0.28em] text-cream-50/35 underline-offset-4 transition hover:text-cream-50/60 hover:underline disabled:cursor-not-allowed disabled:opacity-30"
                       >
                         Try again
                       </button>
                     )}
 
+                    {/* Follow-up */}
                     {showFollowUp && (
                       <div className="mt-6 border-t border-gold-300/10 pt-5">
-                        {followUpLoading && followUpDisplayed.length === 0 ? (
+                        {followUp.loading && followUp.displayedText.length === 0 ? (
                           <div className="flex items-center gap-[5px]" aria-label="Listening more">
                             <span className="inline-block h-1 w-1 animate-pulse rounded-full bg-gold-300/35" />
                             <span className="inline-block h-1 w-1 animate-pulse rounded-full bg-gold-300/35 [animation-delay:150ms]" />
                             <span className="inline-block h-1 w-1 animate-pulse rounded-full bg-gold-300/35 [animation-delay:300ms]" />
                           </div>
                         ) : (
-                          <p className="font-display text-sm italic leading-7 text-cream-50/50 sm:text-base">
-                            {followUpDisplayed}
-                            {followUpDisplayed.length < followUpFull.length && (
-                              <span
-                                aria-hidden
-                                className="ml-[1px] inline-block h-[0.9em] w-px animate-pulse bg-cream-50/30 align-middle"
-                              />
+                          <>
+                            <p className="font-display text-sm italic leading-7 text-cream-50/50 sm:text-base">
+                              {followUp.displayedText}
+                              {followUp.displayedText.length < followUp.fullText.length && (
+                                <span
+                                  aria-hidden
+                                  className="ml-[1px] inline-block h-[0.9em] w-px animate-pulse bg-cream-50/30 align-middle"
+                                />
+                              )}
+                            </p>
+
+                            {showFollowUpCta && (
+                              <button
+                                type="button"
+                                onClick={takeIntoWords}
+                                disabled={composer.loading}
+                                className="mt-4 text-[0.65rem] uppercase tracking-[0.28em] text-cream-50/40 underline-offset-4 transition hover:text-cream-50/70 hover:underline disabled:cursor-not-allowed disabled:opacity-30"
+                              >
+                                Take this into words →
+                              </button>
                             )}
-                          </p>
+                          </>
                         )}
                       </div>
                     )}
@@ -595,6 +324,7 @@ export default function CreatePage() {
             )}
           </div>
 
+          {/* 03 — Feeling */}
           <div>
             <div className="flex items-baseline gap-3">
               <span
@@ -635,6 +365,7 @@ export default function CreatePage() {
             </div>
           </div>
 
+          {/* 04 — Words */}
           <div>
             <div className="flex items-baseline gap-3">
               <span
@@ -654,6 +385,7 @@ export default function CreatePage() {
               A few words for them. Anything that has been waiting.
             </p>
             <textarea
+              ref={messageTextareaRef}
               id="message"
               name="message"
               rows={4}
@@ -667,17 +399,7 @@ export default function CreatePage() {
               {draft.message.length}/{MESSAGE_LIMIT}
             </p>
 
-            {composerEligible && composerDrafts.length === 0 && !composerLoading && (
-              <button
-                type="button"
-                onClick={() => void triggerComposer()}
-                className="mt-4 text-xs uppercase tracking-[0.28em] text-cream-50/35 underline-offset-4 transition hover:text-cream-50/60 hover:underline"
-              >
-                Find the words
-              </button>
-            )}
-
-            {composerLoading && composerDrafts.length === 0 && (
+            {composer.loading && composer.drafts.length === 0 && (
               <div className="mt-6 border-t border-gold-300/15 pt-5">
                 <div className="flex items-center gap-[5px]" aria-label="Looking for the words">
                   <span className="inline-block h-1 w-1 animate-pulse rounded-full bg-gold-300/50" />
@@ -687,13 +409,13 @@ export default function CreatePage() {
               </div>
             )}
 
-            {composerDrafts.length > 0 && (
+            {composer.drafts.length > 0 && (
               <div className="mt-6 border-t border-gold-300/15 pt-5">
                 <p className="text-[0.6rem] font-light uppercase tracking-[0.28em] text-cream-50/35">
                   Three quiet starts
                 </p>
                 <div className="mt-4 space-y-4">
-                  {composerDrafts.map((text, index) => (
+                  {composer.drafts.map((text, index) => (
                     <button
                       key={`${index}-${text.slice(0, 24)}`}
                       type="button"
@@ -709,15 +431,15 @@ export default function CreatePage() {
                 <div className="mt-5 flex flex-wrap items-center gap-5">
                   <button
                     type="button"
-                    onClick={() => void triggerComposer()}
-                    disabled={composerLoading}
+                    onClick={takeIntoWords}
+                    disabled={composer.loading}
                     className="text-xs uppercase tracking-[0.28em] text-cream-50/35 underline-offset-4 transition hover:text-cream-50/60 hover:underline disabled:cursor-not-allowed disabled:opacity-30"
                   >
                     Try different words
                   </button>
                   <button
                     type="button"
-                    onClick={dismissComposer}
+                    onClick={composer.dismiss}
                     className="text-xs uppercase tracking-[0.28em] text-cream-50/35 underline-offset-4 transition hover:text-cream-50/60 hover:underline"
                   >
                     Write my own
