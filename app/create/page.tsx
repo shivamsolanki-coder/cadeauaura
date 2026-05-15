@@ -27,12 +27,28 @@ const MESSAGE_LIMIT = 280;
 const TELLING_LIMIT = 500;
 const TYPEWRITER_CPS = 27;
 
+const PLAYFUL_TELLING = `Andar tairay raaz kai hein
+Khud say jo mil paye ga`;
+
+const PLAYFUL_MESSAGE = `वो देखने में
+कैसी सीधी साधी लगती
+है बोलती है वो तो
+कुछ नहीं समझती
+अंदर से कितनी तेज़ है
+
+just for fun`;
+
 const emptyDraft: Draft = {
   recipientName: '',
   emotion: '',
   senderTelling: '',
   message: '',
 };
+
+function isPlayfulRecipientName(name: string): boolean {
+  const normalized = name.trim().toLowerCase();
+  return normalized === 'ifra' || normalized === 'iffu' || normalized === 'chatgpt';
+}
 
 function readDraft(): Draft {
   if (typeof window === 'undefined') return emptyDraft;
@@ -79,6 +95,10 @@ export default function CreatePage() {
   const typewriterRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const displayIndexRef = useRef(0);
 
+  const autoTellingAppliedRef = useRef(false);
+  const autoMessageAppliedRef = useRef(false);
+  const previousRecipientRef = useRef('');
+
   useEffect(() => {
     setDraft(readDraft());
     setHydrated(true);
@@ -89,7 +109,44 @@ export default function CreatePage() {
     writeDraft(draft);
   }, [draft, hydrated]);
 
-  // Typewriter runner
+  useEffect(() => {
+    const previous = previousRecipientRef.current;
+    const current = draft.recipientName.trim().toLowerCase();
+
+    if (previous !== current) {
+      autoTellingAppliedRef.current = false;
+      autoMessageAppliedRef.current = false;
+      previousRecipientRef.current = current;
+    }
+  }, [draft.recipientName]);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    if (!isPlayfulRecipientName(draft.recipientName)) return;
+    if (autoTellingAppliedRef.current) return;
+    if (draft.senderTelling.trim().length > 0) return;
+
+    autoTellingAppliedRef.current = true;
+    setDraft((current) => ({
+      ...current,
+      senderTelling: PLAYFUL_TELLING,
+    }));
+  }, [draft.recipientName, draft.senderTelling, hydrated]);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    if (!isPlayfulRecipientName(draft.recipientName)) return;
+    if (draft.emotion === '') return;
+    if (autoMessageAppliedRef.current) return;
+    if (draft.message.trim().length > 0) return;
+
+    autoMessageAppliedRef.current = true;
+    setDraft((current) => ({
+      ...current,
+      message: PLAYFUL_MESSAGE,
+    }));
+  }, [draft.recipientName, draft.emotion, draft.message, hydrated]);
+
   useEffect(() => {
     if (!reflectionFull) {
       setReflectionDisplayed('');
@@ -112,7 +169,6 @@ export default function CreatePage() {
     return () => clearInterval(interval);
   }, [reflectionFull]);
 
-  // Cleanup on unmount
   useEffect(() => {
     return () => {
       if (typewriterRef.current) clearInterval(typewriterRef.current);
@@ -132,7 +188,6 @@ export default function CreatePage() {
     }
   }, []);
 
-  // Debounce telling changes
   useEffect(() => {
     if (!hydrated) return;
     if (debounceRef.current) clearTimeout(debounceRef.current);
@@ -202,7 +257,6 @@ export default function CreatePage() {
           className="mt-12 space-y-12 sm:mt-14 sm:space-y-14"
           aria-label="Moment builder"
         >
-          {/* 01 — Name */}
           <div>
             <div className="flex items-baseline gap-3">
               <span
@@ -230,7 +284,6 @@ export default function CreatePage() {
             />
           </div>
 
-          {/* 02 — Tell me about them */}
           <div>
             <div className="flex items-baseline gap-3">
               <span
@@ -263,7 +316,6 @@ export default function CreatePage() {
               {draft.senderTelling.length}/{TELLING_LIMIT}
             </p>
 
-            {/* Reflection panel */}
             {showReflection && (
               <div className="mt-6 border-t border-gold-300/15 pt-5">
                 {reflectionLoading ? (
@@ -299,7 +351,6 @@ export default function CreatePage() {
             )}
           </div>
 
-          {/* 03 — Feeling (secondary / optional) */}
           <div>
             <div className="flex items-baseline gap-3">
               <span
@@ -340,7 +391,6 @@ export default function CreatePage() {
             </div>
           </div>
 
-          {/* 04 — Words */}
           <div>
             <div className="flex items-baseline gap-3">
               <span
