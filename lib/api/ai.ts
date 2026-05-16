@@ -27,6 +27,7 @@ export interface FollowUpResponse {
   followUp: string;
   anchors: string[];
   tone: Tone;
+  secondaryTone: Tone;
 }
 
 export async function fetchFollowUp(
@@ -43,14 +44,19 @@ export async function fetchFollowUp(
     followUp: string;
     anchors: string[];
     tone: string;
+    secondaryTone: string | null;
   };
   const tone: Tone = KNOWN_TONES.includes(data.tone as Tone)
     ? (data.tone as Tone)
+    : '';
+  const secondaryTone: Tone = KNOWN_TONES.includes(data.secondaryTone as Tone)
+    ? (data.secondaryTone as Tone)
     : '';
   return {
     followUp: data.followUp,
     anchors: Array.isArray(data.anchors) ? data.anchors.slice(0, 4) : [],
     tone,
+    secondaryTone,
   };
 }
 
@@ -60,6 +66,7 @@ export interface ComposerInput {
   anchors: string[];
   tone: Tone;
   emotion: string;
+  attempt: number;
 }
 
 export async function fetchComposerDrafts(
@@ -74,6 +81,7 @@ export async function fetchComposerDrafts(
       anchors: input.anchors,
       tone: input.tone === '' ? null : input.tone,
       emotion: input.emotion,
+      attempt: input.attempt,
     }),
   });
   if (!res.ok) throw new Error('compose failed');
