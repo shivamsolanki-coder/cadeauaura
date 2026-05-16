@@ -3,8 +3,23 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
-type Tone = '' | 'vague' | 'warm' | 'specific' | 'grief' | 'hurt';
-const KNOWN_TONES: readonly Tone[] = ['vague', 'warm', 'specific', 'grief', 'hurt'];
+type Tone =
+  | ''
+  | 'vague'
+  | 'warm'
+  | 'specific'
+  | 'grief'
+  | 'distance'
+  | 'hurt';
+
+const KNOWN_TONES: readonly Tone[] = [
+  'vague',
+  'warm',
+  'specific',
+  'grief',
+  'distance',
+  'hurt',
+];
 
 interface Draft {
   recipientName: string;
@@ -43,6 +58,7 @@ function readDraft(): Draft | null {
  */
 const PREVIEW_TITLE: Record<Tone, string> = {
   grief: 'A quiet draft, for someone you have lost.',
+  distance: 'A draft across the time you have not closed.',
   hurt: 'A draft you can keep, send, or rewrite.',
   vague: 'A first draft of their moment.',
   warm: 'This is your first draft of their moment.',
@@ -52,6 +68,7 @@ const PREVIEW_TITLE: Record<Tone, string> = {
 
 const PREVIEW_CTA: Record<Tone, string> = {
   grief: 'See how it would reach them',
+  distance: 'See how it would reach across',
   hurt: 'See how it would land',
   vague: 'Open demo reveal',
   warm: 'Open demo reveal',
@@ -62,6 +79,8 @@ const PREVIEW_CTA: Record<Tone, string> = {
 const PREVIEW_CLOSING: Record<Tone, string> = {
   grief:
     'This rehearsal stays on your device. There is no rush, and no one else can see it.',
+  distance:
+    'This stays on your device. No bridge has to be crossed unless you decide.',
   hurt:
     'This rehearsal is yours alone, held quietly on your device until you are ready.',
   vague:
@@ -155,9 +174,6 @@ export default function PreviewPage() {
           ) : null}
         </article>
 
-        {/* Anchors — what we noticed in their words, surfaced as a quiet
-            postscript rather than a labeled metadata block. The sender
-            will recognise their own words without it being announced. */}
         {anchorsLine ? (
           <p className="mt-8 font-display text-sm italic leading-7 text-cream-50/40 sm:text-base">
             <span aria-hidden className="mr-3 text-gold-300/55">~</span>
