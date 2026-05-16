@@ -20,13 +20,21 @@ export const EMOTIONS = [
 
 export type Emotion = (typeof EMOTIONS)[number];
 
-export type Tone = '' | 'vague' | 'warm' | 'specific' | 'grief' | 'hurt';
+export type Tone =
+  | ''
+  | 'vague'
+  | 'warm'
+  | 'specific'
+  | 'grief'
+  | 'distance'
+  | 'hurt';
 
 export const KNOWN_TONES: readonly Tone[] = [
   'vague',
   'warm',
   'specific',
   'grief',
+  'distance',
   'hurt',
 ];
 
@@ -37,6 +45,7 @@ export interface Draft {
   message: string;
   anchors: string[];
   tone: Tone;
+  secondaryTone: Tone;
 }
 
 export const STORAGE_KEY = 'cadeauaura.draft.v1';
@@ -48,6 +57,7 @@ export const emptyDraft: Draft = {
   message: '',
   anchors: [],
   tone: '',
+  secondaryTone: '',
 };
 
 /**
@@ -67,6 +77,9 @@ export function readDraft(): Draft {
       anchors: Array.isArray(parsed.anchors) ? parsed.anchors.slice(0, 4) : [],
       tone: KNOWN_TONES.includes(parsed.tone as Tone)
         ? (parsed.tone as Tone)
+        : '',
+      secondaryTone: KNOWN_TONES.includes(parsed.secondaryTone as Tone)
+        ? (parsed.secondaryTone as Tone)
         : '',
     };
   } catch {
