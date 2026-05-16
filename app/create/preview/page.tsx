@@ -3,6 +3,11 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
+import { createMoment, type CreateMomentResult } from '@/lib/api/moment';
+import { getDeviceId } from '@/lib/device';
+import { slugifyName } from '@/lib/recipient';
+import { buildWhatsAppShare } from '@/lib/whatsapp';
+
 type Tone =
   | ''
   | 'vague'
@@ -11,7 +16,6 @@ type Tone =
   | 'grief'
   | 'distance'
   | 'hurt';
-
 const KNOWN_TONES: readonly Tone[] = [
   'vague',
   'warm',
@@ -27,6 +31,7 @@ interface Draft {
   message: string;
   anchors: string[];
   tone: Tone;
+  secondaryTone: Tone;
 }
 
 const STORAGE_KEY = 'cadeauaura.draft.v1';
@@ -43,19 +48,18 @@ function readDraft(): Draft | null {
       emotion: parsed.emotion ?? '',
       message: parsed.message ?? '',
       anchors: Array.isArray(parsed.anchors) ? parsed.anchors.slice(0, 4) : [],
-      tone: KNOWN_TONES.includes(parsed.tone as Tone) ? (parsed.tone as Tone) : '',
+      tone: KNOWN_TONES.includes(parsed.tone as Tone)
+        ? (parsed.tone as Tone)
+        : '',
+      secondaryTone: KNOWN_TONES.includes(parsed.secondaryTone as Tone)
+        ? (parsed.secondaryTone as Tone)
+        : '',
     };
   } catch {
     return null;
   }
 }
 
-/**
- * Tone-shifted microcopy for the rehearsal page. Grief and hurt earn
- * softer framing than the default product copy in every slot — title,
- * CTA, and bottom note. Everything else falls through to the same
- * baseline phrasing.
- */
 const PREVIEW_TITLE: Record<Tone, string> = {
   grief: 'A quiet draft, for someone you have lost.',
   distance: 'A draft across the time you have not closed.',
@@ -67,35 +71,43 @@ const PREVIEW_TITLE: Record<Tone, string> = {
 };
 
 const PREVIEW_CTA: Record<Tone, string> = {
-  grief: 'See how it would reach them',
-  distance: 'See how it would reach across',
-  hurt: 'See how it would land',
-  vague: 'Open demo reveal',
-  warm: 'Open demo reveal',
-  specific: 'Open demo reveal',
-  '': 'Open demo reveal',
+  grief: 'Create their quiet link',
+  distance: 'Create the thread',
+  hurt: 'Create their private link',
+  vague: 'Create private link',
+  warm: 'Create private link',
+  specific: 'Create private link',
+  '': 'Create private link',
 };
 
 const PREVIEW_CLOSING: Record<Tone, string> = {
   grief:
-    'This rehearsal stays on your device. There is no rush, and no one else can see it.',
+    'Once you create the link, it is yours to share when you are ready.',
   distance:
-    'This stays on your device. No bridge has to be crossed unless you decide.',
+    'The link lives only when you decide to share it.',
   hurt:
-    'This rehearsal is yours alone, held quietly on your device until you are ready.',
+    'You can hold the link, send it, or never use it. It is yours.',
   vague:
-    'This preview lives only on your device. Sending and the recipient’s reveal come next.',
+    'A private link will be ready for you to share when you decide.',
   warm:
-    'This preview lives only on your device. Sending and the recipient’s reveal come next.',
+    'A private link will be ready for you to share when you decide.',
   specific:
-    'This preview lives only on your device. Sending and the recipient’s reveal come next.',
+    'A private link will be ready for you to share when you decide.',
   '':
-    'This preview lives only on your device. Sending and the recipient’s reveal come next.',
+    'A private link will be ready for you to share when you decide.',
 };
+
+type CreateState =
+  | { status: 'idle' }
+  | { status: 'creating' }
+  | { status: 'created'; result: CreateMomentResult }
+  | { status: 'error'; reason: string };
 
 export default function PreviewPage() {
   const [draft, setDraft] = useState<Draft | null>(null);
   const [hydrated, setHydrated] = useState(false);
+  const [createState, setCreateState] = useState<CreateState>({ status: 'idle' });
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     setDraft(readDraft());
@@ -132,12 +144,49 @@ export default function PreviewPage() {
     );
   }
 
-  const message =
+  const finalMessage =
     draft.message.trim().length > 0
       ? draft.message
       : `A moment, for ${draft.recipientName}.`;
 
-  const anchorsLine = draft.anchors.length > 0 ? draft.anchors.join(' · ') : '';
+  const anchorsLine =
+    draft.anchors.length > 0 ? draft.anchors.join(' · ') : '';
+
+  async function handleCreateLink() {
+    if (!draft) return;
+    setCreateState({ status: 'creating' });
+    try {
+      const result = await createMoment({
+        recipientDisplayName: draft.recipientName.trim(),
+        recipientSlug: slugifyName(draft.recipientName),
+        message: finalMessage,
+        emotion: draft.emotion,
+        tone: draft.tone,
+        secondaryTone: draft.secondaryTone,
+        anchors: draft.anchors,
+        senderDeviceId: getDeviceId(),
+      });
+      setCreateState({ status: 'created', result });
+    } catch (err) {
+      setCreateState({
+        status: 'error',
+        reason: err instanceof Error ? err.message : 'unknown',
+      });
+    }
+  }
+
+  async function handleCopy(url: string) {
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1500);
+    } catch {
+      // some browsers block clipboard without secure context — silent.
+    }
+  }
+
+  const isCreating = createState.status === 'creating';
+  const created = createState.status === 'created' ? createState.result : null;
 
   return (
     <main className="relative min-h-[88svh] overflow-hidden bg-ink-950 px-6 py-16 text-cream-50 sm:px-10 sm:py-20">
@@ -164,7 +213,7 @@ export default function PreviewPage() {
           </p>
 
           <p className="mt-6 font-display text-2xl italic font-light leading-relaxed text-cream-50 sm:text-3xl">
-            {message}
+            {finalMessage}
           </p>
 
           {draft.emotion ? (
@@ -181,32 +230,93 @@ export default function PreviewPage() {
           </p>
         ) : null}
 
-        <div className="mt-10 flex flex-wrap items-center gap-4 text-sm">
-          <Link
-            href="/r/demo"
-            className="group inline-flex items-center gap-2 rounded-full bg-rose-500 px-6 py-3 font-medium text-cream-50 shadow-[0_18px_50px_-18px_rgba(143,20,49,0.7)] transition hover:bg-rose-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gold-300"
-          >
-            <span>{PREVIEW_CTA[draft.tone]}</span>
-            <span
-              aria-hidden
-              className="transition-transform duration-300 group-hover:translate-x-1"
+        {/* Create-link panel */}
+        {!created ? (
+          <div className="mt-10 flex flex-wrap items-center gap-4 text-sm">
+            <button
+              type="button"
+              onClick={handleCreateLink}
+              disabled={isCreating}
+              className="group inline-flex items-center gap-2 rounded-full bg-rose-500 px-6 py-3 font-medium text-cream-50 shadow-[0_18px_50px_-18px_rgba(143,20,49,0.7)] transition hover:bg-rose-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gold-300 disabled:cursor-not-allowed disabled:bg-cream-50/10 disabled:text-cream-50/30 disabled:shadow-none"
             >
-              →
-            </span>
-          </Link>
-          <Link
-            href="/create"
-            className="rounded-full border border-cream-50/20 px-6 py-3 font-light text-cream-50/80 transition hover:border-cream-50/45 hover:text-cream-50"
-          >
-            Edit
-          </Link>
-          <Link
-            href="/"
-            className="text-cream-50/45 underline-offset-4 hover:text-cream-50/80 hover:underline"
-          >
-            Return home
-          </Link>
-        </div>
+              <span>{isCreating ? 'Preparing the link…' : PREVIEW_CTA[draft.tone]}</span>
+              {!isCreating && (
+                <span
+                  aria-hidden
+                  className="transition-transform duration-300 group-hover:translate-x-1"
+                >
+                  →
+                </span>
+              )}
+            </button>
+            <Link
+              href="/create"
+              className="rounded-full border border-cream-50/20 px-6 py-3 font-light text-cream-50/80 transition hover:border-cream-50/45 hover:text-cream-50"
+            >
+              Edit
+            </Link>
+            <Link
+              href="/"
+              className="text-cream-50/45 underline-offset-4 hover:text-cream-50/80 hover:underline"
+            >
+              Return home
+            </Link>
+          </div>
+        ) : (
+          <div className="mt-10 border-t border-gold-300/15 pt-8">
+            <p className="text-[0.6rem] font-light uppercase tracking-[0.28em] text-cream-50/40">
+              Your private link
+            </p>
+            <p className="mt-3 break-all font-display text-base leading-7 text-cream-50/85 sm:text-lg">
+              {created.shareUrl}
+            </p>
+
+            {created.linkActive ? (
+              <div className="mt-6 flex flex-wrap items-center gap-4 text-sm">
+                <button
+                  type="button"
+                  onClick={() => handleCopy(created.shareUrl)}
+                  className="rounded-full border border-cream-50/20 px-5 py-3 font-light text-cream-50/85 transition hover:border-cream-50/45 hover:text-cream-50"
+                >
+                  {copied ? 'Copied' : 'Copy link'}
+                </button>
+                <a
+                  href={buildWhatsAppShare(
+                    created.shareUrl,
+                    draft.recipientName,
+                  )}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="rounded-full bg-cream-50 px-5 py-3 font-medium text-ink-900 transition hover:bg-mist-200"
+                >
+                  Share on WhatsApp
+                </a>
+                <Link
+                  href="/create"
+                  className="text-cream-50/45 underline-offset-4 hover:text-cream-50/80 hover:underline"
+                >
+                  Begin another
+                </Link>
+              </div>
+            ) : (
+              <p className="mt-5 text-xs leading-6 text-cream-50/45">
+                This link will live when storage is configured for the
+                deployment. For now, it is held only in this rehearsal.
+              </p>
+            )}
+
+            <p className="mt-8 max-w-md text-xs leading-6 text-cream-50/30">
+              The link is private. Only the person who has it can open the
+              moment. Nothing has been sent yet.
+            </p>
+          </div>
+        )}
+
+        {createState.status === 'error' && (
+          <p className="mt-6 text-xs leading-6 text-cream-50/55">
+            The link could not be prepared just now. Try again in a moment.
+          </p>
+        )}
 
         <p className="mt-12 max-w-md text-xs leading-6 text-cream-50/30">
           {PREVIEW_CLOSING[draft.tone]}
