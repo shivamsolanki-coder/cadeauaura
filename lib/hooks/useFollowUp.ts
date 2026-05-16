@@ -22,6 +22,7 @@ export interface UseFollowUpResult {
   done: boolean;
   anchors: string[];
   tone: Tone;
+  secondaryTone: Tone;
 }
 
 /**
@@ -43,20 +44,20 @@ export function useFollowUp(input: UseFollowUpInput): UseFollowUpResult {
   const [loading, setLoading] = useState(false);
   const [anchors, setAnchors] = useState<string[]>([]);
   const [tone, setTone] = useState<Tone>('');
+  const [secondaryTone, setSecondaryTone] = useState<Tone>('');
 
   const typewriterRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const indexRef = useRef(0);
   const delayRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const fetchKeyRef = useRef('');
 
-  // Fire the fetch when the reflection finishes typing. Keyed on
-  // (telling, reflection) so we never trigger twice for the same one.
   useEffect(() => {
     if (!input.reflection) {
       setFullText('');
       setDisplayedText('');
       setAnchors([]);
       setTone('');
+      setSecondaryTone('');
       fetchKeyRef.current = '';
       if (delayRef.current) {
         clearTimeout(delayRef.current);
@@ -82,6 +83,7 @@ export function useFollowUp(input: UseFollowUpInput): UseFollowUpResult {
         setFullText(result.followUp);
         setAnchors(result.anchors);
         setTone(result.tone);
+        setSecondaryTone(result.secondaryTone);
       } catch {
         // The follow-up is optional — failing silently keeps the page calm.
       } finally {
@@ -94,7 +96,6 @@ export function useFollowUp(input: UseFollowUpInput): UseFollowUpResult {
     };
   }, [input.telling, input.reflection, input.reflectionDone]);
 
-  // Typewriter playback.
   useEffect(() => {
     if (!fullText) {
       setDisplayedText('');
@@ -117,7 +118,6 @@ export function useFollowUp(input: UseFollowUpInput): UseFollowUpResult {
     return () => clearInterval(interval);
   }, [fullText]);
 
-  // Cleanup on unmount.
   useEffect(() => {
     return () => {
       if (delayRef.current) clearTimeout(delayRef.current);
@@ -134,5 +134,6 @@ export function useFollowUp(input: UseFollowUpInput): UseFollowUpResult {
     done,
     anchors,
     tone,
+    secondaryTone,
   };
 }
