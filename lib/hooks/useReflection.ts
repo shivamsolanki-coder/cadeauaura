@@ -58,7 +58,6 @@ export function useReflection(
     }
   }, []);
 
-  // Debounce telling changes, then fetch.
   useEffect(() => {
     if (!enabled) return;
     if (debounceRef.current) clearTimeout(debounceRef.current);
@@ -79,7 +78,6 @@ export function useReflection(
     };
   }, [telling, enabled, trigger]);
 
-  // Typewriter playback.
   useEffect(() => {
     if (!fullText) {
       setDisplayedText('');
@@ -102,7 +100,6 @@ export function useReflection(
     return () => clearInterval(interval);
   }, [fullText]);
 
-  // Cleanup on unmount.
   useEffect(() => {
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
