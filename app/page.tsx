@@ -1,545 +1,498 @@
+'use client';
+
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 
-import { HeroEcho } from '@/components/marketing/HeroEcho';
-import { HeroQuestion } from '@/components/marketing/HeroQuestion';
-import { productCategories } from '@/data/productCategories';
-import { products } from '@/data/products';
+import {
+  EMOTIONS,
+  emptyDraft,
+  readDraft,
+  writeDraft,
+  type Draft,
+} from '@/lib/draft';
+import { useComposer } from '@/lib/hooks/useComposer';
+import { useFollowUp } from '@/lib/hooks/useFollowUp';
+import { useReflection } from '@/lib/hooks/useReflection';
 
-const whatsappNumber = '919205089044';
+const MESSAGE_LIMIT = 280;
+const TELLING_LIMIT = 500;
 
-function getWhatsAppLink(productName?: string) {
-  const message = productName
-    ? `Hi CadeauAura, I am interested in ${productName}. Please share photos, price details and customization options.`
-    : 'Hi CadeauAura, I want help choosing a meaningful gift. Please guide me.';
+const PLAYFUL_TELLING = `Andar tairay raaz kai hein
+Khud say jo mil paye ga`;
 
-  return `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+const PLAYFUL_MESSAGE = `Some souls are understood slowly, because their depth is not meant for hurried eyes. What seems quiet on the surface often holds a rare kind of strength within. And in the end, it is not the loudest presence that stays with us, but the one that lingers in the heart.`;
+
+function isPlayfulRecipientName(name: string): boolean {
+  const normalized = name.trim().toLowerCase();
+  return normalized === 'ifra' || normalized === 'iffu' || normalized === 'chatgpt';
 }
 
-const trustItems = [
-  {
-    icon: '💬',
-    title: 'WhatsApp-based enquiry',
-    text: 'Share your occasion, budget and relationship. We help you choose the right gifting direction.',
-  },
-  {
-    icon: '🎁',
-    title: 'Curated gift suggestions',
-    text: 'Explore products by occasion, relationship, emotion and cultural warmth.',
-  },
-  {
-    icon: '✍️',
-    title: 'Custom message cards',
-    text: 'Add thoughtful lines that make the gift feel more personal and memorable.',
-  },
-  {
-    icon: '✨',
-    title: 'Premium packaging guidance',
-    text: 'Box, ribbon, card and presentation options are shared before final confirmation.',
-  },
-];
+export default function CreatePage() {
+  const router = useRouter();
+  const [draft, setDraft] = useState<Draft>(emptyDraft);
+  const [hydrated, setHydrated] = useState(false);
+  const messageTextareaRef = useRef<HTMLTextAreaElement | null>(null);
 
-const howItWorks = [
-  {
-    step: '01',
-    title: 'Choose the moment',
-    text: 'Select birthday, anniversary, wedding, festive, parent or corporate gifting.',
-  },
-  {
-    step: '02',
-    title: 'Pick a gift idea',
-    text: 'Browse gift boxes, hampers, keepsakes, message cards and packaging options.',
-  },
-  {
-    step: '03',
-    title: 'Enquire on WhatsApp',
-    text: 'Ask for real photos, customization options, final price and delivery details.',
-  },
-  {
-    step: '04',
-    title: 'Confirm the final gift',
-    text: 'Once everything is clear, you can finalize the gift as per your requirement.',
-  },
-];
+  const autoTellingAppliedRef = useRef(false);
+  const autoMessageAppliedRef = useRef(false);
+  const previousRecipientRef = useRef('');
 
-const featuredProductSlugs = [
-  'romantic-memory-box',
-  'birthday-surprise-box',
-  'wedding-blessing-box',
-  'diya-festive-box',
-  'client-appreciation-box',
-  'gratitude-box-for-parents',
-];
+  useEffect(() => {
+    setDraft(readDraft());
+    setHydrated(true);
+  }, []);
 
-const pathways = [
-  {
-    title: 'Birthday Gifts',
-    text: 'Thoughtful birthday boxes, cards and personalized surprises.',
-    href: '/categories/birthday-gifts',
-    image: '/hero-gift.jpg.png',
-  },
-  {
-    title: 'Anniversary Gifts',
-    text: 'Romantic keepsakes and meaningful gifts for couples.',
-    href: '/categories/anniversary-gifts',
-    image: '/meaning-card.jpg.png',
-  },
-  {
-    title: 'Festive Gifts',
-    text: 'Warm Indian gifting ideas for celebrations and rituals.',
-    href: '/categories/festive-gifts',
-    image: '/culture-diya.jpg.png',
-  },
-  {
-    title: 'Corporate Gifts',
-    text: 'Professional gift boxes for clients, teams and events.',
-    href: '/categories/corporate-gifts',
-    image: '/story-unboxing.jpg.png',
-  },
-];
+  useEffect(() => {
+    if (!hydrated) return;
+    writeDraft(draft);
+  }, [draft, hydrated]);
 
-const meaningCards = [
-  {
-    title: 'Love',
-    text: 'You make ordinary days feel special.',
-  },
-  {
-    title: 'Gratitude',
-    text: 'Thank you for being there in ways words cannot fully hold.',
-  },
-  {
-    title: 'Pride',
-    text: 'Seeing you grow makes this moment even more meaningful.',
-  },
-];
+  const reflection = useReflection(draft.senderTelling, hydrated);
+  const followUp = useFollowUp({
+    telling: draft.senderTelling,
+    reflection: reflection.fullText,
+    reflectionDone: reflection.done,
+  });
+  const composer = useComposer();
+  const { reset: resetComposer } = composer;
 
-const featuredSlugs = [
-  'birthday-gifts',
-  'anniversary-gifts',
-  'wedding-gifts',
-  'festive-gifts',
-];
+  useEffect(() => {
+    const previous = previousRecipientRef.current;
+    const current = draft.recipientName.trim().toLowerCase();
 
-export default function HomePage() {
-  const featuredProducts = products.filter((product) =>
-    featuredProductSlugs.includes(product.slug)
-  );
+    if (previous !== current) {
+      autoTellingAppliedRef.current = false;
+      autoMessageAppliedRef.current = false;
+      previousRecipientRef.current = current;
+    }
+  }, [draft.recipientName]);
 
-  const featuredCategories = productCategories.filter((category) =>
-    featuredSlugs.includes(category.slug)
-  );
+  useEffect(() => {
+    if (!hydrated) return;
+    if (!isPlayfulRecipientName(draft.recipientName)) return;
+    if (autoTellingAppliedRef.current) return;
+    if (draft.senderTelling.trim().length > 0) return;
+
+    autoTellingAppliedRef.current = true;
+    setDraft((current) => ({
+      ...current,
+      senderTelling: PLAYFUL_TELLING,
+    }));
+  }, [draft.recipientName, draft.senderTelling, hydrated]);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    if (!isPlayfulRecipientName(draft.recipientName)) return;
+    if (draft.emotion === '') return;
+    if (autoMessageAppliedRef.current) return;
+    if (draft.message.trim().length > 0) return;
+
+    autoMessageAppliedRef.current = true;
+    setDraft((current) => ({
+      ...current,
+      message: PLAYFUL_MESSAGE,
+    }));
+  }, [draft.recipientName, draft.emotion, draft.message, hydrated]);
+
+  // Mirror anchors + tone + secondaryTone from the follow-up hook back
+  // into the draft so they survive a refresh via localStorage. The hook
+  // produces; the draft is the source of truth.
+  useEffect(() => {
+    setDraft((current) => {
+      const sameAnchors =
+        current.anchors.length === followUp.anchors.length &&
+        current.anchors.every((a, i) => a === followUp.anchors[i]);
+
+      if (
+        sameAnchors &&
+        current.tone === followUp.tone &&
+        current.secondaryTone === followUp.secondaryTone
+      ) {
+        return current;
+      }
+
+      return {
+        ...current,
+        anchors: followUp.anchors,
+        tone: followUp.tone,
+        secondaryTone: followUp.secondaryTone,
+      };
+    });
+  }, [followUp.anchors, followUp.tone, followUp.secondaryTone]);
+
+  useEffect(() => {
+    resetComposer();
+  }, [draft.senderTelling, resetComposer]);
+
+  function update<K extends keyof Draft>(key: K, value: Draft[K]) {
+    setDraft((current) => ({ ...current, [key]: value }));
+  }
+
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!canPreview) return;
+    router.push('/create/preview');
+  }
+
+  function chooseDraft(text: string) {
+    update('message', text);
+    composer.dismiss();
+  }
+
+  function takeIntoWords() {
+    messageTextareaRef.current?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'center',
+    });
+
+    void composer.trigger({
+      recipientName: draft.recipientName.trim(),
+      telling: draft.senderTelling.trim(),
+      anchors: draft.anchors,
+      tone: draft.tone,
+      emotion: draft.emotion,
+    });
+  }
+
+  const canPreview =
+    draft.recipientName.trim().length > 0 &&
+    (draft.emotion !== '' || draft.senderTelling.trim().length > 0);
+
+  const composerEligible =
+    draft.recipientName.trim().length > 0 &&
+    draft.senderTelling.trim().length >= 10;
+
+  const showReflection =
+    reflection.loading || reflection.displayedText.length > 0;
+  const showFollowUp =
+    reflection.done && (followUp.loading || followUp.displayedText.length > 0);
+  const showFollowUpCta =
+    followUp.done && composerEligible && composer.drafts.length === 0;
 
   return (
-    <main className="overflow-hidden">
-      <HeroQuestion />
-      <HeroEcho />
+    <main className="relative min-h-[88svh] overflow-hidden bg-ink-950 px-6 py-16 text-cream-50 sm:px-10 sm:py-20">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_15%,rgba(215,162,93,0.08),transparent_55%),radial-gradient(circle_at_50%_100%,rgba(143,20,49,0.18),transparent_60%)]"
+      />
 
-      <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10">
-        <div className="grid overflow-hidden rounded-[2rem] border border-[#ead8c7] bg-[#fff7ef] shadow-xl md:grid-cols-2 xl:grid-cols-4">
-          {trustItems.map((item) => (
-            <div
-              key={item.title}
-              className="border-b border-[#ead8c7] p-6 last:border-b-0 md:border-r md:last:border-r-0 xl:border-b-0"
-            >
-              <div className="flex items-start gap-4">
-                <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-[#ead8c7] bg-white text-2xl text-[#8f1431] shadow-sm">
-                  {item.icon}
-                </span>
-                <div>
-                  <h2 className="font-serif text-xl leading-tight text-[#5a1722]">
-                    {item.title}
-                  </h2>
-                  <p className="mt-2 text-sm leading-6 text-stone-600">
-                    {item.text}
-                  </p>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
+      <div className="relative mx-auto w-full max-w-2xl">
+        <p className="text-xs font-light uppercase tracking-[0.32em] text-gold-300/70">
+          A moment, for someone
+        </p>
 
-      <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
-        <div className="mb-7 flex flex-col justify-between gap-4 md:flex-row md:items-end">
+        <h1 className="mt-4 font-display font-light leading-[1.05] tracking-[-0.02em] text-cream-50 text-[clamp(2rem,5vw,3.25rem)]">
+          Tell us who this is for.
+        </h1>
+
+        <p className="mt-4 max-w-md text-sm leading-7 text-cream-50/60">
+          A few quiet questions. Nothing is sent until you say so. Your draft
+          is held on this device.
+        </p>
+
+        <form
+          onSubmit={handleSubmit}
+          className="mt-12 space-y-12 sm:mt-14 sm:space-y-14"
+          aria-label="Moment builder"
+        >
           <div>
-            <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#8a4a2d]">
-              Featured gifts
-            </p>
-            <h2 className="mt-3 font-serif text-4xl leading-tight text-[#5a1722] sm:text-5xl">
-              Real gift ideas you can enquire for
-            </h2>
-            <p className="mt-3 max-w-2xl text-sm leading-7 text-stone-700">
-              Start with these popular gifting ideas. Ask for photos,
-              customization, packaging and delivery details on WhatsApp.
-            </p>
-          </div>
-
-          <Link
-            href="/categories"
-            className="text-sm font-bold text-[#8f1431] transition hover:text-[#5a1722]"
-          >
-            Explore all gift categories →
-          </Link>
-        </div>
-
-        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-          {featuredProducts.map((product) => (
-            <article
-              key={product.slug}
-              className="group overflow-hidden rounded-[2rem] border border-[#ead8c7] bg-[#fff7ef] shadow-sm transition hover:-translate-y-1 hover:shadow-2xl"
-            >
-              <div
-                className="relative min-h-[250px] bg-cover bg-center transition duration-700 group-hover:scale-[1.03]"
-                style={{ backgroundImage: `url('${product.image}')` }}
+            <div className="flex items-baseline gap-3">
+              <span
+                aria-hidden
+                className="text-[0.65rem] font-light tracking-[0.32em] text-gold-300/55"
               >
-                <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(22,6,6,0.05),rgba(22,6,6,0.72))]" />
-
-                <div className="absolute left-5 top-5 rounded-full border border-[#d7a25d]/40 bg-[#160606]/70 px-3 py-1 text-xs font-bold uppercase tracking-[0.22em] text-[#f3c982] backdrop-blur">
-                  {product.badge}
-                </div>
-
-                <div className="absolute bottom-5 left-5 right-5">
-                  <h3 className="font-serif text-3xl leading-tight text-[#fff7ef]">
-                    {product.name}
-                  </h3>
-                  <p className="mt-2 text-sm font-bold text-[#f3c982]">
-                    {product.price}
-                  </p>
-                </div>
-              </div>
-
-              <div className="p-6">
-                <p className="text-sm leading-7 text-stone-700">
-                  {product.description}
-                </p>
-
-                <p className="mt-4 rounded-2xl bg-white px-4 py-3 text-sm font-semibold text-[#5a1722]">
-                  Best for: {product.bestFor}
-                </p>
-
-                <div className="mt-5 flex flex-wrap gap-3">
-                  <a
-                    href={getWhatsAppLink(product.name)}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="rounded-full bg-[#25D366] px-5 py-3 text-sm font-bold text-white transition hover:-translate-y-1 hover:bg-[#1ebe5d]"
-                  >
-                    Enquire on WhatsApp
-                  </a>
-
-                  <Link
-                    href={`/categories/${product.categorySlug}`}
-                    className="rounded-full border border-[#d7a25d]/50 bg-white px-5 py-3 text-sm font-bold text-[#5a1722] transition hover:bg-[#fff2df]"
-                  >
-                    View category
-                  </Link>
-                </div>
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
-        <div className="rounded-[2.5rem] bg-[#4a0716] p-6 text-white shadow-2xl shadow-[#4a0716]/20 sm:p-8 lg:p-10">
-          <div className="flex flex-col justify-between gap-5 md:flex-row md:items-end">
-            <div>
-              <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#e8b36f]">
-                How it works
-              </p>
-              <h2 className="mt-3 font-serif text-4xl leading-tight sm:text-5xl">
-                Simple enquiry. Clear guidance. Better gifting.
-              </h2>
-              <p className="mt-3 max-w-2xl text-sm leading-7 text-white/70">
-                CadeauAura is built for people who want a thoughtful gift but
-                need help choosing the right option.
-              </p>
+                01
+              </span>
+              <label
+                htmlFor="recipientName"
+                className="block text-xs font-light uppercase tracking-[0.28em] text-cream-50/55"
+              >
+                Name
+              </label>
             </div>
-
-            <a
-              href={getWhatsAppLink()}
-              target="_blank"
-              rel="noreferrer"
-              className="rounded-full border border-[#e8b36f]/40 px-5 py-3 text-sm font-semibold text-[#e8b36f] transition hover:bg-[#e8b36f] hover:text-[#430816]"
-            >
-              Ask for gift help
-            </a>
+            <input
+              id="recipientName"
+              name="recipientName"
+              type="text"
+              autoComplete="off"
+              value={draft.recipientName}
+              onChange={(event) => update('recipientName', event.target.value)}
+              placeholder="Aarav"
+              className="mt-4 w-full border-b border-cream-50/15 bg-transparent pb-3 font-display text-2xl text-cream-50 placeholder:text-cream-50/25 focus:border-gold-300/60 focus:outline-none sm:text-3xl"
+            />
           </div>
 
-          <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-            {howItWorks.map((item) => (
-              <div
-                key={item.step}
-                className="rounded-3xl border border-white/10 bg-white/[0.08] p-6 backdrop-blur"
-              >
-                <p className="text-sm font-black text-[#e8b36f]">
-                  {item.step}
-                </p>
-                <h3 className="mt-4 font-serif text-2xl text-[#fff7ef]">
-                  {item.title}
-                </h3>
-                <p className="mt-3 text-sm leading-7 text-white/65">
-                  {item.text}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
-        <div className="mb-7 flex flex-col justify-between gap-4 md:flex-row md:items-end">
           <div>
-            <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#8a4a2d]">
-              Shop by need
-            </p>
-            <h2 className="mt-3 font-serif text-4xl leading-tight text-[#5a1722] sm:text-5xl">
-              Find gifts by occasion or relationship
-            </h2>
-          </div>
-
-          <Link
-            href="/gift-finder"
-            className="text-sm font-bold text-[#8f1431] transition hover:text-[#5a1722]"
-          >
-            Get gift suggestions →
-          </Link>
-        </div>
-
-        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-          {pathways.map((item) => (
-            <Link
-              key={item.title}
-              href={item.href}
-              className="group relative min-h-[300px] overflow-hidden rounded-[2rem] border border-[#ead8c7] shadow-xl transition hover:-translate-y-1 hover:shadow-2xl sm:min-h-[320px]"
-            >
-              <div
-                className="absolute inset-0 bg-cover bg-center transition duration-700 group-hover:scale-110"
-                style={{ backgroundImage: `url('${item.image}')` }}
-              />
-              <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(22,6,6,0.08),rgba(22,6,6,0.88))]" />
-
-              <div className="absolute inset-x-0 bottom-0 p-6">
-                <span className="mb-4 flex h-12 w-12 items-center justify-center rounded-full border border-[#d7a25d]/40 bg-[#160606]/65 text-xl text-[#f3c982] backdrop-blur">
-                  ✦
-                </span>
-                <h3 className="font-serif text-3xl leading-tight text-[#fff7ef]">
-                  {item.title}
-                </h3>
-                <p className="mt-2 text-sm leading-6 text-[#f6dfd0]/75">
-                  {item.text}
-                </p>
-                <p className="mt-4 text-sm font-bold text-[#f3c982]">
-                  View gift ideas →
-                </p>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
-        <div className="rounded-[2.5rem] bg-[#4a0716] p-6 text-white shadow-2xl shadow-[#4a0716]/20 sm:p-8 lg:p-10">
-          <div className="flex flex-col justify-between gap-5 md:flex-row md:items-end">
-            <div>
-              <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#e8b36f]">
-                Featured collections
-              </p>
-              <h2 className="mt-3 font-serif text-4xl leading-tight sm:text-5xl">
-                Explore more gifting categories
-              </h2>
-              <p className="mt-3 max-w-2xl text-sm leading-7 text-white/70">
-                Browse curated categories by occasion and gift purpose.
-              </p>
-            </div>
-
-            <Link
-              href="/categories"
-              className="rounded-full border border-[#e8b36f]/40 px-5 py-3 text-sm font-semibold text-[#e8b36f] transition hover:bg-[#e8b36f] hover:text-[#430816]"
-            >
-              Explore Gift Categories
-            </Link>
-          </div>
-
-          <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-            {featuredCategories.map((category) => (
-              <Link
-                key={category.slug}
-                href={category.href}
-                className="group overflow-hidden rounded-3xl border border-white/10 bg-white/[0.08] backdrop-blur transition hover:-translate-y-1 hover:bg-white/[0.12]"
+            <div className="flex items-baseline gap-3">
+              <span
+                aria-hidden
+                className="text-[0.65rem] font-light tracking-[0.32em] text-gold-300/55"
               >
-                <div
-                  className="min-h-[220px] bg-cover bg-center transition duration-700 group-hover:scale-105"
-                  style={{ backgroundImage: `url('${category.image}')` }}
-                />
-                <div className="p-5">
-                  <p className="text-xs font-bold uppercase tracking-[0.24em] text-[#e8b36f]">
-                    {category.badge}
-                  </p>
-                  <h3 className="mt-3 font-serif text-2xl text-[#fff7ef]">
-                    {category.title}
-                  </h3>
-                  <p className="mt-3 text-sm leading-6 text-white/65">
-                    {category.description}
-                  </p>
-                  <div className="mt-5 flex items-center justify-between gap-3">
-                    <span className="text-sm font-bold text-[#e8b36f]">
-                      {category.priceRange}
-                    </span>
-                    <span className="rounded-full bg-[#fff7ef] px-4 py-2 text-sm font-semibold text-[#4a0716]">
-                      View ideas →
-                    </span>
+                02
+              </span>
+              <label
+                htmlFor="senderTelling"
+                className="block text-xs font-light uppercase tracking-[0.28em] text-cream-50/55"
+              >
+                Tell me about them
+              </label>
+            </div>
+            <p className="mt-2 text-sm leading-7 text-cream-50/45">
+              A few words about who they are, or what they have held for you.
+            </p>
+            <textarea
+              id="senderTelling"
+              name="senderTelling"
+              rows={3}
+              maxLength={TELLING_LIMIT}
+              value={draft.senderTelling}
+              onChange={(event) => update('senderTelling', event.target.value)}
+              placeholder="She carried me through last year without making it a big deal."
+              className="mt-5 w-full resize-none border-b border-cream-50/15 bg-transparent pb-3 font-display text-lg leading-8 text-cream-50 placeholder:text-cream-50/25 focus:border-gold-300/60 focus:outline-none"
+            />
+            <p className="mt-2 text-right text-xs text-cream-50/35">
+              {draft.senderTelling.length}/{TELLING_LIMIT}
+            </p>
+
+            {showReflection && (
+              <div className="mt-6 border-t border-gold-300/15 pt-5">
+                {reflection.loading ? (
+                  <div className="flex items-center gap-[5px]" aria-label="Listening">
+                    <span className="inline-block h-1 w-1 animate-pulse rounded-full bg-gold-300/50" />
+                    <span className="inline-block h-1 w-1 animate-pulse rounded-full bg-gold-300/50 [animation-delay:150ms]" />
+                    <span className="inline-block h-1 w-1 animate-pulse rounded-full bg-gold-300/50 [animation-delay:300ms]" />
                   </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
+                ) : (
+                  <>
+                    <p className="font-display text-base italic leading-7 text-cream-50/65">
+                      {reflection.displayedText}
+                      {reflection.displayedText.length < reflection.fullText.length && (
+                        <span
+                          aria-hidden
+                          className="ml-[1px] inline-block h-[0.9em] w-px animate-pulse bg-cream-50/40 align-middle"
+                        />
+                      )}
+                    </p>
 
-      <section className="mx-auto grid max-w-7xl gap-6 px-4 py-8 sm:px-6 lg:grid-cols-[0.95fr_1.05fr]">
-        <div className="relative min-h-[360px] overflow-hidden rounded-[2.5rem] border border-[#ead8c7] shadow-xl sm:min-h-[420px]">
-          <div
-            className="absolute inset-0 bg-cover bg-center"
-            style={{ backgroundImage: "url('/meaning-card.jpg.png')" }}
-          />
-          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(22,6,6,0.02),rgba(22,6,6,0.62))]" />
-          <p className="absolute bottom-6 left-6 right-6 rounded-2xl bg-black/35 px-5 py-4 text-sm font-semibold text-white backdrop-blur">
-            Meaning cards help your gift carry the right words.
-          </p>
-        </div>
+                    {reflection.done && (
+                      <button
+                        type="button"
+                        onClick={reflection.tryAgain}
+                        disabled={reflection.maxAttemptsReached}
+                        className="mt-4 text-xs uppercase tracking-[0.28em] text-cream-50/35 underline-offset-4 transition hover:text-cream-50/60 hover:underline disabled:cursor-not-allowed disabled:opacity-30"
+                      >
+                        Try again
+                      </button>
+                    )}
 
-        <div className="rounded-[2.5rem] border border-[#ead8c7] bg-[#fff7ef] p-7 shadow-xl sm:p-10">
-          <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#8a4a2d]">
-            Words that feel real
-          </p>
-          <h2 className="mt-4 font-serif text-4xl leading-tight text-[#5a1722] sm:text-5xl">
-            Meaning cards for emotions gifts cannot say alone
-          </h2>
-          <p className="mt-4 text-sm leading-7 text-stone-700">
-            Add short, heartfelt message lines for love, gratitude, pride and
-            celebration. These can be paired with gift boxes and hampers.
-          </p>
+                    {showFollowUp && (
+                      <div className="mt-6 border-t border-gold-300/10 pt-5">
+                        {followUp.loading && followUp.displayedText.length === 0 ? (
+                          <div className="flex items-center gap-[5px]" aria-label="Listening more">
+                            <span className="inline-block h-1 w-1 animate-pulse rounded-full bg-gold-300/35" />
+                            <span className="inline-block h-1 w-1 animate-pulse rounded-full bg-gold-300/35 [animation-delay:150ms]" />
+                            <span className="inline-block h-1 w-1 animate-pulse rounded-full bg-gold-300/35 [animation-delay:300ms]" />
+                          </div>
+                        ) : (
+                          <>
+                            <p className="font-display text-sm italic leading-7 text-cream-50/50 sm:text-base">
+                              {followUp.displayedText}
+                              {followUp.displayedText.length < followUp.fullText.length && (
+                                <span
+                                  aria-hidden
+                                  className="ml-[1px] inline-block h-[0.9em] w-px animate-pulse bg-cream-50/30 align-middle"
+                                />
+                              )}
+                            </p>
 
-          <div className="mt-7 grid gap-4 sm:grid-cols-3">
-            {meaningCards.map((card) => (
-              <div
-                key={card.title}
-                className="rounded-3xl border border-[#ead8c7] bg-white p-5 shadow-sm"
-              >
-                <h3 className="font-serif text-2xl text-[#5a1722]">
-                  {card.title}
-                </h3>
-                <p className="mt-3 text-sm leading-6 text-stone-600">
-                  “{card.text}”
-                </p>
+                            {showFollowUpCta && (
+                              <button
+                                type="button"
+                                onClick={takeIntoWords}
+                                disabled={composer.loading}
+                                className="mt-4 text-[0.65rem] uppercase tracking-[0.28em] text-cream-50/40 underline-offset-4 transition hover:text-cream-50/70 hover:underline disabled:cursor-not-allowed disabled:opacity-30"
+                              >
+                                Take this into words →
+                              </button>
+                            )}
+                          </>
+                        )}
+                      </div>
+                    )}
+                  </>
+                )}
               </div>
-            ))}
+            )}
           </div>
 
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Link
-              href="/meaning-cards"
-              className="rounded-full bg-[#8f1431] px-7 py-4 text-sm font-semibold text-white transition hover:-translate-y-1 hover:bg-[#a51c3c]"
-            >
-              View Meaning Card Examples →
-            </Link>
-
-            <a
-              href={getWhatsAppLink('Custom Message Card')}
-              target="_blank"
-              rel="noreferrer"
-              className="rounded-full border border-[#d7a25d]/50 bg-white px-7 py-4 text-sm font-semibold text-[#5a1722] transition hover:-translate-y-1 hover:bg-[#fff2df]"
-            >
-              Ask for card options
-            </a>
+          <div>
+            <div className="flex items-baseline gap-3">
+              <span
+                aria-hidden
+                className="text-[0.65rem] font-light tracking-[0.32em] text-gold-300/55"
+              >
+                03
+              </span>
+              <span className="block text-xs font-light uppercase tracking-[0.28em] text-cream-50/55">
+                Feeling
+              </span>
+              <span className="text-[0.6rem] font-light uppercase tracking-[0.2em] text-cream-50/30">
+                optional
+              </span>
+            </div>
+            <p className="mt-2 text-sm leading-7 text-cream-50/45">
+              What do you want them to feel?
+            </p>
+            <div className="mt-5 flex flex-wrap gap-2">
+              {EMOTIONS.map((option) => {
+                const active = draft.emotion === option;
+                return (
+                  <button
+                    key={option}
+                    type="button"
+                    onClick={() => update('emotion', active ? '' : option)}
+                    aria-pressed={active}
+                    className={`rounded-full border px-4 py-2 text-sm transition ${
+                      active
+                        ? 'border-cream-50 bg-cream-50 text-ink-900'
+                        : 'border-cream-50/15 text-cream-50/55 hover:border-cream-50/35 hover:text-cream-50/80'
+                    }`}
+                  >
+                    {option}
+                  </button>
+                );
+              })}
+            </div>
           </div>
-        </div>
-      </section>
 
-      <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
-        <div className="grid overflow-hidden rounded-[2.5rem] bg-[#5a0718] text-white shadow-2xl lg:grid-cols-[0.9fr_1.1fr]">
-          <div className="p-8 sm:p-10 lg:p-12">
-            <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#e8b36f]">
-              Rooted in culture
+          <div>
+            <div className="flex items-baseline gap-3">
+              <span
+                aria-hidden
+                className="text-[0.65rem] font-light tracking-[0.32em] text-gold-300/55"
+              >
+                04
+              </span>
+              <label
+                htmlFor="message"
+                className="block text-xs font-light uppercase tracking-[0.28em] text-cream-50/55"
+              >
+                Words
+              </label>
+            </div>
+            <p className="mt-2 text-sm leading-7 text-cream-50/45">
+              A few words for them. Anything that has been waiting.
             </p>
-            <h2 className="mt-4 font-serif text-4xl leading-tight sm:text-5xl">
-              Gifts inspired by Indian warmth, ritual and celebration
-            </h2>
-            <p className="mt-5 text-sm leading-7 text-white/75">
-              From diya-lit festive moments to elegant message cards,
-              CadeauAura blends cultural warmth with modern premium gifting.
+            <textarea
+              ref={messageTextareaRef}
+              id="message"
+              name="message"
+              rows={4}
+              maxLength={MESSAGE_LIMIT}
+              value={draft.message}
+              onChange={(event) => update('message', event.target.value)}
+              placeholder="You held a year I almost lost. Thank you."
+              className="mt-5 w-full resize-none border-b border-cream-50/15 bg-transparent pb-3 font-display text-lg leading-8 text-cream-50 placeholder:text-cream-50/25 focus:border-gold-300/60 focus:outline-none"
+            />
+            <p className="mt-2 text-right text-xs text-cream-50/35">
+              {draft.message.length}/{MESSAGE_LIMIT}
             </p>
 
-            <div className="mt-7 space-y-3">
-              {[
-                'Festive presentation options',
-                'Ritual-inspired gift ideas',
-                'Elegant keepsake and card add-ons',
-              ].map((item) => (
-                <div
-                  key={item}
-                  className="rounded-2xl border border-white/10 bg-white/[0.08] px-5 py-4 text-sm font-semibold text-[#fff7ef]"
-                >
-                  {item}
+            {composer.loading && composer.drafts.length === 0 && (
+              <div className="mt-6 border-t border-gold-300/15 pt-5">
+                <div className="flex items-center gap-[5px]" aria-label="Looking for the words">
+                  <span className="inline-block h-1 w-1 animate-pulse rounded-full bg-gold-300/50" />
+                  <span className="inline-block h-1 w-1 animate-pulse rounded-full bg-gold-300/50 [animation-delay:150ms]" />
+                  <span className="inline-block h-1 w-1 animate-pulse rounded-full bg-gold-300/50 [animation-delay:300ms]" />
                 </div>
-              ))}
-            </div>
+              </div>
+            )}
 
-            <Link
-              href="/culture-tradition"
-              className="mt-8 inline-flex rounded-full border border-[#e8b36f]/45 px-7 py-4 text-sm font-semibold text-[#e8b36f] transition hover:bg-[#e8b36f] hover:text-[#4a0716]"
+            {composer.drafts.length > 0 && (
+              <div className="mt-6 border-t border-gold-300/15 pt-5">
+                <p className="text-[0.6rem] font-light uppercase tracking-[0.28em] text-cream-50/35">
+                  Three quiet starts
+                </p>
+                <div className="mt-4 space-y-4">
+                  {composer.drafts.map((text, index) => (
+                    <button
+                      key={`${index}-${text.slice(0, 24)}`}
+                      type="button"
+                      onClick={() => chooseDraft(text)}
+                      className="block w-full border-l border-gold-300/15 pl-4 text-left transition hover:border-gold-300/45"
+                    >
+                      <p className="font-display text-base italic leading-7 text-cream-50/75">
+                        {text}
+                      </p>
+                    </button>
+                  ))}
+                </div>
+                <div className="mt-5 flex flex-wrap items-center gap-5">
+                  {composer.canRetry ? (
+                    <button
+                      type="button"
+                      onClick={takeIntoWords}
+                      disabled={composer.loading}
+                      className="text-xs uppercase tracking-[0.28em] text-cream-50/35 underline-offset-4 transition hover:text-cream-50/60 hover:underline disabled:cursor-not-allowed disabled:opacity-30"
+                    >
+                      Try different words
+                    </button>
+                  ) : (
+                    <span className="text-xs leading-6 text-cream-50/35 sm:max-w-[20rem]">
+                      These are the starts we have. Try writing a new direction in your telling.
+                    </span>
+                  )}
+                  <button
+                    type="button"
+                    onClick={composer.dismiss}
+                    className="text-xs uppercase tracking-[0.28em] text-cream-50/35 underline-offset-4 transition hover:text-cream-50/60 hover:underline"
+                  >
+                    Write my own
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="flex flex-col items-start gap-4 pt-4 sm:flex-row sm:items-center sm:justify-between">
+            <button
+              type="submit"
+              disabled={!canPreview}
+              className="group inline-flex w-full items-center justify-center gap-2 rounded-full bg-rose-500 px-7 py-4 text-sm font-medium text-cream-50 shadow-[0_18px_50px_-18px_rgba(143,20,49,0.7)] transition hover:bg-rose-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gold-300 disabled:cursor-not-allowed disabled:bg-cream-50/10 disabled:text-cream-50/30 disabled:shadow-none sm:w-auto"
             >
-              Explore Culture →
-            </Link>
-          </div>
-
-          <div
-            className="min-h-[360px] bg-cover bg-center sm:min-h-[420px]"
-            style={{ backgroundImage: "url('/culture-diya.jpg.png')" }}
-          />
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-7xl px-4 pb-12 pt-8 sm:px-6">
-        <div className="relative overflow-hidden rounded-[2.5rem] bg-[#160606] p-8 text-white shadow-2xl sm:p-12">
-          <div
-            className="absolute inset-0 bg-cover bg-center opacity-30"
-            style={{ backgroundImage: "url('/story-unboxing.jpg.png')" }}
-          />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(215,162,93,0.22),transparent_24rem)]" />
-
-          <div className="relative max-w-3xl">
-            <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#e8b36f]">
-              Start your gifting enquiry
-            </p>
-            <h2 className="mt-4 font-serif text-4xl leading-tight sm:text-5xl">
-              Need help choosing the right gift?
-            </h2>
-            <p className="mt-4 text-sm leading-7 text-white/75">
-              Tell us the occasion, relationship and budget. CadeauAura will
-              guide you toward suitable gift ideas and message card options.
-            </p>
-
-            <div className="mt-8 flex flex-wrap gap-4">
-              <Link
-                href="/gift-finder"
-                className="rounded-full bg-[#9f1239] px-7 py-4 text-sm font-semibold text-white transition hover:-translate-y-1 hover:bg-[#b01543]"
+              <span>Preview their moment</span>
+              <span
+                aria-hidden
+                className="transition-transform duration-300 group-hover:translate-x-1"
               >
-                Get Gift Suggestions →
-              </Link>
+                →
+              </span>
+            </button>
 
-              <a
-                href={getWhatsAppLink()}
-                target="_blank"
-                rel="noreferrer"
-                className="rounded-full bg-[#fff7ef] px-7 py-4 text-sm font-semibold text-[#4b0d18] transition hover:-translate-y-1 hover:bg-[#f3c982]"
-              >
-                Chat on WhatsApp
-              </a>
-            </div>
+            {hydrated ? (
+              canPreview ? (
+                <span className="text-xs uppercase tracking-[0.28em] text-cream-50/30">
+                  Saved on this device
+                </span>
+              ) : (
+                <span className="text-xs leading-6 text-cream-50/45 sm:max-w-[18rem] sm:text-right">
+                  Add their name and tell us about them to preview.
+                </span>
+              )
+            ) : null}
           </div>
-        </div>
-      </section>
+        </form>
+
+        <p className="mt-16 text-xs text-cream-50/35">
+          <Link
+            href="/"
+            className="underline-offset-4 hover:text-cream-50/60 hover:underline"
+          >
+            Return home
+          </Link>
+        </p>
+      </div>
     </main>
   );
 }
