@@ -3,10 +3,29 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
+type Tone =
+  | ''
+  | 'vague'
+  | 'warm'
+  | 'specific'
+  | 'grief'
+  | 'distance'
+  | 'hurt';
+
+const KNOWN_TONES: readonly Tone[] = [
+  'vague',
+  'warm',
+  'specific',
+  'grief',
+  'distance',
+  'hurt',
+];
+
 interface Draft {
   recipientName: string;
   emotion: string;
   message: string;
+  tone: Tone;
 }
 
 const STORAGE_KEY = 'cadeauaura.draft.v1';
@@ -22,6 +41,7 @@ function readDraft(): Draft | null {
       recipientName: parsed.recipientName,
       emotion: parsed.emotion ?? '',
       message: parsed.message ?? '',
+      tone: KNOWN_TONES.includes(parsed.tone as Tone) ? (parsed.tone as Tone) : '',
     };
   } catch {
     return null;
@@ -29,6 +49,66 @@ function readDraft(): Draft | null {
 }
 
 type Stage = 'sealed' | 'opening' | 'open';
+
+interface ChoreographyVars {
+  envelopeFadeMs: number;
+  cardEnterMs: number;
+  sealedSubtitle: string;
+  ctaLabel: string;
+  closingLine: string;
+}
+
+const CHOREO: Record<Tone, ChoreographyVars> = {
+  grief: {
+    envelopeFadeMs: 1500,
+    cardEnterMs: 1800,
+    sealedSubtitle: 'Something quiet, for you',
+    ctaLabel: 'When you are ready',
+    closingLine: 'Held with care, for as long as you need.',
+  },
+  distance: {
+    envelopeFadeMs: 1300,
+    cardEnterMs: 1700,
+    sealedSubtitle: 'A small thread, across the time',
+    ctaLabel: 'Open it gently',
+    closingLine: 'Sent in case there is still a thread.',
+  },
+  hurt: {
+    envelopeFadeMs: 1200,
+    cardEnterMs: 1600,
+    sealedSubtitle: 'A small thing, for you',
+    ctaLabel: 'When you are ready',
+    closingLine: 'Sent without asking anything of you.',
+  },
+  warm: {
+    envelopeFadeMs: 1000,
+    cardEnterMs: 1400,
+    sealedSubtitle: 'Something is waiting for you',
+    ctaLabel: 'Open the moment',
+    closingLine: 'Made for you, with care.',
+  },
+  specific: {
+    envelopeFadeMs: 1000,
+    cardEnterMs: 1400,
+    sealedSubtitle: 'Something is waiting for you',
+    ctaLabel: 'Open the moment',
+    closingLine: 'Made for you, with care.',
+  },
+  vague: {
+    envelopeFadeMs: 1000,
+    cardEnterMs: 1400,
+    sealedSubtitle: 'Something is waiting for you',
+    ctaLabel: 'Open the moment',
+    closingLine: 'Made for you, with care.',
+  },
+  '': {
+    envelopeFadeMs: 1000,
+    cardEnterMs: 1400,
+    sealedSubtitle: 'Something is waiting for you',
+    ctaLabel: 'Open the moment',
+    closingLine: 'Made for you, with care.',
+  },
+};
 
 export default function DemoRevealPage() {
   const [draft, setDraft] = useState<Draft | null>(null);
@@ -40,11 +120,12 @@ export default function DemoRevealPage() {
     setHydrated(true);
   }, []);
 
+  const choreo = draft ? CHOREO[draft.tone] : CHOREO[''];
+
   function handleOpen() {
     if (stage !== 'sealed') return;
     setStage('opening');
-    // Match the envelope fade-out so the card lands cleanly afterwards.
-    window.setTimeout(() => setStage('open'), 1000);
+    window.setTimeout(() => setStage('open'), choreo.envelopeFadeMs);
   }
 
   if (!hydrated) {
@@ -91,10 +172,10 @@ export default function DemoRevealPage() {
 
       <div className="relative mx-auto w-full max-w-xl">
         <div className="relative flex min-h-[68svh] items-center justify-center">
-          {/* Sealed envelope */}
           <div
             aria-hidden={stage !== 'sealed'}
-            className={`absolute inset-0 flex flex-col items-center justify-center transition-all duration-1000 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+            style={{ transitionDuration: `${choreo.envelopeFadeMs}ms` }}
+            className={`absolute inset-0 flex flex-col items-center justify-center transition-all ease-[cubic-bezier(0.22,1,0.36,1)] ${
               stage === 'sealed'
                 ? 'opacity-100 scale-100'
                 : 'pointer-events-none opacity-0 scale-95'
@@ -141,7 +222,7 @@ export default function DemoRevealPage() {
             </p>
 
             <p className="mt-3 text-xs font-light uppercase tracking-[0.32em] text-gold-300/70">
-              Something is waiting for you
+              {choreo.sealedSubtitle}
             </p>
 
             <button
@@ -149,7 +230,7 @@ export default function DemoRevealPage() {
               onClick={handleOpen}
               className="group mt-10 inline-flex items-center gap-2 rounded-full bg-rose-500 px-7 py-4 text-sm font-medium text-cream-50 shadow-[0_18px_50px_-18px_rgba(143,20,49,0.7)] transition hover:bg-rose-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gold-300"
             >
-              <span>Open the moment</span>
+              <span>{choreo.ctaLabel}</span>
               <span
                 aria-hidden
                 className="transition-transform duration-300 group-hover:translate-x-1"
@@ -159,10 +240,10 @@ export default function DemoRevealPage() {
             </button>
           </div>
 
-          {/* Opened card */}
           <div
             aria-hidden={stage !== 'open'}
-            className={`absolute inset-0 flex flex-col items-center justify-center transition-all duration-[1400ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${
+            style={{ transitionDuration: `${choreo.cardEnterMs}ms` }}
+            className={`absolute inset-0 flex flex-col items-center justify-center transition-all ease-[cubic-bezier(0.22,1,0.36,1)] ${
               stage === 'open'
                 ? 'translate-y-0 opacity-100 blur-0'
                 : 'pointer-events-none translate-y-4 opacity-0 blur-[6px]'
@@ -185,7 +266,7 @@ export default function DemoRevealPage() {
             </article>
 
             <p className="mt-8 text-center font-display text-sm italic font-light text-cream-50/55 sm:text-base">
-              Made for you, with care.
+              {choreo.closingLine}
             </p>
           </div>
         </div>
