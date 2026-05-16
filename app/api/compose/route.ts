@@ -199,11 +199,6 @@ function fallbackDrafts(
       `What you did was not a small thing, even if you treated it like one. I remember it. I keep remembering it.`,
       `I think about ${anchorPhrase} more than I let on. You probably do not know how much it shaped me.`,
     ],
-    '': [
-      `Thank you for being someone I do not have to explain myself to. I see what you carry, even when you do not.`,
-      `${name}, I am better because of you. I do not say it often enough, so I am saying it now.`,
-      `You make a quieter version of me feel possible. ${anchorPhrase} stays with me more than you know.`,
-    ],
   };
 
   const key: Tone = tone ?? 'warm';
