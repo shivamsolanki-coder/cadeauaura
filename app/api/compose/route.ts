@@ -80,10 +80,13 @@ export async function POST(req: Request) {
       emotion: emotion ?? '',
       attempt: safeAttempt,
     });
+
     const passing = modelDrafts.filter(
       (text) => passesRestraint(text, 'composer').ok,
     );
+
     const filled = topUpToThree(passing, recipientName, safeTone, anchors ?? []);
+
     return jsonReply({
       drafts: filled,
       source: passing.length > 0 ? 'model' : 'fallback',
@@ -107,16 +110,22 @@ interface ComposerArgs {
 
 async function callComposer(client: Anthropic, args: ComposerArgs): Promise<string[]> {
   const lines: string[] = [];
+
   lines.push(`Recipient name: ${args.recipientName}`);
   lines.push(`What the sender wrote about them:\n${args.telling}`);
+
   if (args.anchors.length > 0) {
     lines.push(`Anchors that surfaced: ${args.anchors.join(' / ')}`);
   }
+
   if (args.tone) {
     lines.push(`Emotional tone: ${args.tone}`);
   }
+
   if (args.emotion) {
-    lines.push(`The sender wants the recipient to feel: ${args.emotion.toLowerCase()}`);
+    lines.push(
+      `The sender wants the recipient to feel: ${args.emotion.toLowerCase()}`,
+    );
   }
 
   const model =
@@ -131,6 +140,7 @@ async function callComposer(client: Anthropic, args: ComposerArgs): Promise<stri
 
   const block = response.content.find((entry) => entry.type === 'text');
   const text = block && block.type === 'text' ? block.text.trim() : '';
+
   const start = text.indexOf('{');
   const end = text.lastIndexOf('}');
   if (start < 0 || end < 0) {
@@ -139,6 +149,7 @@ async function callComposer(client: Anthropic, args: ComposerArgs): Promise<stri
 
   const candidate: unknown = JSON.parse(text.slice(start, end + 1));
   const parsed = ModelPayloadSchema.parse(candidate);
+
   return parsed.drafts.slice(0, 3);
 }
 
@@ -149,13 +160,16 @@ function topUpToThree(
   anchors: string[],
 ): string[] {
   if (passing.length >= 3) return passing.slice(0, 3);
+
   const fallback = fallbackDrafts(recipientName, tone, anchors);
   const out = [...passing];
+
   for (const candidate of fallback) {
     if (out.length >= 3) break;
     if (out.includes(candidate)) continue;
     out.push(candidate);
   }
+
   return out.slice(0, 3);
 }
 
