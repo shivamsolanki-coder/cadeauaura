@@ -1,11 +1,15 @@
-import type Anthropic from '@anthropic-ai/sdk';
 import { z } from 'zod';
 
-import { getClaude, MODELS } from '@/lib/ai/claude';
-import { REFLECTOR_SYSTEM_PROMPT } from '@/lib/ai/prompts';
-import { passesRestraint } from '@/lib/ai/restraint';
+import { reflectAgent } from '@/lib/agents/emotion';
 
 export const runtime = 'edge';
+
+/**
+ * Thin wrapper around the Emotion Agent's reflect sub-agent. The
+ * existing client (lib/api/ai.ts → fetchReflection) speaks this
+ * shape — { text, source } — so we keep it stable while the actual
+ * logic lives in lib/agents/emotion.ts.
+ */
 
 const RequestSchema = z.object({
   telling: z.string().trim().min(1).max(2000),
@@ -26,107 +30,15 @@ export async function POST(req: Request) {
   }
 
   const parsed = RequestSchema.safeParse(raw);
-  if (!parsed.success) {
-    return jsonError('Invalid input', 400);
-  }
+  if (!parsed.success) return jsonError('Invalid input', 400);
 
-  const { telling } = parsed.data;
+  const result = await reflectAgent.run({ telling: parsed.data.telling });
+  if (!result.ok) return jsonError(result.reason, 500);
 
-  const client = getClaude();
-  if (!client) {
-    return jsonReply({ text: fallbackReflection(telling), source: 'fallback' });
-  }
-
-  try {
-    const modelText = await callReflector(client, telling);
-    return jsonReply({ text: modelText, source: 'model' });
-  } catch {
-    return jsonReply({ text: fallbackReflection(telling), source: 'fallback' });
-  }
-}
-
-async function callReflector(
-  client: Anthropic,
-  telling: string,
-): Promise<string> {
-  const first = await client.messages.create({
-    model: MODELS.haiku,
-    max_tokens: 80,
-    system: REFLECTOR_SYSTEM_PROMPT,
-    messages: [{ role: 'user', content: telling }],
+  return jsonReply({
+    text: result.data.text,
+    source: result.source === 'model' ? 'model' : 'fallback',
   });
-
-  const firstText = extractText(first);
-  const firstCheck = passesRestraint(firstText, 'reflector');
-  if (firstCheck.ok) return firstText;
-
-  const retry = await client.messages.create({
-    model: MODELS.haiku,
-    max_tokens: 80,
-    system: REFLECTOR_SYSTEM_PROMPT,
-    messages: [
-      { role: 'user', content: telling },
-      { role: 'assistant', content: firstText },
-      {
-        role: 'user',
-        content: `That response ${firstCheck.reason}. Return a single short sentence that follows every voice rule strictly. No preamble. No quotes.`,
-      },
-    ],
-  });
-
-  const retryText = extractText(retry);
-  const retryCheck = passesRestraint(retryText, 'reflector');
-  if (retryCheck.ok) return retryText;
-
-  throw new Error(
-    `Reflector failed restraint twice: ${firstCheck.reason} / ${retryCheck.reason}`,
-  );
-}
-
-function extractText(response: Anthropic.Message): string {
-  const block = response.content.find((entry) => entry.type === 'text');
-  const raw = block && block.type === 'text' ? block.text : '';
-
-  return raw
-    .trim()
-    .replace(/^["'‘’“”]+/, '')
-    .replace(/["'‘’“”]+$/, '')
-    .trim();
-}
-
-function fallbackReflection(telling: string): string {
-  const normalised = telling.trim().toLowerCase();
-  const wordCount = normalised.split(/\s+/).filter(Boolean).length;
-
-  if (/\b(passed|gone|miss(ed)?|died|no longer here|used to be|she was|he was)\b/.test(normalised)) {
-    return 'This one is for someone you have already said goodbye to.';
-  }
-
-  if (/\b(hate|never deserved|doesn'?t deserve|never apologi[sz]ed|hurt me|asshole)\b/.test(normalised)) {
-    return 'Tell me one thing they got right, even once.';
-  }
-
-  if (wordCount < 10) {
-    return pickByHash(normalised, [
-      'Tell me about a single morning with them you still think about.',
-      'What did they hold for you that no one else did?',
-      'Name one small thing they did this week that you noticed but did not say.',
-    ]);
-  }
-
-  return pickByHash(normalised, [
-    'It sounds like they have stayed with you in ways that took time to name.',
-    'It sounds like they carried you through something you needed.',
-    'You have been waiting to say this for longer than just today.',
-  ]);
-}
-
-function pickByHash(seed: string, options: readonly string[]): string {
-  let hash = 0;
-  for (let i = 0; i < seed.length; i += 1) {
-    hash = (hash + seed.charCodeAt(i)) % 1_000_000;
-  }
-  return options[hash % options.length];
 }
 
 function jsonReply(payload: ReflectorPayload): Response {

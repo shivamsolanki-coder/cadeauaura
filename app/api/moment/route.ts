@@ -1,22 +1,23 @@
 import { z } from 'zod';
 
 import { KNOWN_TONES, type Tone } from '@/lib/draft';
-import { isKVConfigured, kv } from '@/lib/kv';
 import {
   CHOREOGRAPHY_VERSION,
   generateMomentId,
-  momentKey,
   type Moment,
 } from '@/lib/moment';
 import { slugifyName } from '@/lib/recipient';
+import { sendMoment } from '@/lib/workflows/send-moment';
 
 export const runtime = 'edge';
 
 /**
- * Create a Moment. Generates an id, normalises the payload, writes to
- * KV when configured, and always returns a coherent { id, shareUrl,
- * linkActive } response so the preview UI can render something useful
- * even in environments where KV is missing.
+ * Create a Moment. Builds the immutable Moment object from the
+ * request payload and hands the rest of the work to the sendMoment
+ * workflow, which composes Memory Archive + Communication agents.
+ *
+ * Always returns a coherent { id, shareUrl, linkActive } response.
+ * linkActive=false when KV is unconfigured.
  */
 
 const RequestSchema = z.object({
@@ -64,19 +65,14 @@ export async function POST(req: Request) {
     choreographyVersion: CHOREOGRAPHY_VERSION,
   };
 
-  let linkActive = isKVConfigured;
-  if (linkActive) {
-    try {
-      await kv.set(momentKey(id), moment);
-    } catch {
-      linkActive = false;
-    }
-  }
-
   const origin = new URL(req.url).origin;
-  const shareUrl = `${origin}/r/${id}`;
+  const result = await sendMoment({ moment, origin });
 
-  return jsonReply({ id, shareUrl, linkActive });
+  return jsonReply({
+    id: result.id,
+    shareUrl: result.shareUrl,
+    linkActive: result.linkActive,
+  });
 }
 
 function jsonReply(payload: {

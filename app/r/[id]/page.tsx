@@ -1,114 +1,62 @@
-'use client';
-
 import Link from 'next/link';
-import { use, useEffect, useState } from 'react';
 
-import { fetchMoment } from '@/lib/api/moment';
-import type { Tone } from '@/lib/draft';
-import type { Moment } from '@/lib/moment';
+import { BeatRenderer } from '@/components/reveal/BeatRenderer';
+import { recallMomentAgent } from '@/lib/agents/memory';
+import { surpriseAgent } from '@/lib/agents/surprise';
+import type { BeatSequence } from '@/lib/domain/beats';
+import { CHOREOGRAPHY_VERSION, isValidMomentId, type Moment } from '@/lib/moment';
 
-type Stage = 'sealed' | 'opening' | 'open';
+export const runtime = 'edge';
 
 /**
- * Choreography parameters per tone — identical shape to /r/demo so a
- * moment behaves the same whether rendered from localStorage (demo)
- * or from KV (real). Bumped via Moment.choreographyVersion if this
- * map ever changes shape in a breaking way.
+ * Recipient reveal page.
+ *
+ * Server-rendered: fetches the moment via the Memory Archive Agent
+ * and builds the beat sequence via the Surprise Script Agent. The
+ * interactive state machine (sealed → opening → open) lives in the
+ * BeatRenderer client component.
+ *
+ * Fallback: if Surprise Script fails to return a sequence (shouldn't
+ * happen — it's deterministic), the page renders a default v1
+ * sequence so the moment never breaks.
  */
-interface ChoreographyVars {
-  envelopeFadeMs: number;
-  cardEnterMs: number;
-  sealedSubtitle: string;
-  ctaLabel: string;
-  closingLine: string;
-}
 
-const CHOREO: Record<Tone, ChoreographyVars> = {
-  grief: {
-    envelopeFadeMs: 1500,
-    cardEnterMs: 1800,
-    sealedSubtitle: 'Something quiet, for you',
-    ctaLabel: 'When you are ready',
-    closingLine: 'Held with care, for as long as you need.',
-  },
-  distance: {
-    envelopeFadeMs: 1300,
-    cardEnterMs: 1700,
-    sealedSubtitle: 'A small thread, across the time',
-    ctaLabel: 'Open it gently',
-    closingLine: 'Sent in case there is still a thread.',
-  },
-  hurt: {
-    envelopeFadeMs: 1200,
-    cardEnterMs: 1600,
-    sealedSubtitle: 'A small thing, for you',
-    ctaLabel: 'When you are ready',
-    closingLine: 'Sent without asking anything of you.',
-  },
-  warm: {
-    envelopeFadeMs: 1000,
-    cardEnterMs: 1400,
-    sealedSubtitle: 'Something is waiting for you',
-    ctaLabel: 'Open the moment',
-    closingLine: 'Made for you, with care.',
-  },
-  specific: {
-    envelopeFadeMs: 1000,
-    cardEnterMs: 1400,
-    sealedSubtitle: 'Something is waiting for you',
-    ctaLabel: 'Open the moment',
-    closingLine: 'Made for you, with care.',
-  },
-  vague: {
-    envelopeFadeMs: 1000,
-    cardEnterMs: 1400,
-    sealedSubtitle: 'Something is waiting for you',
-    ctaLabel: 'Open the moment',
-    closingLine: 'Made for you, with care.',
-  },
-  '': {
-    envelopeFadeMs: 1000,
-    cardEnterMs: 1400,
-    sealedSubtitle: 'Something is waiting for you',
-    ctaLabel: 'Open the moment',
-    closingLine: 'Made for you, with care.',
-  },
+const DEFAULT_FALLBACK_SEQUENCE: BeatSequence = {
+  beats: [
+    {
+      type: 'envelope',
+      text: 'Something is waiting for you',
+      durationMs: 1000,
+      ctaLabel: 'Open the moment',
+    },
+    { type: 'reveal', durationMs: 1400 },
+    { type: 'sign-off', text: 'Made for you, with care.' },
+  ],
+  choreographyVersion: CHOREOGRAPHY_VERSION,
 };
 
-export default function MomentRevealPage({
+async function loadMoment(id: string): Promise<Moment | null> {
+  if (!isValidMomentId(id)) return null;
+  const result = await recallMomentAgent.run({ id });
+  return result.ok ? result.data.moment : null;
+}
+
+async function loadSequence(moment: Moment): Promise<BeatSequence> {
+  const result = await surpriseAgent.run({
+    message: moment.message,
+    tone: moment.tone,
+    plan: null,
+  });
+  return result.ok ? result.data.sequence : DEFAULT_FALLBACK_SEQUENCE;
+}
+
+export default async function MomentRevealPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const { id } = use(params);
-
-  const [moment, setMoment] = useState<Moment | null>(null);
-  const [loaded, setLoaded] = useState(false);
-  const [stage, setStage] = useState<Stage>('sealed');
-
-  useEffect(() => {
-    let cancelled = false;
-    fetchMoment(id).then((result) => {
-      if (cancelled) return;
-      setMoment(result);
-      setLoaded(true);
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, [id]);
-
-  const choreo = moment ? CHOREO[moment.tone] : CHOREO[''];
-
-  function handleOpen() {
-    if (stage !== 'sealed') return;
-    setStage('opening');
-    window.setTimeout(() => setStage('open'), choreo.envelopeFadeMs);
-  }
-
-  if (!loaded) {
-    return <main className="min-h-[88svh] bg-ink-950" aria-hidden />;
-  }
+  const { id } = await params;
+  const moment = await loadMoment(id);
 
   if (!moment) {
     return (
@@ -134,6 +82,7 @@ export default function MomentRevealPage({
     );
   }
 
+  const sequence = await loadSequence(moment);
   const message =
     moment.message.trim().length > 0
       ? moment.message
@@ -147,120 +96,12 @@ export default function MomentRevealPage({
       />
 
       <div className="relative mx-auto w-full max-w-xl">
-        <div className="relative flex min-h-[68svh] items-center justify-center">
-          {/* Sealed envelope */}
-          <div
-            aria-hidden={stage !== 'sealed'}
-            style={{ transitionDuration: `${choreo.envelopeFadeMs}ms` }}
-            className={`absolute inset-0 flex flex-col items-center justify-center transition-all ease-[cubic-bezier(0.22,1,0.36,1)] ${
-              stage === 'sealed'
-                ? 'opacity-100 scale-100'
-                : 'pointer-events-none opacity-0 scale-95'
-            }`}
-          >
-            <svg
-              viewBox="0 0 200 140"
-              className="h-auto w-48 sm:w-60"
-              role="img"
-              aria-label="A sealed envelope"
-            >
-              <rect
-                x="10"
-                y="40"
-                width="180"
-                height="90"
-                rx="3"
-                fill="rgba(255,247,239,0.04)"
-                stroke="rgba(247,230,216,0.35)"
-                strokeWidth="1.2"
-              />
-              <path
-                d="M 11 41 L 100 100 L 189 41"
-                fill="none"
-                stroke="rgba(247,230,216,0.35)"
-                strokeWidth="1.2"
-                strokeLinejoin="round"
-              />
-              <circle cx="100" cy="92" r="13" fill="#8F1431" />
-              <text
-                x="100"
-                y="97"
-                textAnchor="middle"
-                fontSize="14"
-                fill="#F3C982"
-                fontFamily="Georgia, serif"
-              >
-                ✦
-              </text>
-            </svg>
-
-            <p className="mt-10 font-display text-2xl italic font-light text-cream-50">
-              For {moment.recipientDisplayName}
-            </p>
-
-            <p className="mt-3 text-xs font-light uppercase tracking-[0.32em] text-gold-300/70">
-              {choreo.sealedSubtitle}
-            </p>
-
-            <button
-              type="button"
-              onClick={handleOpen}
-              className="group mt-10 inline-flex items-center gap-2 rounded-full bg-rose-500 px-7 py-4 text-sm font-medium text-cream-50 shadow-[0_18px_50px_-18px_rgba(143,20,49,0.7)] transition hover:bg-rose-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gold-300"
-            >
-              <span>{choreo.ctaLabel}</span>
-              <span
-                aria-hidden
-                className="transition-transform duration-300 group-hover:translate-x-1"
-              >
-                →
-              </span>
-            </button>
-          </div>
-
-          {/* Opened card */}
-          <div
-            aria-hidden={stage !== 'open'}
-            style={{ transitionDuration: `${choreo.cardEnterMs}ms` }}
-            className={`absolute inset-0 flex flex-col items-center justify-center transition-all ease-[cubic-bezier(0.22,1,0.36,1)] ${
-              stage === 'open'
-                ? 'translate-y-0 opacity-100 blur-0'
-                : 'pointer-events-none translate-y-4 opacity-0 blur-[6px]'
-            }`}
-          >
-            <article className="w-full rounded-2xl border border-cream-50/12 bg-cream-50/[0.04] p-8 backdrop-blur-sm sm:p-12">
-              <p className="text-xs font-light uppercase tracking-[0.32em] text-gold-300/70">
-                For {moment.recipientDisplayName}
-              </p>
-
-              <p className="mt-6 font-display text-2xl italic font-light leading-relaxed text-cream-50 sm:text-3xl">
-                {message}
-              </p>
-
-              {moment.emotion ? (
-                <p className="mt-8 text-xs font-light uppercase tracking-[0.28em] text-cream-50/45">
-                  With {moment.emotion.toLowerCase()}
-                </p>
-              ) : null}
-            </article>
-
-            <p className="mt-8 text-center font-display text-sm italic font-light text-cream-50/55 sm:text-base">
-              {choreo.closingLine}
-            </p>
-          </div>
-        </div>
-
-        <div
-          className={`mt-12 flex flex-wrap items-center justify-center gap-4 text-sm transition-opacity duration-1000 ${
-            stage === 'open' ? 'opacity-100' : 'pointer-events-none opacity-0'
-          }`}
-        >
-          <Link
-            href="/"
-            className="text-cream-50/45 underline-offset-4 hover:text-cream-50/80 hover:underline"
-          >
-            About CadeauAura
-          </Link>
-        </div>
+        <BeatRenderer
+          sequence={sequence}
+          recipientName={moment.recipientDisplayName}
+          message={message}
+          emotion={moment.emotion}
+        />
       </div>
     </main>
   );

@@ -1,12 +1,13 @@
 import { z } from 'zod';
 
-import { composeAgent } from '@/lib/agents/communication';
+import { planMoment } from '@/lib/workflows/plan-moment';
 
 export const runtime = 'edge';
 
 /**
- * Thin wrapper around the Communication Agent's compose sub-agent.
- * Preserves the existing /api/compose contract — { drafts, source }.
+ * Plan a moment. Thin wrapper over the planMoment workflow, which
+ * itself wraps the Planning Agent. Returns { plan, source } where
+ * source distinguishes model output from deterministic fallback.
  */
 
 const ToneSchema = z.enum([
@@ -20,17 +21,12 @@ const ToneSchema = z.enum([
 
 const RequestSchema = z.object({
   recipientName: z.string().trim().min(1).max(80),
-  telling: z.string().trim().min(1).max(2000),
   anchors: z.array(z.string().trim().min(1).max(80)).max(6).optional(),
   tone: ToneSchema.nullable().optional(),
+  secondaryTone: ToneSchema.nullable().optional(),
   emotion: z.string().trim().max(40).optional(),
-  attempt: z.number().int().min(0).max(10).optional(),
+  occasion: z.string().trim().max(80).optional(),
 });
-
-interface ComposerPayload {
-  drafts: string[];
-  source: 'model' | 'fallback';
-}
 
 export async function POST(req: Request) {
   let raw: unknown;
@@ -43,25 +39,10 @@ export async function POST(req: Request) {
   const parsed = RequestSchema.safeParse(raw);
   if (!parsed.success) return jsonError('Invalid input', 400);
 
-  const result = await composeAgent.run({
-    recipientName: parsed.data.recipientName,
-    telling: parsed.data.telling,
-    anchors: parsed.data.anchors,
-    tone: parsed.data.tone,
-    emotion: parsed.data.emotion,
-    attempt: parsed.data.attempt,
-  });
+  const result = await planMoment(parsed.data);
+  if (!result) return jsonError('plan unavailable', 500);
 
-  if (!result.ok) return jsonError(result.reason, 500);
-
-  return jsonReply({
-    drafts: result.data.drafts,
-    source: result.source === 'model' ? 'model' : 'fallback',
-  });
-}
-
-function jsonReply(payload: ComposerPayload): Response {
-  return new Response(JSON.stringify(payload), {
+  return new Response(JSON.stringify(result), {
     status: 200,
     headers: {
       'Content-Type': 'application/json; charset=utf-8',

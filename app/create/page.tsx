@@ -13,6 +13,7 @@ import {
 } from '@/lib/draft';
 import { useComposer } from '@/lib/hooks/useComposer';
 import { useFollowUp } from '@/lib/hooks/useFollowUp';
+import { usePlan } from '@/lib/hooks/usePlan';
 import { useReflection } from '@/lib/hooks/useReflection';
 
 const MESSAGE_LIMIT = 280;
@@ -56,6 +57,8 @@ export default function CreatePage() {
   });
   const composer = useComposer();
   const { reset: resetComposer } = composer;
+  const planBeat = usePlan();
+  const { reset: resetPlan } = planBeat;
 
   // Keep hidden playful autofill state scoped to the current recipient name.
   useEffect(() => {
@@ -118,6 +121,25 @@ export default function CreatePage() {
   useEffect(() => {
     resetComposer();
   }, [draft.senderTelling, resetComposer]);
+
+  // Editing the telling or changing the recipient invalidates any plan.
+  useEffect(() => {
+    resetPlan();
+  }, [draft.senderTelling, draft.recipientName, resetPlan]);
+
+  function triggerPlan() {
+    void planBeat.trigger({
+      recipientName: draft.recipientName.trim(),
+      anchors: draft.anchors,
+      tone: draft.tone,
+      secondaryTone: draft.secondaryTone,
+      emotion: draft.emotion,
+    });
+  }
+
+  const planEligible =
+    draft.recipientName.trim().length > 0 &&
+    draft.senderTelling.trim().length >= 10;
 
   function update<K extends keyof Draft>(key: K, value: Draft[K]) {
     setDraft((current) => ({ ...current, [key]: value }));
@@ -448,6 +470,49 @@ export default function CreatePage() {
               </div>
             )}
           </div>
+
+          {/* Optional — shape the moment */}
+          {planEligible && (
+            <div>
+              {!planBeat.plan ? (
+                <button
+                  type="button"
+                  onClick={triggerPlan}
+                  disabled={planBeat.loading}
+                  className="text-xs uppercase tracking-[0.28em] text-cream-50/40 underline-offset-4 transition hover:text-cream-50/70 hover:underline disabled:cursor-not-allowed disabled:opacity-30"
+                >
+                  {planBeat.loading ? 'Shaping the moment…' : 'Plan this moment →'}
+                </button>
+              ) : (
+                <div className="border-t border-gold-300/15 pt-5">
+                  <p className="text-[0.6rem] font-light uppercase tracking-[0.28em] text-cream-50/35">
+                    Shape of the moment
+                  </p>
+                  <p className="mt-3 font-display text-base italic leading-7 text-cream-50/70 sm:text-lg">
+                    A {planBeat.plan.momentType} — {planBeat.plan.durationHint}.
+                  </p>
+                  <ul className="mt-3 space-y-1">
+                    {planBeat.plan.keyBeats.map((beat, index) => (
+                      <li
+                        key={`${index}-${beat.slice(0, 16)}`}
+                        className="font-display text-sm italic leading-7 text-cream-50/55"
+                      >
+                        <span aria-hidden className="mr-2 text-gold-300/55">~</span>
+                        {beat}
+                      </li>
+                    ))}
+                  </ul>
+                  <button
+                    type="button"
+                    onClick={planBeat.reset}
+                    className="mt-4 text-[0.65rem] uppercase tracking-[0.28em] text-cream-50/35 underline-offset-4 transition hover:text-cream-50/60 hover:underline"
+                  >
+                    Set this aside
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
 
           <div className="flex flex-col items-start gap-4 pt-4 sm:flex-row sm:items-center sm:justify-between">
             <button

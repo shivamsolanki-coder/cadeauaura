@@ -1,5 +1,5 @@
-import { kv } from '@/lib/kv';
-import { isValidMomentId, momentKey, type Moment } from '@/lib/moment';
+import { recallMomentAgent } from '@/lib/agents/memory';
+import { isValidMomentId, type Moment } from '@/lib/moment';
 
 export const runtime = 'edge';
 
@@ -18,12 +18,8 @@ export async function GET(
     return jsonReply(null);
   }
 
-  try {
-    const moment = await kv.get<Moment>(momentKey(id));
-    return jsonReply(moment);
-  } catch {
-    return jsonReply(null);
-  }
+  const result = await recallMomentAgent.run({ id });
+  return jsonReply(result.ok ? result.data.moment : null);
 }
 
 function jsonReply(moment: Moment | null): Response {
