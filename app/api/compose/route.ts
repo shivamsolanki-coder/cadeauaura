@@ -7,29 +7,14 @@ import { passesRestraint } from '@/lib/ai/restraint';
 
 export const runtime = 'edge';
 
-/**
- * The Composer route. Returns three short message drafts the sender
- * could send to the recipient, written in the sender's voice.
- *
- * Input contract:
- *   - recipientName: short name string (used sparingly inside drafts)
- *   - telling: the raw telling from step 02
- *   - anchors: 2–4 short phrases the follow-up route surfaced
- *   - tone: one of grief / hurt / vague / warm / specific (or null)
- *   - emotion: optional UI-selected emotion chip
- *
- * Output:
- *   { drafts: [string, string, string], source: 'model' | 'fallback' }
- *
- * Each returned draft has passed the 'composer' restraint profile
- * (max 3 sentences, max 20 words per sentence, max 55 words total,
- * no banned adjectives, no self-reference, no exclamation marks).
- * If the model returns fewer than 3 passing drafts, the route tops
- * up from a deterministic, tone-adapted fallback set so the UI
- * always has three cards to render.
- */
-
-const ToneSchema = z.enum(['vague', 'warm', 'specific', 'grief', 'hurt']);
+const ToneSchema = z.enum([
+  'vague',
+  'warm',
+  'specific',
+  'grief',
+  'distance',
+  'hurt',
+]);
 
 const RequestSchema = z.object({
   recipientName: z.string().trim().min(1).max(80),
@@ -37,6 +22,8 @@ const RequestSchema = z.object({
   anchors: z.array(z.string().trim().min(1).max(80)).max(6).optional(),
   tone: ToneSchema.nullable().optional(),
   emotion: z.string().trim().max(40).optional(),
+  /** 0 for the first try, increments on each "Try different words". */
+  attempt: z.number().int().min(0).max(10).optional(),
 });
 
 const ModelPayloadSchema = z.object({
@@ -49,6 +36,15 @@ interface ComposerPayload {
   drafts: string[];
   source: 'model' | 'fallback';
 }
+
+/**
+ * Cost-safe model selection. The first few tries get Sonnet because
+ * quality matters most when the sender is still deciding whether to
+ * trust the engine. Past that, repeated regenerates are usually the
+ * sender hunting for variety — Haiku gives that at a fraction of the
+ * cost without burning real money on diminishing returns.
+ */
+const SONNET_ATTEMPT_CEILING = 2;
 
 export async function POST(req: Request) {
   let raw: unknown;
@@ -63,8 +59,9 @@ export async function POST(req: Request) {
     return jsonError('Invalid input', 400);
   }
 
-  const { recipientName, telling, anchors, tone, emotion } = parsed.data;
+  const { recipientName, telling, anchors, tone, emotion, attempt } = parsed.data;
   const safeTone: Tone | null = tone ?? null;
+  const safeAttempt = attempt ?? 0;
 
   const client = getClaude();
   if (!client) {
@@ -81,6 +78,7 @@ export async function POST(req: Request) {
       anchors: anchors ?? [],
       tone: safeTone,
       emotion: emotion ?? '',
+      attempt: safeAttempt,
     });
     const passing = modelDrafts.filter(
       (text) => passesRestraint(text, 'composer').ok,
@@ -104,6 +102,7 @@ interface ComposerArgs {
   anchors: string[];
   tone: Tone | null;
   emotion: string;
+  attempt: number;
 }
 
 async function callComposer(client: Anthropic, args: ComposerArgs): Promise<string[]> {
@@ -120,8 +119,11 @@ async function callComposer(client: Anthropic, args: ComposerArgs): Promise<stri
     lines.push(`The sender wants the recipient to feel: ${args.emotion.toLowerCase()}`);
   }
 
+  const model =
+    args.attempt > SONNET_ATTEMPT_CEILING ? MODELS.haiku : MODELS.sonnet;
+
   const response = await client.messages.create({
-    model: MODELS.sonnet,
+    model,
     max_tokens: 700,
     system: COMPOSER_SYSTEM_PROMPT,
     messages: [{ role: 'user', content: lines.join('\n\n') }],
@@ -172,6 +174,11 @@ function fallbackDrafts(
       `${name}, you are not as far away as the calendar makes you sound. Thank you for what you left in me.`,
       `Some days I forget, and then ${anchorPhrase} comes back and I remember everything at once.`,
     ],
+    distance: [
+      `I have been meaning to reach out for a while. Not for any reason exactly. Just because you crossed my mind.`,
+      `${name}, it has been a long time. I am not asking for anything. I just wanted you to know I think of you.`,
+      `Some of what we lost is still in me, I think. ${anchorPhrase}. Take this however you want.`,
+    ],
     hurt: [
       `I am not sure how to say this clearly. There was something you got right, and I will hold that. The rest I am still working out.`,
       `${name}, I have been carrying this for a while. I do not need an answer. I just needed to say it out loud once.`,
@@ -191,6 +198,11 @@ function fallbackDrafts(
       `${name}, I have been meaning to tell you for a while. ${anchorPhrase} stays with me more than you know. Thank you for that.`,
       `What you did was not a small thing, even if you treated it like one. I remember it. I keep remembering it.`,
       `I think about ${anchorPhrase} more than I let on. You probably do not know how much it shaped me.`,
+    ],
+    '': [
+      `Thank you for being someone I do not have to explain myself to. I see what you carry, even when you do not.`,
+      `${name}, I am better because of you. I do not say it often enough, so I am saying it now.`,
+      `You make a quieter version of me feel possible. ${anchorPhrase} stays with me more than you know.`,
     ],
   };
 
