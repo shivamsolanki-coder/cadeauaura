@@ -6,7 +6,11 @@ import { surpriseAgent } from '@/lib/agents/surprise';
 import type { BeatSequence } from '@/lib/domain/beats';
 import { CHOREOGRAPHY_VERSION, isValidMomentId, type Moment } from '@/lib/moment';
 
-export const runtime = 'edge';
+// Server-side default runtime (Node). The agent-driven render pulls
+// in lib/agents/* which transitively imports the Anthropic SDK and
+// pushes the edge bundle over Vercel's 1 MB Hobby limit; the Node
+// serverless runtime has a 50 MB cap and no behaviour difference for
+// this page.
 
 /**
  * Recipient reveal page.
