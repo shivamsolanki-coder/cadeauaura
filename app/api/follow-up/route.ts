@@ -7,34 +7,24 @@ import { passesRestraint } from '@/lib/ai/restraint';
 
 export const runtime = 'edge';
 
-/**
- * The Follow-Up route. Runs after the first reflection has landed.
- * Returns a structured payload with:
- *
- *   - anchors: 2–4 short verbatim/thematic fragments from the telling
- *   - tone:    one of grief / hurt / vague / warm / specific
- *   - followUp: a single sentence inviting the sender one step deeper,
- *               tone-adapted (grief returns a soft acknowledgment
- *               instead of a question).
- *
- * The anchors are passed back to the client so the draft can carry
- * them forward — the future message composer will lean on them
- * instead of re-deriving them from scratch.
- *
- * Falls back to a deterministic heuristic when no API key is set,
- * so this route never breaks the user-visible experience.
- */
-
 const RequestSchema = z.object({
   telling: z.string().trim().min(1).max(2000),
   reflection: z.string().trim().min(1).max(500).optional(),
 });
 
-const ToneSchema = z.enum(['vague', 'warm', 'specific', 'grief', 'hurt']);
+const ToneSchema = z.enum([
+  'vague',
+  'warm',
+  'specific',
+  'grief',
+  'distance',
+  'hurt',
+]);
 
 const ModelPayloadSchema = z.object({
   anchors: z.array(z.string().trim().min(1).max(80)).min(1).max(6),
   tone: ToneSchema,
+  secondaryTone: ToneSchema.nullable().optional(),
   followUp: z.string().trim().min(1).max(200),
 });
 
@@ -43,6 +33,7 @@ export type FollowUpTone = z.infer<typeof ToneSchema>;
 interface FollowUpPayload {
   anchors: string[];
   tone: FollowUpTone;
+  secondaryTone: FollowUpTone | null;
   followUp: string;
   source: 'model' | 'fallback';
 }
@@ -110,6 +101,7 @@ async function callFollowUp(
   return {
     anchors: parsed.anchors.slice(0, 4).map((a) => a.toLowerCase()),
     tone: parsed.tone,
+    secondaryTone: parsed.secondaryTone ?? null,
     followUp: parsed.followUp,
   };
 }
@@ -119,10 +111,27 @@ function fallbackFollowUp(telling: string): Omit<FollowUpPayload, 'source'> {
   const wordCount = normalised.split(/\s+/).filter(Boolean).length;
 
   let tone: FollowUpTone;
-  if (/\b(passed|gone|miss(ed)?|died|no longer here|used to be|she was|he was)\b/.test(normalised)) {
+
+  // Order matters: grief (death) must beat distance (drift). Hurt is its
+  // own register and must not be conflated with either.
+  if (
+    /\b(passed|died|funeral|grave|buried|no longer with us|left us|gone for(ever)?|she'?s gone|he'?s gone)\b/.test(
+      normalised,
+    )
+  ) {
     tone = 'grief';
-  } else if (/\b(hate|never deserved|doesn'?t deserve|never apologi[sz]ed|hurt me|asshole)\b/.test(normalised)) {
+  } else if (
+    /\b(hate|never deserved|doesn'?t deserve|never apologi[sz]ed|hurt me|asshole|betray|cheated|lied to me)\b/.test(
+      normalised,
+    )
+  ) {
     tone = 'hurt';
+  } else if (
+    /\b(used to be close|haven'?t spoken|drifted|estranged|out of touch|lost touch|long time ago|years ago|complicated|distant|fell out|stopped talking)\b/.test(
+      normalised,
+    )
+  ) {
+    tone = 'distance';
   } else if (wordCount < 10) {
     tone = 'vague';
   } else if (wordCount < 25) {
@@ -131,15 +140,21 @@ function fallbackFollowUp(telling: string): Omit<FollowUpPayload, 'source'> {
     tone = 'specific';
   }
 
-  const followUp = ({
+  const followUp = {
     grief: 'There is no rush to find the right words today.',
+    distance: 'What would still make you want to send this, after everything?',
     hurt: 'Is there a single moment, even small, that you would keep?',
     vague: 'What is one small thing about them you would notice from across a room?',
     warm: 'What do you think they have not realized about how much it mattered?',
     specific: 'What did this person know about you that no one else did?',
-  })[tone];
+  }[tone];
 
-  return { anchors: extractAnchorsHeuristic(telling), tone, followUp };
+  return {
+    anchors: extractAnchorsHeuristic(telling),
+    tone,
+    secondaryTone: null,
+    followUp,
+  };
 }
 
 const STOPWORDS = new Set([
