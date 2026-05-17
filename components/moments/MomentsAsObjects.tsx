@@ -3,21 +3,20 @@
 import dynamic from 'next/dynamic';
 
 /**
- * Moments as Objects — a reusable homepage section.
+ * Moments as Objects — section for the homepage.
+ *
+ * One sealed envelope, slowly rotating in 3D, beside a short
+ * typographic list of five emotional addresses. The 3D is the accent;
+ * the writing is the centre. The whole section sits low on the page
+ * so the top fold (HeroQuestion + HeroEcho) stays as the first
+ * cinematic impression.
  *
  * The Canvas + lighting + 3D libs live behind a dynamic import with
- * ssr disabled, so:
- *   - the WebGL bundle never ships on the initial paint
- *   - the section is server-renderable in markup (a placeholder is
- *     shown until hydration)
- *   - mobile / reduced-motion users never load the 3D libs at all,
- *     because MomentsStage swaps to MobileFallback before mounting
- *     Canvas
+ * ssr disabled. Mobile / reduced-motion users get a typographic
+ * fallback and never download the WebGL chunks.
  *
- * Drop this into any page like a normal section:
- *
+ * Drop into any page:
  *   import { MomentsAsObjects } from '@/components/moments/MomentsAsObjects';
- *   ...
  *   <MomentsAsObjects />
  */
 
@@ -26,10 +25,7 @@ const MomentsStage = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div
-        className="h-[60svh] min-h-[420px] w-full bg-ink-950"
-        aria-hidden
-      />
+      <div className="h-[64svh] min-h-[440px] w-full" aria-hidden />
     ),
   },
 );
@@ -38,13 +34,15 @@ export function MomentsAsObjects() {
   return (
     <section
       aria-label="Moments as objects"
-      className="relative isolate overflow-hidden bg-ink-950 py-24 text-cream-50 sm:py-32"
+      className="relative isolate overflow-hidden bg-ink-950 py-28 text-cream-50 sm:py-36"
     >
+      {/* Radial wash + soft rose glow, matched to the hero palette */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_30%,rgba(215,162,93,0.07),transparent_55%),radial-gradient(circle_at_50%_100%,rgba(143,20,49,0.16),transparent_60%)]"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_30%_40%,rgba(215,162,93,0.08),transparent_55%),radial-gradient(circle_at_70%_85%,rgba(143,20,49,0.16),transparent_60%)]"
       />
 
+      {/* Film grain */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 opacity-[0.04] mix-blend-soft-light"
@@ -55,19 +53,20 @@ export function MomentsAsObjects() {
       />
 
       <div className="relative mx-auto max-w-6xl px-6 sm:px-10">
+        {/* Editorial heading — restrained, no oversell */}
         <div className="mx-auto max-w-2xl text-center">
           <p className="text-xs font-light uppercase tracking-[0.32em] text-gold-300/70">
-            A moment, in object
+            What is held inside
           </p>
-          <h2 className="mt-5 font-display text-3xl font-light leading-[1.1] tracking-[-0.01em] text-cream-50 sm:text-4xl md:text-5xl">
-            Each moment has a shape.
+          <h2 className="mt-5 font-display text-3xl font-light leading-[1.05] tracking-[-0.01em] text-cream-50 sm:text-4xl md:text-5xl">
+            Every moment, sealed for one.
           </h2>
-          <p className="mt-5 text-sm leading-7 text-cream-50/55 sm:text-base">
-            Open the one that feels like yours.
+          <p className="mx-auto mt-5 max-w-md text-sm leading-7 text-cream-50/55 sm:text-base">
+            Five quiet addresses. Choose the one closest to what you want to say.
           </p>
         </div>
 
-        <div className="mt-14 sm:mt-20">
+        <div className="mt-16 sm:mt-20">
           <MomentsStage />
         </div>
       </div>

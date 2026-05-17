@@ -1,13 +1,15 @@
 /**
- * The five emotional artefacts. Each one is an address, not a product.
+ * The five emotional addresses CadeauAura speaks to.
  *
- * Positions are scene-space coordinates arranged in a gentle arc
- * across the camera's view. Captions are written in CadeauAura's
- * voice — italic, second-person, no clichés, no exclamation marks.
+ * After the Moments section was reduced to a single focal artefact —
+ * a sealed envelope — the five entries here serve as a typographic
+ * list beside the 3D scene. Each one corresponds to a wax-seal
+ * accent colour so the envelope quietly shifts its tone as the
+ * sender moves between captions.
  *
- * When real GLTF assets land, swap the procedural object in
- * components/moments/objects.tsx for a <Gltf path="..." /> import.
- * Nothing else here changes.
+ * Captions are written in CadeauAura's voice: italic, second-person,
+ * no clichés, no exclamation marks. None of them sound like product
+ * categories.
  */
 
 export type MomentKey =
@@ -23,51 +25,59 @@ export interface MomentConfig {
   caption: string;
   ctaHref: string;
   ctaLabel: string;
-  position: [number, number, number];
+  /** Wax-seal base colour for the focal envelope when this moment is active. */
+  sealColor: string;
+  /** Gold rim emissive intensity for this moment. Subtle differentiation. */
+  sealGlow: number;
 }
 
 export const MOMENTS: readonly MomentConfig[] = [
   {
     key: 'velvet-box',
-    label: 'Velvet keepsake',
+    label: 'A keepsake',
     caption:
       'For the year you almost lost, and the one who carried you through it.',
     ctaHref: '/create',
     ctaLabel: 'Begin',
-    position: [-2.7, 0.1, 0],
+    sealColor: '#7E102C',
+    sealGlow: 0.22,
   },
   {
     key: 'sealed-envelope',
-    label: 'Sealed envelope',
+    label: 'A letter, in waiting',
     caption: 'For the words you have been waiting to send.',
     ctaHref: '/create',
     ctaLabel: 'Begin',
-    position: [-1.35, 0.4, 0.5],
+    sealColor: '#8F1431',
+    sealGlow: 0.28,
   },
   {
     key: 'memory-capsule',
-    label: 'Glass memory',
+    label: 'A small remembrance',
     caption: 'For the time you have not closed.',
     ctaHref: '/create',
     ctaLabel: 'Begin',
-    position: [0, -0.1, 0.9],
+    sealColor: '#A03A55',
+    sealGlow: 0.18,
   },
   {
     key: 'gold-edge-card',
-    label: 'Gold-edged card',
+    label: 'A quiet thanks',
     caption: 'For the one who has held you through every quiet hour.',
     ctaHref: '/create',
     ctaLabel: 'Begin',
-    position: [1.35, 0.4, 0.5],
+    sealColor: '#B26B3C',
+    sealGlow: 0.32,
   },
   {
     key: 'quiet-candle',
-    label: 'A quiet flame',
+    label: 'For someone gone',
     caption: 'For someone you have already said goodbye to.',
     ctaHref: '/create',
     ctaLabel: 'Begin',
-    position: [2.7, -0.05, 0],
+    sealColor: '#5A0B18',
+    sealGlow: 0.14,
   },
 ];
 
-export const DEFAULT_MOMENT: MomentKey = 'memory-capsule';
+export const DEFAULT_MOMENT: MomentKey = 'sealed-envelope';
