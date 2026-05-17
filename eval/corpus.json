@@ -1,0 +1,148 @@
+{
+  "version": 1,
+  "_doc": "Lightweight evaluation corpus for CadeauAura. The runner imports each agent and the restraint gate, exercising the deterministic fallback paths (no model tokens spent). Used to catch regressions in tone classification, anchor extraction, restraint compliance, plan shape, and beat sequence sanity.",
+  "deepenCases": [
+    {
+      "id": "grief-bereavement",
+      "telling": "my dad passed last spring it would have been his birthday this week",
+      "expectedTone": "grief"
+    },
+    {
+      "id": "grief-buried",
+      "telling": "we buried her on a tuesday and i still pretend she is going to call",
+      "expectedTone": "grief"
+    },
+    {
+      "id": "distance-drift",
+      "telling": "we used to be close before everything happened and i still think about him",
+      "expectedTone": "distance"
+    },
+    {
+      "id": "distance-no-contact",
+      "telling": "i havent spoken to him in three years but i miss the small things",
+      "expectedTone": "distance"
+    },
+    {
+      "id": "hurt-betrayal",
+      "telling": "he lied to me for years and i hate him but i still owe him something",
+      "expectedTone": "hurt"
+    },
+    {
+      "id": "hurt-anger",
+      "telling": "she never deserved my time but i should still write something honest",
+      "expectedTone": "hurt"
+    },
+    {
+      "id": "vague-thanks",
+      "telling": "thanks for everything",
+      "expectedTone": "vague"
+    },
+    {
+      "id": "warm-medium",
+      "telling": "my partner has been quietly looking after me through this whole stretch",
+      "expectedTone": "warm"
+    },
+    {
+      "id": "specific-rich",
+      "telling": "every sunday for years my grandmother sat with me at the kitchen table and taught me to read after lunch and i still remember the warmth of those quiet mornings every single time i smell that exact bread",
+      "expectedTone": "specific"
+    }
+  ],
+  "restraintCases": [
+    {
+      "id": "clean-mirror",
+      "text": "It sounds like she carried you through a year you needed her.",
+      "profile": "reflector",
+      "shouldPass": true
+    },
+    {
+      "id": "banned-perfect",
+      "text": "This is a perfect moment for them.",
+      "profile": "reflector",
+      "shouldPass": false
+    },
+    {
+      "id": "banned-meaningful",
+      "text": "What a meaningful gift this would be.",
+      "profile": "reflector",
+      "shouldPass": false
+    },
+    {
+      "id": "self-reference",
+      "text": "As an AI, I cannot answer that.",
+      "profile": "reflector",
+      "shouldPass": false
+    },
+    {
+      "id": "exclamation",
+      "text": "You carried me through that year!",
+      "profile": "reflector",
+      "shouldPass": false
+    },
+    {
+      "id": "composer-clean",
+      "text": "You held a year I almost lost. I do not think I have ever told you how much. Thank you.",
+      "profile": "composer",
+      "shouldPass": true
+    },
+    {
+      "id": "composer-too-long-per-sentence",
+      "text": "You have carried me through more weeks and months than I have ever been able to find the right words to thank you for in any single conversation we have had.",
+      "profile": "composer",
+      "shouldPass": false
+    }
+  ],
+  "planningCases": [
+    {
+      "id": "warm-plan",
+      "recipientName": "Mom",
+      "tone": "warm",
+      "expectMomentType": ["letter", "reveal", "series", "unboxing", "gesture"]
+    },
+    {
+      "id": "grief-plan",
+      "recipientName": "Dad",
+      "tone": "grief",
+      "expectMomentType": ["letter", "gesture"]
+    },
+    {
+      "id": "distance-plan",
+      "recipientName": "Old friend",
+      "tone": "distance",
+      "expectMomentType": ["letter", "gesture", "series"]
+    }
+  ],
+  "composeCases": [
+    {
+      "id": "warm-three-drafts",
+      "recipientName": "Mom",
+      "telling": "my mom kept showing up for me last year when i was unwell",
+      "tone": "warm",
+      "anchors": ["kept showing up", "last year"]
+    },
+    {
+      "id": "grief-three-drafts",
+      "recipientName": "Dad",
+      "telling": "my dad passed last spring and it would have been his birthday",
+      "tone": "grief",
+      "anchors": ["last spring", "birthday"]
+    }
+  ],
+  "surpriseCases": [
+    {
+      "id": "warm-default-plan",
+      "message": "You held a year I almost lost. Thank you.",
+      "tone": "warm"
+    },
+    {
+      "id": "grief-default-plan",
+      "message": "I think about you when I do the small things you would have noticed.",
+      "tone": "grief"
+    },
+    {
+      "id": "distance-default-plan",
+      "message": "Some of what we lost is still in me, I think.",
+      "tone": "distance"
+    }
+  ]
+}

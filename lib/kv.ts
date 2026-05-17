@@ -2,18 +2,21 @@
  * Thin abstraction over the Vercel KV (Upstash Redis) REST API.
  *
  * Calls go directly to the REST endpoint, so we avoid taking
- * `@vercel/kv` as a hard dependency. When `KV_REST_API_URL` and
- * `KV_REST_API_TOKEN` are not present in the environment the module
- * exports a no-op store. The recipient routes degrade gracefully:
- * fetch returns null, save is silent, and the UI behaves as if the
- * sender has never written to this person before.
+ * `@vercel/kv` as a hard dependency. When the env snapshot reports
+ * KV is not configured, this module exports a no-op store. The
+ * recipient and moment routes degrade gracefully — fetch returns
+ * null, save is silent, and the UI behaves as if the sender has
+ * never written to this person before.
  *
  * Values are JSON-serialised on the way in and parsed on the way out
  * so callers can store plain TypeScript objects.
  */
 
-const KV_URL = process.env.KV_REST_API_URL;
-const KV_TOKEN = process.env.KV_REST_API_TOKEN;
+import { readEnv } from '@/lib/env';
+
+const env = readEnv();
+const KV_URL = env.kv.url;
+const KV_TOKEN = env.kv.token;
 
 export interface KVStore {
   get<T>(key: string): Promise<T | null>;
@@ -66,6 +69,6 @@ const rest: KVStore = {
   },
 };
 
-export const kv: KVStore = KV_URL && KV_TOKEN ? rest : noop;
+export const kv: KVStore = env.kv.configured ? rest : noop;
 
-export const isKVConfigured = Boolean(KV_URL && KV_TOKEN);
+export const isKVConfigured = env.kv.configured;
