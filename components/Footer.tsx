@@ -37,7 +37,7 @@ export function Footer() {
         </div>
 
         <div>
-          <h3 className="font-display text-xl text-gold-300">Explore</h3>
+          <h2 className="font-display text-xl text-gold-300">Explore</h2>
           <ul className="mt-4 space-y-3 text-sm text-cream-50/80">
             {quickLinks.map(([label, href]) => (
               <li key={href}>
@@ -53,7 +53,7 @@ export function Footer() {
         </div>
 
         <div>
-          <h3 className="font-display text-xl text-gold-300">Gift Categories</h3>
+          <h2 className="font-display text-xl text-gold-300">Gift Categories</h2>
           <ul className="mt-4 space-y-3 text-sm text-cream-50/80">
             {categories.map(([label, href]) => (
               <li key={href}>
@@ -69,7 +69,7 @@ export function Footer() {
         </div>
 
         <div>
-          <h3 className="font-display text-xl text-gold-300">Trust</h3>
+          <h2 className="font-display text-xl text-gold-300">Trust</h2>
           <ul className="mt-4 space-y-3 text-sm text-cream-50/80">
             <li>Curated with care</li>
             <li>Rooted in many cultures</li>

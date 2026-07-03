@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     description:
       'Find emotional and thoughtful message lines to pair with meaningful gifts.',
     url: '/messages',
-    images: ['/meaning-card.jpg.png'],
+    images: ['/meaning-card.webp'],
   },
 };
 
@@ -94,7 +94,7 @@ export default function MessagesPage() {
       <section className="relative -mx-4 -mt-10 overflow-hidden bg-[#160606] px-4 py-16 text-white sm:-mx-6 sm:px-6 lg:-mx-8">
         <div
           className="absolute inset-0 bg-cover bg-center opacity-45"
-          style={{ backgroundImage: "url('/meaning-card.jpg.png')" }}
+          style={{ backgroundImage: "url('/meaning-card.webp')" }}
         />
         <div className="absolute inset-0 bg-[linear-gradient(90deg,#170405_0%,rgba(35,5,10,0.94)_48%,rgba(22,6,6,0.35)_100%)]" />
 
@@ -169,7 +169,7 @@ export default function MessagesPage() {
       <section className="mx-auto grid max-w-7xl gap-6 px-4 pb-12 sm:px-6 lg:grid-cols-[0.95fr_1.05fr]">
         <div
           className="min-h-[360px] rounded-[2rem] border border-[#ead8c7] bg-cover bg-center shadow-xl"
-          style={{ backgroundImage: "url('/story-unboxing.jpg.png')" }}
+          style={{ backgroundImage: "url('/story-unboxing.webp')" }}
         />
 
         <div className="rounded-[2rem] bg-[#430816] p-7 text-white shadow-2xl shadow-[#430816]/20 sm:p-10">

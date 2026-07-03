@@ -63,7 +63,7 @@ export const metadata: Metadata = {
     description:
       'CadeauAura helps people discover thoughtful gift ideas inspired by emotion, culture and personal meaning.',
     url: '/about',
-    images: ['/hero-gift.jpg.png'],
+    images: ['/hero-gift.webp'],
   },
 };
 
@@ -76,7 +76,7 @@ export default function AboutPage() {
       <section className="relative -mx-4 -mt-10 overflow-hidden bg-[#160606] px-4 py-16 text-white sm:-mx-6 sm:px-6 lg:-mx-8">
         <div
           className="absolute inset-0 bg-cover bg-center opacity-45"
-          style={{ backgroundImage: "url('/story-unboxing.jpg.png')" }}
+          style={{ backgroundImage: "url('/story-unboxing.webp')" }}
         />
         <div className="absolute inset-0 bg-[linear-gradient(90deg,#170405_0%,rgba(35,5,10,0.94)_48%,rgba(22,6,6,0.35)_100%)]" />
 
@@ -138,7 +138,7 @@ export default function AboutPage() {
 
         <div
           className="min-h-[360px] rounded-[2rem] border border-[#ead8c7] bg-cover bg-center shadow-xl"
-          style={{ backgroundImage: "url('/meaning-card.jpg.png')" }}
+          style={{ backgroundImage: "url('/meaning-card.webp')" }}
         />
       </section>
 
@@ -223,7 +223,7 @@ export default function AboutPage() {
       <section className="mx-auto grid max-w-7xl gap-6 px-4 pb-12 sm:px-6 lg:grid-cols-[0.95fr_1.05fr]">
         <div
           className="min-h-[360px] rounded-[2rem] border border-[#ead8c7] bg-cover bg-center shadow-xl"
-          style={{ backgroundImage: "url('/culture-diya.jpg.png')" }}
+          style={{ backgroundImage: "url('/culture-diya.webp')" }}
         />
 
         <div className="rounded-[2rem] border border-[#ead8c7] bg-[#fff7ef] p-7 shadow-sm sm:p-10">

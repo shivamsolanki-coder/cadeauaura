@@ -5,7 +5,7 @@ export const products = [
     name: 'Romantic Memory Box',
     description:
       'A premium keepsake box with space for photos, notes and small memories from your love story.',
-    image: '/meaning-card.jpg.png',
+    image: '/meaning-card.webp',
     price: '₹1,499',
     badge: 'Romantic',
     bestFor: 'Anniversary, partner, proposal',
@@ -16,7 +16,7 @@ export const products = [
     name: 'Couple Name Frame',
     description:
       'A personalized couple frame designed for milestones, dates and meaningful memories.',
-    image: '/story-unboxing.jpg.png',
+    image: '/story-unboxing.webp',
     price: '₹999',
     badge: 'Personalized',
     bestFor: 'Couples and anniversaries',
@@ -27,7 +27,7 @@ export const products = [
     name: 'Premium Love Hamper',
     description:
       'A warm romantic hamper with elegant packaging, message card and celebration-ready feel.',
-    image: '/hero-gift.jpg.png',
+    image: '/hero-gift.webp',
     price: '₹2,499',
     badge: 'Premium',
     bestFor: 'Love and celebration',
@@ -39,7 +39,7 @@ export const products = [
     name: 'Birthday Surprise Box',
     description:
       'A joyful birthday gift box with thoughtful items, premium wrapping and a celebration card.',
-    image: '/hero-gift.jpg.png',
+    image: '/hero-gift.webp',
     price: '₹899',
     badge: 'Popular',
     bestFor: 'Friends, siblings, colleagues',
@@ -50,7 +50,7 @@ export const products = [
     name: 'Personalized Birthday Card Set',
     description:
       'A meaningful card set with warm birthday wishes and personal message options.',
-    image: '/meaning-card.jpg.png',
+    image: '/meaning-card.webp',
     price: '₹499',
     badge: 'Meaningful',
     bestFor: 'Birthday wishes',
@@ -61,7 +61,7 @@ export const products = [
     name: 'Luxury Birthday Hamper',
     description:
       'A premium hamper crafted for unforgettable birthday moments and elegant presentation.',
-    image: '/story-unboxing.jpg.png',
+    image: '/story-unboxing.webp',
     price: '₹2,999',
     badge: 'Luxury',
     bestFor: 'Premium birthdays',
@@ -73,7 +73,7 @@ export const products = [
     name: 'Wedding Blessing Box',
     description:
       'A culturally warm wedding gift box with premium finishing and blessing-inspired details.',
-    image: '/culture-diya.jpg.png',
+    image: '/culture-diya.webp',
     price: '₹3,499',
     badge: 'Wedding',
     bestFor: 'Newly married couples',
@@ -84,7 +84,7 @@ export const products = [
     name: 'Premium Wedding Keepsake',
     description:
       'A memorable keepsake gift designed for wedding rituals, blessings and emotional value.',
-    image: '/story-unboxing.jpg.png',
+    image: '/story-unboxing.webp',
     price: '₹4,999',
     badge: 'Keepsake',
     bestFor: 'Wedding memories',
@@ -95,7 +95,7 @@ export const products = [
     name: 'Elegant Couple Gift Set',
     description:
       'A graceful gift set for couples with premium packaging and meaningful presentation.',
-    image: '/hero-gift.jpg.png',
+    image: '/hero-gift.webp',
     price: '₹2,499',
     badge: 'Elegant',
     bestFor: 'Wedding and reception',
@@ -107,7 +107,7 @@ export const products = [
     name: 'Client Appreciation Box',
     description:
       'A professional premium box designed for clients, partners and business relationships.',
-    image: '/hero-gift.jpg.png',
+    image: '/hero-gift.webp',
     price: '₹1,999',
     badge: 'Business',
     bestFor: 'Clients and partners',
@@ -118,7 +118,7 @@ export const products = [
     name: 'Team Celebration Hamper',
     description:
       'A thoughtful hamper for employee recognition, team wins and workplace celebrations.',
-    image: '/story-unboxing.jpg.png',
+    image: '/story-unboxing.webp',
     price: '₹1,499',
     badge: 'Team',
     bestFor: 'Employees and teams',
@@ -129,7 +129,7 @@ export const products = [
     name: 'Premium Desk Gift Set',
     description:
       'An elegant professional gift set suitable for office use, appreciation and branding.',
-    image: '/meaning-card.jpg.png',
+    image: '/meaning-card.webp',
     price: '₹2,999',
     badge: 'Professional',
     bestFor: 'Corporate gifting',
@@ -141,7 +141,7 @@ export const products = [
     name: 'Diya Festive Box',
     description:
       'A festive gift box inspired by diya light, Indian rituals and warm celebration moments.',
-    image: '/culture-diya.jpg.png',
+    image: '/culture-diya.webp',
     price: '₹1,299',
     badge: 'Festive',
     bestFor: 'Diwali and celebrations',
@@ -152,7 +152,7 @@ export const products = [
     name: 'Rose Petal Celebration Box',
     description:
       'A beautiful celebration box with cultural warmth, rose-inspired styling and premium feel.',
-    image: '/hero-gift.jpg.png',
+    image: '/hero-gift.webp',
     price: '₹1,799',
     badge: 'Celebration',
     bestFor: 'Festivals and family',
@@ -163,7 +163,7 @@ export const products = [
     name: 'Indian Tradition Hamper',
     description:
       'A culturally rooted hamper for festive gifting, family blessings and memorable rituals.',
-    image: '/culture-diya.jpg.png',
+    image: '/culture-diya.webp',
     price: '₹2,499',
     badge: 'Traditional',
     bestFor: 'Festive gifting',
@@ -175,7 +175,7 @@ export const products = [
     name: 'Couple Date Night Box',
     description:
       'A romantic gift box for couples to celebrate quality time, memories and connection.',
-    image: '/meaning-card.jpg.png',
+    image: '/meaning-card.webp',
     price: '₹1,899',
     badge: 'Romantic',
     bestFor: 'Partners and couples',
@@ -186,7 +186,7 @@ export const products = [
     name: 'Love Note Jar',
     description:
       'A jar of thoughtful notes designed to express affection in a sweet and memorable way.',
-    image: '/story-unboxing.jpg.png',
+    image: '/story-unboxing.webp',
     price: '₹799',
     badge: 'Sweet',
     bestFor: 'Love messages',
@@ -197,7 +197,7 @@ export const products = [
     name: 'Proposal Memory Kit',
     description:
       'A meaningful kit crafted for proposals, romantic surprises and unforgettable moments.',
-    image: '/hero-gift.jpg.png',
+    image: '/hero-gift.webp',
     price: '₹2,999',
     badge: 'Special',
     bestFor: 'Proposals',
@@ -209,7 +209,7 @@ export const products = [
     name: 'Gratitude Box for Parents',
     description:
       'A warm emotional box made to express love, respect and gratitude for parents.',
-    image: '/story-unboxing.jpg.png',
+    image: '/story-unboxing.webp',
     price: '₹1,499',
     badge: 'Family',
     bestFor: 'Mother and father',
@@ -220,7 +220,7 @@ export const products = [
     name: 'Parent Blessing Frame',
     description:
       'A meaningful frame that celebrates family love, blessings and lifelong support.',
-    image: '/meaning-card.jpg.png',
+    image: '/meaning-card.webp',
     price: '₹999',
     badge: 'Blessing',
     bestFor: 'Parents',
@@ -231,7 +231,7 @@ export const products = [
     name: 'Family Memory Hamper',
     description:
       'A heartfelt hamper for family moments, emotional messages and shared memories.',
-    image: '/hero-gift.jpg.png',
+    image: '/hero-gift.webp',
     price: '₹2,499',
     badge: 'Heartfelt',
     bestFor: 'Family gifting',
@@ -243,7 +243,7 @@ export const products = [
     name: 'Luxury Gift Box Packaging',
     description:
       'Premium packaging with elegant box styling, ribbon finishing and luxury presentation.',
-    image: '/hero-gift.jpg.png',
+    image: '/hero-gift.webp',
     price: '₹799',
     badge: 'Packaging',
     bestFor: 'Premium presentation',
@@ -254,7 +254,7 @@ export const products = [
     name: 'Gold Ribbon Finish',
     description:
       'A refined ribbon and finishing upgrade to make every gift look more premium.',
-    image: '/culture-diya.jpg.png',
+    image: '/culture-diya.webp',
     price: '₹299',
     badge: 'Add-on',
     bestFor: 'Gift finishing',
@@ -265,7 +265,7 @@ export const products = [
     name: 'Custom Message Card',
     description:
       'A premium message card add-on to make every gift feel more personal and emotional.',
-    image: '/meaning-card.jpg.png',
+    image: '/meaning-card.webp',
     price: '₹199',
     badge: 'Personal',
     bestFor: 'Meaningful gifting',

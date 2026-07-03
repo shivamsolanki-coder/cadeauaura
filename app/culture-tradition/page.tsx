@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     description:
       'Celebrate gifting inspired by traditions, rituals, festivals, blessings and emotional connection from many cultures.',
     url: '/culture-tradition',
-    images: ['/culture-diya.jpg.png'],
+    images: ['/culture-diya.webp'],
   },
 };
 
@@ -98,7 +98,7 @@ export default function CultureTraditionPage() {
       <section className="relative -mx-4 -mt-10 overflow-hidden bg-[#160606] px-4 py-16 text-white sm:-mx-6 sm:px-6 lg:-mx-8">
         <div
           className="absolute inset-0 bg-cover bg-center opacity-50"
-          style={{ backgroundImage: "url('/culture-diya.jpg.png')" }}
+          style={{ backgroundImage: "url('/culture-diya.webp')" }}
         />
         <div className="absolute inset-0 bg-[linear-gradient(90deg,#170405_0%,rgba(35,5,10,0.94)_48%,rgba(22,6,6,0.35)_100%)]" />
 
@@ -160,7 +160,7 @@ export default function CultureTraditionPage() {
 
         <div
           className="min-h-[360px] rounded-[2rem] border border-[#ead8c7] bg-cover bg-center shadow-xl"
-          style={{ backgroundImage: "url('/culture-diya.jpg.png')" }}
+          style={{ backgroundImage: "url('/culture-diya.webp')" }}
         />
       </section>
 
@@ -243,7 +243,7 @@ export default function CultureTraditionPage() {
       <section className="mx-auto grid max-w-7xl gap-6 px-4 pb-10 sm:px-6 lg:grid-cols-[0.95fr_1.05fr]">
         <div
           className="min-h-[380px] rounded-[2rem] border border-[#ead8c7] bg-cover bg-center shadow-xl"
-          style={{ backgroundImage: "url('/hero-gift.jpg.png')" }}
+          style={{ backgroundImage: "url('/hero-gift.webp')" }}
         />
 
         <div className="rounded-[2rem] border border-[#ead8c7] bg-[#fff7ef] p-7 shadow-sm sm:p-10">

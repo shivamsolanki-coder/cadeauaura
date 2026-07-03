@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     description:
       'Discover thoughtful gifting ideas by occasion, relationship, emotion and budget.',
     url: '/gift-finder',
-    images: ['/hero-gift.jpg.png'],
+    images: ['/hero-gift.webp'],
   },
 };
 

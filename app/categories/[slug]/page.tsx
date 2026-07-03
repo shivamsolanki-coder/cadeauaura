@@ -255,7 +255,7 @@ export default async function CategoryDetailPage({
             href={getWhatsAppLink(categoryMessage)}
             target="_blank"
             rel="noreferrer"
-            className="rounded-full bg-[#25D366] px-6 py-3 text-sm font-bold text-white transition hover:-translate-y-1 hover:bg-[#1ebe5d]"
+            className="rounded-full bg-[#25D366] px-6 py-3 text-sm font-bold text-[#0c2b1c] transition hover:-translate-y-1 hover:bg-[#1ebe5d]"
           >
             Category WhatsApp Enquiry →
           </a>
