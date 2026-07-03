@@ -1,6 +1,7 @@
 import Link from 'next/link';
 
 import { CinematicHero } from '@/components/home/CinematicHero';
+import { ExperienceStory } from '@/components/home/ExperienceStory';
 import { MomentGrid } from '@/components/home/MomentGrid';
 import { MomentsAsObjects } from '@/components/moments/MomentsAsObjects';
 
@@ -11,6 +12,9 @@ export default function HomePage() {
 
       {/* Ways in — hover-reveal moment grid */}
       <MomentGrid />
+
+      {/* The Experience — pinned scroll story */}
+      <ExperienceStory />
 
       {/* Moments as Objects */}
       <MomentsAsObjects />
