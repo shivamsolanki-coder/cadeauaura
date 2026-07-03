@@ -115,7 +115,7 @@ export default function MessagesPage() {
               href={getWhatsAppLink(whatsappMessage)}
               target="_blank"
               rel="noreferrer"
-              className="rounded-full bg-[#25D366] px-7 py-4 text-sm font-bold text-white shadow-2xl shadow-black/20 transition hover:-translate-y-1 hover:bg-[#1ebe5d]"
+              className="rounded-full bg-[#25D366] px-7 py-4 text-sm font-bold text-[#0c2b1c] shadow-2xl shadow-black/20 transition hover:-translate-y-1 hover:bg-[#1ebe5d]"
             >
               Ask for Message Help →
             </a>
@@ -187,7 +187,7 @@ export default function MessagesPage() {
                 key={tip}
                 className="rounded-2xl border border-white/10 bg-white/[0.08] p-4 text-sm font-semibold text-[#fff7ef]"
               >
-                ✓ {tip}
+                <span aria-hidden>✓</span> {tip}
               </div>
             ))}
           </div>

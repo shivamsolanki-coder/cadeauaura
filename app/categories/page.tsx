@@ -31,7 +31,7 @@ export default function CategoriesPage() {
 
         <div className="relative mx-auto max-w-7xl">
           <div className="inline-flex items-center gap-3 rounded-full border border-[#d7a25d]/35 bg-white/10 px-4 py-2 text-xs font-bold uppercase tracking-[0.35em] text-[#f3c982] backdrop-blur">
-            <span>🎁</span>
+            <span aria-hidden>🎁</span>
             Gift Categories
           </div>
 

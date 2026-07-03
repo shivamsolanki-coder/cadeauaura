@@ -16,7 +16,7 @@ const values = [
   },
   {
     title: 'Culture with warmth',
-    text: 'Indian gifting has rituals, blessings and small details that make moments memorable.',
+    text: 'Every culture has rituals, blessings and small details that make moments memorable. We design with all of them in mind.',
   },
   {
     title: 'Personal meaning',
@@ -105,7 +105,7 @@ export default function AboutPage() {
               href={getWhatsAppLink(whatsappMessage)}
               target="_blank"
               rel="noreferrer"
-              className="rounded-full bg-[#25D366] px-7 py-4 text-sm font-bold text-white shadow-2xl shadow-black/20 transition hover:-translate-y-1 hover:bg-[#1ebe5d]"
+              className="rounded-full bg-[#25D366] px-7 py-4 text-sm font-bold text-[#0c2b1c] shadow-2xl shadow-black/20 transition hover:-translate-y-1 hover:bg-[#1ebe5d]"
             >
               Ask on WhatsApp
             </a>
@@ -183,7 +183,7 @@ export default function AboutPage() {
                 Guidance before gifting
               </h2>
 
-              <p className="mt-3 max-w-2xl text-sm leading-7 text-white/70">
+              <p className="mt-3 max-w-2xl text-sm leading-7 text-white/85">
                 CadeauAura currently works through an enquiry-based flow, so you
                 can discuss product details clearly before deciding.
               </p>
@@ -211,7 +211,7 @@ export default function AboutPage() {
                   {item.title}
                 </h3>
 
-                <p className="mt-3 text-sm leading-7 text-white/65">
+                <p className="mt-3 text-sm leading-7 text-white/80">
                   {item.text}
                 </p>
               </div>
@@ -228,7 +228,7 @@ export default function AboutPage() {
 
         <div className="rounded-[2rem] border border-[#ead8c7] bg-[#fff7ef] p-7 shadow-sm sm:p-10">
           <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#8a4a2d]">
-            Indian gifting warmth
+            Gifting warmth, everywhere
           </p>
 
           <h2 className="mt-4 font-serif text-4xl leading-tight text-[#5a1722]">
@@ -236,10 +236,10 @@ export default function AboutPage() {
           </h2>
 
           <p className="mt-5 text-sm leading-7 text-stone-700">
-            Indian gifting is not only about giving an item. It is about respect,
-            blessings, family emotion, celebration and memory. CadeauAura brings
-            that warmth into modern gift ideas, message cards and premium
-            presentation.
+            Meaningful gifting is never only about the item. Across cultures it
+            carries respect, blessings, family emotion, celebration and memory.
+            CadeauAura brings that warmth into modern gift ideas, message cards
+            and premium presentation — wherever your traditions come from.
           </p>
 
           <div className="mt-7 flex flex-wrap gap-3">
