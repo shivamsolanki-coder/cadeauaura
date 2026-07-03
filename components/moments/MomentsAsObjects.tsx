@@ -61,7 +61,7 @@ export function MomentsAsObjects() {
           <h2 className="mt-5 font-display text-3xl font-light leading-[1.05] tracking-[-0.01em] text-cream-50 sm:text-4xl md:text-5xl">
             Every moment, sealed for one.
           </h2>
-          <p className="mx-auto mt-5 max-w-md text-sm leading-7 text-cream-50/55 sm:text-base">
+          <p className="mx-auto mt-5 max-w-md text-sm leading-7 text-cream-50/65 sm:text-base">
             Five quiet addresses. Choose the one closest to what you want to say.
           </p>
         </div>

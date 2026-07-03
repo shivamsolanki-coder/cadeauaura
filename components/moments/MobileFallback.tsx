@@ -18,7 +18,7 @@ export function MobileFallback() {
       <ul className="space-y-8">
         {MOMENTS.map((moment) => (
           <li key={moment.key} className="border-t border-gold-300/12 pt-7">
-            <p className="text-[0.6rem] font-light uppercase tracking-[0.32em] text-cream-50/40">
+            <p className="text-[0.6rem] font-light uppercase tracking-[0.32em] text-cream-50/55">
               {moment.label}
             </p>
             <p className="mt-3 font-display text-lg italic leading-relaxed text-cream-50/85">
@@ -27,7 +27,7 @@ export function MobileFallback() {
             </p>
             <Link
               href={moment.ctaHref}
-              className="mt-4 inline-flex items-center gap-2 text-[0.65rem] uppercase tracking-[0.28em] text-cream-50/55 underline-offset-4 transition hover:text-cream-50/85 hover:underline"
+              className="mt-4 inline-flex items-center gap-2 text-[0.65rem] uppercase tracking-[0.28em] text-cream-50/70 underline-offset-4 transition hover:text-cream-50/85 hover:underline"
             >
               <span>{moment.ctaLabel}</span>
               <span aria-hidden>→</span>
