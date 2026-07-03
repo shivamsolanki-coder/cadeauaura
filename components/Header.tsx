@@ -42,8 +42,16 @@ export function Header() {
     return () => window.removeEventListener('keydown', onKey);
   }, [open]);
 
+  // On the homepage the nav settles in after the hero's first breath;
+  // everywhere else it is present immediately.
+  const isHome = pathname === '/';
+
   return (
-    <header className="sticky top-0 z-50 border-b border-cream-50/5 bg-ink-950/70 backdrop-blur-xl">
+    <header
+      className={`sticky top-0 z-50 border-b border-cream-50/5 bg-ink-950/70 backdrop-blur-xl ${
+        isHome ? 'nav-settle' : ''
+      }`}
+    >
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6">
         <Link
           href="/"

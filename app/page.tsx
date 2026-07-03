@@ -1,91 +1,12 @@
 import Link from 'next/link';
 
+import { CinematicHero } from '@/components/home/CinematicHero';
 import { MomentsAsObjects } from '@/components/moments/MomentsAsObjects';
 
 export default function HomePage() {
   return (
     <main className="bg-ink-950 text-cream-50">
-      {/* Hero */}
-      <section className="relative isolate overflow-hidden px-6 py-20 sm:px-10 sm:py-28">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(215,162,93,0.10),transparent_32%),radial-gradient(circle_at_50%_100%,rgba(143,20,49,0.18),transparent_55%)]"
-        />
-
-        {/* Film grain, matched to the Moments section for one continuous atmosphere */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 opacity-[0.04] mix-blend-soft-light"
-          style={{
-            backgroundImage:
-              "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.6 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>\")",
-          }}
-        />
-
-        <div className="relative mx-auto max-w-6xl">
-          <div className="max-w-3xl">
-            <p className="text-xs font-light uppercase tracking-[0.34em] text-gold-300/72">
-              A quiet way to hold what matters
-            </p>
-
-            <h1 className="mt-6 font-display text-5xl font-light leading-[1.04] tracking-[-0.03em] text-cream-50 sm:text-6xl lg:text-7xl">
-              CadeauAura turns feeling into something gently held.
-            </h1>
-
-            <p className="mt-8 max-w-2xl text-base leading-8 text-cream-50/62 sm:text-lg">
-              Not a gift catalogue. Not a marketplace. Just a slower,
-              more deliberate way to shape a message, a memory, or a moment
-              for someone who has stayed with you.
-            </p>
-
-            <div className="mt-10 flex flex-wrap items-center gap-4">
-              <Link
-                href="/create"
-                className="inline-flex items-center gap-2 rounded-full bg-cream-50 px-7 py-4 text-sm font-medium text-ink-950 transition hover:bg-mist-200"
-              >
-                <span>Begin a moment</span>
-                <span aria-hidden>→</span>
-              </Link>
-
-              <Link
-                href="/about"
-                className="inline-flex items-center gap-2 rounded-full border border-cream-50/18 px-7 py-4 text-sm font-light text-cream-50/82 transition hover:border-cream-50/38 hover:text-cream-50"
-              >
-                <span>Read the philosophy</span>
-              </Link>
-            </div>
-          </div>
-
-          <div className="mt-16 grid gap-6 border-t border-cream-50/10 pt-10 sm:grid-cols-3">
-            <div className="max-w-xs">
-              <p className="text-[0.65rem] font-light uppercase tracking-[0.3em] text-gold-300/68">
-                Quiet
-              </p>
-              <p className="mt-3 text-sm leading-7 text-cream-50/52">
-                Few words. Slower pacing. No pressure to perform emotion loudly.
-              </p>
-            </div>
-
-            <div className="max-w-xs">
-              <p className="text-[0.65rem] font-light uppercase tracking-[0.3em] text-gold-300/68">
-                Personal
-              </p>
-              <p className="mt-3 text-sm leading-7 text-cream-50/52">
-                A message shaped around what only the two of you would understand.
-              </p>
-            </div>
-
-            <div className="max-w-xs">
-              <p className="text-[0.65rem] font-light uppercase tracking-[0.3em] text-gold-300/68">
-                Held
-              </p>
-              <p className="mt-3 text-sm leading-7 text-cream-50/52">
-                Drafted privately first. Shared only when you decide it is ready.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
+      <CinematicHero />
 
       {/* Moments as Objects */}
       <MomentsAsObjects />

@@ -119,6 +119,58 @@ a {
   }
 }
 
+/*
+ * Ambient hero orbs — three warm radial glows drifting on very slow
+ * loops. Under prefers-reduced-motion the global rule freezes them
+ * into a static gradient wash.
+ */
+@keyframes auraDrift1 {
+  0%,
+  100% {
+    transform: translate(-6%, -4%) scale(1);
+  }
+  50% {
+    transform: translate(7%, 9%) scale(1.12);
+  }
+}
+
+@keyframes auraDrift2 {
+  0%,
+  100% {
+    transform: translate(5%, 6%) scale(1.08);
+  }
+  50% {
+    transform: translate(-8%, -5%) scale(0.94);
+  }
+}
+
+@keyframes auraDrift3 {
+  0%,
+  100% {
+    transform: translate(2%, -7%) scale(0.96);
+  }
+  50% {
+    transform: translate(-5%, 6%) scale(1.1);
+  }
+}
+
+@keyframes scrollHint {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.7;
+  }
+  50% {
+    transform: translateY(10px);
+    opacity: 0.25;
+  }
+}
+
+/* Nav settles in after the hero's first breath (homepage only). */
+.nav-settle {
+  animation: auraFadeUp 900ms cubic-bezier(0.22, 1, 0.36, 1) 1600ms both;
+}
+
 @keyframes auraQuiet {
   from {
     opacity: 0;
