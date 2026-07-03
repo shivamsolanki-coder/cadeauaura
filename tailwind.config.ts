@@ -11,10 +11,12 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        'deep-rose': '#4C0519',
-        'ivory-cream': '#FFF9F5',
-        'soft-rose': '#FFF1F2',
-        'warm-amber': '#FEF3C7',
+        // Legacy aliases, remapped onto the brand palette so older
+        // components share one color system with the newer pages.
+        'deep-rose': '#4A0716',
+        'ivory-cream': '#FFF7EF',
+        'soft-rose': '#F8EADF',
+        'warm-amber': '#F6E3C6',
         'stone-text': '#1C1917',
         ...brandColors
       },

@@ -18,6 +18,38 @@ html {
   scroll-behavior: smooth;
 }
 
+/*
+ * Site-wide keyboard focus indicator. A two-tone ring — cream inner,
+ * rose outer — stays visible on both the dark ink surfaces and the
+ * light cream surfaces without per-component tuning. Only keyboard
+ * focus triggers it; pointer clicks stay quiet.
+ */
+:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px #fff7ef,
+    0 0 0 4px #8f1431;
+}
+
+.skip-link {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 100;
+  transform: translateY(-200%);
+  border-radius: 9999px;
+  background: #fff7ef;
+  color: #160606;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: transform 150ms ease;
+}
+
+.skip-link:focus-visible {
+  transform: translateY(0);
+}
+
 body {
   @apply bg-ivory-cream text-stone-text antialiased;
   min-height: 100vh;
