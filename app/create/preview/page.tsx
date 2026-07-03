@@ -217,15 +217,15 @@ export default function PreviewPage() {
           </p>
 
           {draft.emotion ? (
-            <p className="mt-8 text-xs font-light uppercase tracking-[0.28em] text-cream-50/45">
+            <p className="mt-8 text-xs font-light uppercase tracking-[0.28em] text-cream-50/60">
               With {draft.emotion.toLowerCase()}
             </p>
           ) : null}
         </article>
 
         {anchorsLine ? (
-          <p className="mt-8 font-display text-sm italic leading-7 text-cream-50/40 sm:text-base">
-            <span aria-hidden className="mr-3 text-gold-300/55">~</span>
+          <p className="mt-8 font-display text-sm italic leading-7 text-cream-50/60 sm:text-base">
+            <span aria-hidden className="mr-3 text-gold-300/70">~</span>
             {anchorsLine}
           </p>
         ) : null}
@@ -237,7 +237,7 @@ export default function PreviewPage() {
               type="button"
               onClick={handleCreateLink}
               disabled={isCreating}
-              className="group inline-flex items-center gap-2 rounded-full bg-rose-500 px-6 py-3 font-medium text-cream-50 shadow-[0_18px_50px_-18px_rgba(143,20,49,0.7)] transition hover:bg-rose-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gold-300 disabled:cursor-not-allowed disabled:bg-cream-50/10 disabled:text-cream-50/30 disabled:shadow-none"
+              className="group inline-flex items-center gap-2 rounded-full bg-rose-500 px-6 py-3 font-medium text-cream-50 shadow-[0_18px_50px_-18px_rgba(143,20,49,0.7)] transition hover:bg-rose-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gold-300 disabled:cursor-not-allowed disabled:bg-cream-50/10 disabled:text-cream-50/50 disabled:shadow-none"
             >
               <span>{isCreating ? 'Preparing the link…' : PREVIEW_CTA[draft.tone]}</span>
               {!isCreating && (
@@ -257,14 +257,14 @@ export default function PreviewPage() {
             </Link>
             <Link
               href="/"
-              className="text-cream-50/45 underline-offset-4 hover:text-cream-50/80 hover:underline"
+              className="text-cream-50/60 underline-offset-4 hover:text-cream-50/80 hover:underline"
             >
               Return home
             </Link>
           </div>
         ) : (
           <div className="mt-10 border-t border-gold-300/15 pt-8">
-            <p className="text-[0.6rem] font-light uppercase tracking-[0.28em] text-cream-50/40">
+            <p className="text-[0.6rem] font-light uppercase tracking-[0.28em] text-cream-50/60">
               Your private link
             </p>
             <p className="mt-3 break-all font-display text-base leading-7 text-cream-50/85 sm:text-lg">
@@ -276,6 +276,7 @@ export default function PreviewPage() {
                 <button
                   type="button"
                   onClick={() => handleCopy(created.shareUrl)}
+                  aria-live="polite"
                   className="rounded-full border border-cream-50/20 px-5 py-3 font-light text-cream-50/85 transition hover:border-cream-50/45 hover:text-cream-50"
                 >
                   {copied ? 'Copied' : 'Copy link'}
@@ -293,19 +294,19 @@ export default function PreviewPage() {
                 </a>
                 <Link
                   href="/create"
-                  className="text-cream-50/45 underline-offset-4 hover:text-cream-50/80 hover:underline"
+                  className="text-cream-50/60 underline-offset-4 hover:text-cream-50/80 hover:underline"
                 >
                   Begin another
                 </Link>
               </div>
             ) : (
-              <p className="mt-5 text-xs leading-6 text-cream-50/45">
+              <p className="mt-5 text-xs leading-6 text-cream-50/60">
                 This link will live when storage is configured for the
                 deployment. For now, it is held only in this rehearsal.
               </p>
             )}
 
-            <p className="mt-8 max-w-md text-xs leading-6 text-cream-50/30">
+            <p className="mt-8 max-w-md text-xs leading-6 text-cream-50/50">
               The link is private. Only the person who has it can open the
               moment. Nothing has been sent yet.
             </p>
@@ -318,7 +319,7 @@ export default function PreviewPage() {
           </p>
         )}
 
-        <p className="mt-12 max-w-md text-xs leading-6 text-cream-50/30">
+        <p className="mt-12 max-w-md text-xs leading-6 text-cream-50/50">
           {PREVIEW_CLOSING[draft.tone]}
         </p>
       </div>

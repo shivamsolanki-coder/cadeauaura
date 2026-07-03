@@ -217,7 +217,7 @@ export default function CreatePage() {
             <div className="flex items-baseline gap-3">
               <span
                 aria-hidden
-                className="text-[0.65rem] font-light tracking-[0.32em] text-gold-300/55"
+                className="text-[0.65rem] font-light tracking-[0.32em] text-gold-300/70"
               >
                 01
               </span>
@@ -235,8 +235,8 @@ export default function CreatePage() {
               autoComplete="off"
               value={draft.recipientName}
               onChange={(event) => update('recipientName', event.target.value)}
-              placeholder="Aarav"
-              className="mt-4 w-full border-b border-cream-50/15 bg-transparent pb-3 font-display text-2xl text-cream-50 placeholder:text-cream-50/25 focus:border-gold-300/60 focus:outline-none sm:text-3xl"
+              placeholder="Their name"
+              className="mt-4 w-full border-b border-cream-50/15 bg-transparent pb-3 font-display text-2xl text-cream-50 placeholder:text-cream-50/60 focus:border-gold-300/60 focus:outline-none sm:text-3xl"
             />
           </div>
 
@@ -245,7 +245,7 @@ export default function CreatePage() {
             <div className="flex items-baseline gap-3">
               <span
                 aria-hidden
-                className="text-[0.65rem] font-light tracking-[0.32em] text-gold-300/55"
+                className="text-[0.65rem] font-light tracking-[0.32em] text-gold-300/70"
               >
                 02
               </span>
@@ -256,7 +256,7 @@ export default function CreatePage() {
                 Tell me about them
               </label>
             </div>
-            <p className="mt-2 text-sm leading-7 text-cream-50/45">
+            <p className="mt-2 text-sm leading-7 text-cream-50/60">
               A few words about who they are, or what they have held for you.
             </p>
             <textarea
@@ -267,9 +267,9 @@ export default function CreatePage() {
               value={draft.senderTelling}
               onChange={(event) => update('senderTelling', event.target.value)}
               placeholder="She carried me through last year without making it a big deal."
-              className="mt-5 w-full resize-none border-b border-cream-50/15 bg-transparent pb-3 font-display text-lg leading-8 text-cream-50 placeholder:text-cream-50/25 focus:border-gold-300/60 focus:outline-none"
+              className="mt-5 w-full resize-none border-b border-cream-50/15 bg-transparent pb-3 font-display text-lg leading-8 text-cream-50 placeholder:text-cream-50/60 focus:border-gold-300/60 focus:outline-none"
             />
-            <p className="mt-2 text-right text-xs text-cream-50/35">
+            <p className="mt-2 text-right text-xs text-cream-50/55">
               {draft.senderTelling.length}/{TELLING_LIMIT}
             </p>
 
@@ -277,7 +277,7 @@ export default function CreatePage() {
             {showReflection && (
               <div className="mt-6 border-t border-gold-300/15 pt-5">
                 {reflection.loading ? (
-                  <div className="flex items-center gap-[5px]" aria-label="Listening">
+                  <div className="flex items-center gap-[5px]" role="status" aria-label="Listening">
                     <span className="inline-block h-1 w-1 animate-pulse rounded-full bg-gold-300/50" />
                     <span className="inline-block h-1 w-1 animate-pulse rounded-full bg-gold-300/50 [animation-delay:150ms]" />
                     <span className="inline-block h-1 w-1 animate-pulse rounded-full bg-gold-300/50 [animation-delay:300ms]" />
@@ -299,7 +299,7 @@ export default function CreatePage() {
                         type="button"
                         onClick={reflection.tryAgain}
                         disabled={reflection.maxAttemptsReached}
-                        className="mt-4 text-xs uppercase tracking-[0.28em] text-cream-50/35 underline-offset-4 transition hover:text-cream-50/60 hover:underline disabled:cursor-not-allowed disabled:opacity-30"
+                        className="mt-4 text-xs uppercase tracking-[0.28em] text-cream-50/55 underline-offset-4 transition hover:text-cream-50/85 hover:underline disabled:cursor-not-allowed disabled:opacity-30"
                       >
                         Try again
                       </button>
@@ -309,14 +309,14 @@ export default function CreatePage() {
                     {showFollowUp && (
                       <div className="mt-6 border-t border-gold-300/10 pt-5">
                         {followUp.loading && followUp.displayedText.length === 0 ? (
-                          <div className="flex items-center gap-[5px]" aria-label="Listening more">
+                          <div className="flex items-center gap-[5px]" role="status" aria-label="Listening more">
                             <span className="inline-block h-1 w-1 animate-pulse rounded-full bg-gold-300/35" />
                             <span className="inline-block h-1 w-1 animate-pulse rounded-full bg-gold-300/35 [animation-delay:150ms]" />
                             <span className="inline-block h-1 w-1 animate-pulse rounded-full bg-gold-300/35 [animation-delay:300ms]" />
                           </div>
                         ) : (
                           <>
-                            <p className="font-display text-sm italic leading-7 text-cream-50/50 sm:text-base">
+                            <p className="font-display text-sm italic leading-7 text-cream-50/65 sm:text-base">
                               {followUp.displayedText}
                               {followUp.displayedText.length < followUp.fullText.length && (
                                 <span
@@ -331,7 +331,7 @@ export default function CreatePage() {
                                 type="button"
                                 onClick={takeIntoWords}
                                 disabled={composer.loading}
-                                className="mt-4 text-[0.65rem] uppercase tracking-[0.28em] text-cream-50/40 underline-offset-4 transition hover:text-cream-50/70 hover:underline disabled:cursor-not-allowed disabled:opacity-30"
+                                className="mt-4 text-[0.65rem] uppercase tracking-[0.28em] text-cream-50/60 underline-offset-4 transition hover:text-cream-50/90 hover:underline disabled:cursor-not-allowed disabled:opacity-30"
                               >
                                 Take this into words →
                               </button>
@@ -351,18 +351,18 @@ export default function CreatePage() {
             <div className="flex items-baseline gap-3">
               <span
                 aria-hidden
-                className="text-[0.65rem] font-light tracking-[0.32em] text-gold-300/55"
+                className="text-[0.65rem] font-light tracking-[0.32em] text-gold-300/70"
               >
                 03
               </span>
               <span className="block text-xs font-light uppercase tracking-[0.28em] text-cream-50/55">
                 Feeling
               </span>
-              <span className="text-[0.6rem] font-light uppercase tracking-[0.2em] text-cream-50/30">
+              <span className="text-[0.6rem] font-light uppercase tracking-[0.2em] text-cream-50/50">
                 optional
               </span>
             </div>
-            <p className="mt-2 text-sm leading-7 text-cream-50/45">
+            <p className="mt-2 text-sm leading-7 text-cream-50/60">
               What do you want them to feel?
             </p>
             <div className="mt-5 flex flex-wrap gap-2">
@@ -392,7 +392,7 @@ export default function CreatePage() {
             <div className="flex items-baseline gap-3">
               <span
                 aria-hidden
-                className="text-[0.65rem] font-light tracking-[0.32em] text-gold-300/55"
+                className="text-[0.65rem] font-light tracking-[0.32em] text-gold-300/70"
               >
                 04
               </span>
@@ -403,7 +403,7 @@ export default function CreatePage() {
                 Words
               </label>
             </div>
-            <p className="mt-2 text-sm leading-7 text-cream-50/45">
+            <p className="mt-2 text-sm leading-7 text-cream-50/60">
               A few words for them. Anything that has been waiting.
             </p>
             <textarea
@@ -415,15 +415,15 @@ export default function CreatePage() {
               value={draft.message}
               onChange={(event) => update('message', event.target.value)}
               placeholder="You held a year I almost lost. Thank you."
-              className="mt-5 w-full resize-none border-b border-cream-50/15 bg-transparent pb-3 font-display text-lg leading-8 text-cream-50 placeholder:text-cream-50/25 focus:border-gold-300/60 focus:outline-none"
+              className="mt-5 w-full resize-none border-b border-cream-50/15 bg-transparent pb-3 font-display text-lg leading-8 text-cream-50 placeholder:text-cream-50/60 focus:border-gold-300/60 focus:outline-none"
             />
-            <p className="mt-2 text-right text-xs text-cream-50/35">
+            <p className="mt-2 text-right text-xs text-cream-50/55">
               {draft.message.length}/{MESSAGE_LIMIT}
             </p>
 
             {composer.loading && composer.drafts.length === 0 && (
               <div className="mt-6 border-t border-gold-300/15 pt-5">
-                <div className="flex items-center gap-[5px]" aria-label="Looking for the words">
+                <div className="flex items-center gap-[5px]" role="status" aria-label="Looking for the words">
                   <span className="inline-block h-1 w-1 animate-pulse rounded-full bg-gold-300/50" />
                   <span className="inline-block h-1 w-1 animate-pulse rounded-full bg-gold-300/50 [animation-delay:150ms]" />
                   <span className="inline-block h-1 w-1 animate-pulse rounded-full bg-gold-300/50 [animation-delay:300ms]" />
@@ -433,7 +433,7 @@ export default function CreatePage() {
 
             {composer.drafts.length > 0 && (
               <div className="mt-6 border-t border-gold-300/15 pt-5">
-                <p className="text-[0.6rem] font-light uppercase tracking-[0.28em] text-cream-50/35">
+                <p className="text-[0.6rem] font-light uppercase tracking-[0.28em] text-cream-50/55">
                   Three quiet starts
                 </p>
                 <div className="mt-4 space-y-4">
@@ -455,14 +455,14 @@ export default function CreatePage() {
                     type="button"
                     onClick={takeIntoWords}
                     disabled={composer.loading}
-                    className="text-xs uppercase tracking-[0.28em] text-cream-50/35 underline-offset-4 transition hover:text-cream-50/60 hover:underline disabled:cursor-not-allowed disabled:opacity-30"
+                    className="text-xs uppercase tracking-[0.28em] text-cream-50/55 underline-offset-4 transition hover:text-cream-50/85 hover:underline disabled:cursor-not-allowed disabled:opacity-30"
                   >
                     Try different words
                   </button>
                   <button
                     type="button"
                     onClick={composer.dismiss}
-                    className="text-xs uppercase tracking-[0.28em] text-cream-50/35 underline-offset-4 transition hover:text-cream-50/60 hover:underline"
+                    className="text-xs uppercase tracking-[0.28em] text-cream-50/55 underline-offset-4 transition hover:text-cream-50/85 hover:underline"
                   >
                     Write my own
                   </button>
@@ -479,13 +479,13 @@ export default function CreatePage() {
                   type="button"
                   onClick={triggerPlan}
                   disabled={planBeat.loading}
-                  className="text-xs uppercase tracking-[0.28em] text-cream-50/40 underline-offset-4 transition hover:text-cream-50/70 hover:underline disabled:cursor-not-allowed disabled:opacity-30"
+                  className="text-xs uppercase tracking-[0.28em] text-cream-50/60 underline-offset-4 transition hover:text-cream-50/90 hover:underline disabled:cursor-not-allowed disabled:opacity-30"
                 >
                   {planBeat.loading ? 'Shaping the moment…' : 'Plan this moment →'}
                 </button>
               ) : (
                 <div className="border-t border-gold-300/15 pt-5">
-                  <p className="text-[0.6rem] font-light uppercase tracking-[0.28em] text-cream-50/35">
+                  <p className="text-[0.6rem] font-light uppercase tracking-[0.28em] text-cream-50/55">
                     Shape of the moment
                   </p>
                   <p className="mt-3 font-display text-base italic leading-7 text-cream-50/70 sm:text-lg">
@@ -497,7 +497,7 @@ export default function CreatePage() {
                         key={`${index}-${beat.slice(0, 16)}`}
                         className="font-display text-sm italic leading-7 text-cream-50/55"
                       >
-                        <span aria-hidden className="mr-2 text-gold-300/55">~</span>
+                        <span aria-hidden className="mr-2 text-gold-300/70">~</span>
                         {beat}
                       </li>
                     ))}
@@ -505,7 +505,7 @@ export default function CreatePage() {
                   <button
                     type="button"
                     onClick={planBeat.reset}
-                    className="mt-4 text-[0.65rem] uppercase tracking-[0.28em] text-cream-50/35 underline-offset-4 transition hover:text-cream-50/60 hover:underline"
+                    className="mt-4 text-[0.65rem] uppercase tracking-[0.28em] text-cream-50/55 underline-offset-4 transition hover:text-cream-50/85 hover:underline"
                   >
                     Set this aside
                   </button>
@@ -518,7 +518,7 @@ export default function CreatePage() {
             <button
               type="submit"
               disabled={!canPreview}
-              className="group inline-flex w-full items-center justify-center gap-2 rounded-full bg-rose-500 px-7 py-4 text-sm font-medium text-cream-50 shadow-[0_18px_50px_-18px_rgba(143,20,49,0.7)] transition hover:bg-rose-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gold-300 disabled:cursor-not-allowed disabled:bg-cream-50/10 disabled:text-cream-50/30 disabled:shadow-none sm:w-auto"
+              className="group inline-flex w-full items-center justify-center gap-2 rounded-full bg-rose-500 px-7 py-4 text-sm font-medium text-cream-50 shadow-[0_18px_50px_-18px_rgba(143,20,49,0.7)] transition hover:bg-rose-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gold-300 disabled:cursor-not-allowed disabled:bg-cream-50/10 disabled:text-cream-50/50 disabled:shadow-none sm:w-auto"
             >
               <span>Preview their moment</span>
               <span
@@ -531,11 +531,11 @@ export default function CreatePage() {
 
             {hydrated ? (
               canPreview ? (
-                <span className="text-xs uppercase tracking-[0.28em] text-cream-50/30">
+                <span className="text-xs uppercase tracking-[0.28em] text-cream-50/50">
                   Saved on this device
                 </span>
               ) : (
-                <span className="text-xs leading-6 text-cream-50/45 sm:max-w-[18rem] sm:text-right">
+                <span className="text-xs leading-6 text-cream-50/60 sm:max-w-[18rem] sm:text-right">
                   Add their name and tell us about them to preview.
                 </span>
               )
@@ -543,10 +543,10 @@ export default function CreatePage() {
           </div>
         </form>
 
-        <p className="mt-16 text-xs text-cream-50/35">
+        <p className="mt-16 text-xs text-cream-50/55">
           <Link
             href="/"
-            className="underline-offset-4 hover:text-cream-50/60 hover:underline"
+            className="underline-offset-4 hover:text-cream-50/85 hover:underline"
           >
             Return home
           </Link>
