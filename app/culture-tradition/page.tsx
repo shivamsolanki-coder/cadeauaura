@@ -12,16 +12,16 @@ function getWhatsAppLink(message: string) {
 export const metadata: Metadata = {
   title: 'Culture & Tradition',
   description:
-    'Explore Indian gifting traditions, festive rituals, diya-inspired aesthetics, wedding gifting, blessings and culturally meaningful celebrations with CadeauAura.',
+    'Explore gifting traditions from around the world — festive rituals, wedding blessings, family gratitude and culturally meaningful celebrations with CadeauAura.',
   alternates: {
     canonical: '/culture-tradition',
   },
   openGraph: {
     title: 'Culture & Tradition | CadeauAura',
     description:
-      'Celebrate gifting inspired by Indian traditions, rituals, festivals, blessings and emotional connection.',
+      'Celebrate gifting inspired by traditions, rituals, festivals, blessings and emotional connection from many cultures.',
     url: '/culture-tradition',
-    images: ['/culture-diya.jpg.png'],
+    images: ['/culture-diya.webp'],
   },
 };
 
@@ -47,27 +47,27 @@ const traditions = [
 const occasions = [
   {
     title: 'Diwali',
-    text: 'Diyas, warm gold tones, festive boxes and blessings-led presentation.',
+    text: 'Lamplight, warm gold tones, festive boxes and blessings-led presentation.',
   },
   {
-    title: 'Rakhi',
-    text: 'Sibling-focused gifting with emotion, memory and playful warmth.',
+    title: 'Eid',
+    text: 'Generous, gracious gifting for family and neighbours after a month of reflection.',
   },
   {
-    title: 'Wedding',
+    title: 'Lunar New Year',
+    text: 'Red and gold, tokens of fortune and gifts that honour family and elders.',
+  },
+  {
+    title: 'Christmas & Hanukkah',
+    text: 'Winter warmth, wrapped keepsakes and gatherings built around giving.',
+  },
+  {
+    title: 'Weddings',
     text: 'Premium keepsakes, blessing boxes and elegant couple gifting ideas.',
   },
   {
-    title: 'Housewarming',
-    text: 'Warm, graceful and practical gifts for a new beginning.',
-  },
-  {
-    title: 'Family celebration',
-    text: 'Gifts that feel personal for parents, elders and close relatives.',
-  },
-  {
-    title: 'Corporate festive',
-    text: 'Client and team gifting with refined packaging and festival-ready presentation.',
+    title: 'New beginnings',
+    text: 'Housewarmings, graduations and first days — warm, graceful, practical gifts.',
   },
 ];
 
@@ -98,7 +98,7 @@ export default function CultureTraditionPage() {
       <section className="relative -mx-4 -mt-10 overflow-hidden bg-[#160606] px-4 py-16 text-white sm:-mx-6 sm:px-6 lg:-mx-8">
         <div
           className="absolute inset-0 bg-cover bg-center opacity-50"
-          style={{ backgroundImage: "url('/culture-diya.jpg.png')" }}
+          style={{ backgroundImage: "url('/culture-diya.webp')" }}
         />
         <div className="absolute inset-0 bg-[linear-gradient(90deg,#170405_0%,rgba(35,5,10,0.94)_48%,rgba(22,6,6,0.35)_100%)]" />
 
@@ -106,13 +106,13 @@ export default function CultureTraditionPage() {
           <SectionLabel label="Culture & Tradition" />
 
           <h1 className="mt-5 max-w-4xl font-serif text-5xl leading-[0.95] text-[#fff7ef] sm:text-6xl lg:text-7xl">
-            Gifts inspired by Indian warmth, rituals and blessings
+            Gifts inspired by the warmth of every tradition
           </h1>
 
           <p className="mt-6 max-w-2xl text-base leading-8 text-[#f6dfd0]/85 sm:text-lg">
-            CadeauAura celebrates gifts that feel rooted in culture — diya
-            warmth, marigold tones, family blessings, festive emotions and
-            graceful presentation.
+            CadeauAura celebrates gifts that feel rooted in culture — festival
+            light, family blessings, seasonal colour, shared meals and graceful
+            presentation, wherever your traditions call home.
           </p>
 
           <div className="mt-8 flex flex-wrap gap-4">
@@ -120,7 +120,7 @@ export default function CultureTraditionPage() {
               href={getWhatsAppLink(whatsappMessage)}
               target="_blank"
               rel="noreferrer"
-              className="rounded-full bg-[#25D366] px-7 py-4 text-sm font-bold text-white shadow-2xl shadow-black/20 transition hover:-translate-y-1 hover:bg-[#1ebe5d]"
+              className="rounded-full bg-[#25D366] px-7 py-4 text-sm font-bold text-[#0c2b1c] shadow-2xl shadow-black/20 transition hover:-translate-y-1 hover:bg-[#1ebe5d]"
             >
               Ask for Culture Gift →
             </a>
@@ -138,7 +138,7 @@ export default function CultureTraditionPage() {
       <section className="mx-auto grid max-w-7xl gap-6 px-4 py-10 sm:px-6 lg:grid-cols-[1.05fr_0.95fr]">
         <div className="rounded-[2rem] border border-[#ead8c7] bg-[#fff7ef] p-7 shadow-sm sm:p-10">
           <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#8a4a2d]">
-            Indian gifting story
+            The gifting story
           </p>
 
           <h2 className="mt-4 font-serif text-4xl leading-tight text-[#5a1722]">
@@ -146,9 +146,9 @@ export default function CultureTraditionPage() {
           </h2>
 
           <p className="mt-5 text-sm leading-7 text-stone-700">
-            In Indian celebrations, gifting is not only about the item. It is
-            about the relationship, the occasion, the respect behind the gesture
-            and the warmth with which it is presented.
+            In celebrations the world over, gifting is not only about the item.
+            It is about the relationship, the occasion, the respect behind the
+            gesture and the warmth with which it is presented.
           </p>
 
           <p className="mt-4 text-sm leading-7 text-stone-700">
@@ -160,7 +160,7 @@ export default function CultureTraditionPage() {
 
         <div
           className="min-h-[360px] rounded-[2rem] border border-[#ead8c7] bg-cover bg-center shadow-xl"
-          style={{ backgroundImage: "url('/culture-diya.jpg.png')" }}
+          style={{ backgroundImage: "url('/culture-diya.webp')" }}
         />
       </section>
 
@@ -205,7 +205,7 @@ export default function CultureTraditionPage() {
                 Choose gifts by cultural moment
               </h2>
 
-              <p className="mt-3 max-w-2xl text-sm leading-7 text-white/70">
+              <p className="mt-3 max-w-2xl text-sm leading-7 text-white/85">
                 Every cultural occasion has a different emotion. Choose the
                 moment first, then match the gift style.
               </p>
@@ -231,7 +231,7 @@ export default function CultureTraditionPage() {
                   {item.title}
                 </h3>
 
-                <p className="mt-3 text-sm leading-7 text-white/65">
+                <p className="mt-3 text-sm leading-7 text-white/80">
                   {item.text}
                 </p>
               </div>
@@ -243,7 +243,7 @@ export default function CultureTraditionPage() {
       <section className="mx-auto grid max-w-7xl gap-6 px-4 pb-10 sm:px-6 lg:grid-cols-[0.95fr_1.05fr]">
         <div
           className="min-h-[380px] rounded-[2rem] border border-[#ead8c7] bg-cover bg-center shadow-xl"
-          style={{ backgroundImage: "url('/hero-gift.jpg.png')" }}
+          style={{ backgroundImage: "url('/hero-gift.webp')" }}
         />
 
         <div className="rounded-[2rem] border border-[#ead8c7] bg-[#fff7ef] p-7 shadow-sm sm:p-10">
@@ -298,7 +298,7 @@ export default function CultureTraditionPage() {
               href={getWhatsAppLink(whatsappMessage)}
               target="_blank"
               rel="noreferrer"
-              className="rounded-full bg-[#25D366] px-7 py-4 text-sm font-bold text-white transition hover:-translate-y-1 hover:bg-[#1ebe5d]"
+              className="rounded-full bg-[#25D366] px-7 py-4 text-sm font-bold text-[#0c2b1c] transition hover:-translate-y-1 hover:bg-[#1ebe5d]"
             >
               Ask on WhatsApp
             </a>

@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     description:
       'Browse premium and meaningful gift categories by occasion, relationship and emotion.',
     url: '/categories',
-    images: ['/culture-diya.jpg.png'],
+    images: ['/culture-diya.webp'],
   },
 };
 
@@ -25,13 +25,13 @@ export default function CategoriesPage() {
       <section className="relative -mx-4 -mt-10 overflow-hidden bg-[#160606] px-4 py-16 text-white sm:-mx-6 sm:px-6 lg:-mx-8">
         <div
           className="absolute inset-0 bg-cover bg-center opacity-45"
-          style={{ backgroundImage: "url('/culture-diya.jpg.png')" }}
+          style={{ backgroundImage: "url('/culture-diya.webp')" }}
         />
         <div className="absolute inset-0 bg-[linear-gradient(90deg,#170405_0%,rgba(35,5,10,0.94)_45%,rgba(22,6,6,0.35)_100%)]" />
 
         <div className="relative mx-auto max-w-7xl">
           <div className="inline-flex items-center gap-3 rounded-full border border-[#d7a25d]/35 bg-white/10 px-4 py-2 text-xs font-bold uppercase tracking-[0.35em] text-[#f3c982] backdrop-blur">
-            <span>🎁</span>
+            <span aria-hidden>🎁</span>
             Gift Categories
           </div>
 

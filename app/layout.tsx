@@ -25,7 +25,6 @@ const structuredData = {
         '@type': 'ContactPoint',
         telephone: '+91-9205089044',
         contactType: 'customer support',
-        areaServed: 'IN',
         availableLanguage: ['English', 'Hindi'],
       },
     },
@@ -39,7 +38,7 @@ const structuredData = {
       },
       description:
         'Discover meaningful gifts, premium gift boxes, message cards and culture-inspired gifting ideas.',
-      inLanguage: 'en-IN',
+      inLanguage: 'en',
     },
   ],
 };
@@ -69,7 +68,7 @@ export const metadata: Metadata = {
     url: siteUrl,
     siteName: 'CadeauAura',
     images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'CadeauAura premium meaningful gifting experience' }],
-    locale: 'en_IN',
+    locale: 'en',
     type: 'website',
   },
   twitter: {
@@ -99,14 +98,17 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: ReactNode }>) {
   return (
-    <html lang="en-IN" className={`${fontDisplay.variable} ${fontUI.variable}`}>
+    <html lang="en" className={`${fontDisplay.variable} ${fontUI.variable}`}>
       <body className="min-h-screen overflow-x-hidden font-sans">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
         />
+        <a href="#main-content" className="skip-link">
+          Skip to content
+        </a>
         <Header />
-        <div className="min-h-[calc(100vh-180px)] w-full">
+        <div id="main-content" className="min-h-[calc(100vh-180px)] w-full">
           {children}
         </div>
         <Footer />

@@ -172,6 +172,24 @@ const personalityKeywords: Record<Personality, string[]> = {
   Adventurous: ['surprise', 'celebration', 'hamper', 'date'],
 };
 
+const cultureKeywords: Record<Culture, string[]> = {
+  Global: ['premium', 'personalized', 'message', 'keepsake'],
+  Indian: ['festive', 'diya', 'blessing', 'tradition', 'wedding', 'family'],
+  Japanese: ['minimal', 'card', 'frame', 'packaging', 'elegant', 'keepsake'],
+  'Middle Eastern': ['luxury', 'hamper', 'premium', 'family', 'blessing'],
+  African: ['celebration', 'family', 'memory', 'gratitude', 'vibrant'],
+  Latin: ['celebration', 'family', 'date', 'romantic', 'joy'],
+};
+
+const cultureCategoryBoost: Record<Culture, string[]> = {
+  Global: [],
+  Indian: ['festive-gifts', 'wedding-gifts', 'parent-gifts'],
+  Japanese: ['luxury-packaging', 'corporate-gifts'],
+  'Middle Eastern': ['luxury-packaging', 'festive-gifts'],
+  African: ['festive-gifts', 'parent-gifts'],
+  Latin: ['couple-gifts', 'anniversary-gifts'],
+};
+
 const gestureKeywords: Record<GestureFeeling, string[]> = {
   Quiet: ['card', 'frame', 'message', 'keepsake'],
   Warm: ['gratitude', 'family', 'festive', 'parent'],
@@ -227,7 +245,7 @@ export function GiftFinder() {
         return { idea, score };
       })
       .sort((a, b) => b.score - a.score)
-      .slice(0, activeCount ? 3 : 3);
+      .slice(0, 3);
   }, [state, activeCount]);
 
   const productResults = useMemo(() => {
@@ -262,8 +280,11 @@ export function GiftFinder() {
           score += countKeywordMatches(text, gestureKeywords[state.gesture]);
         }
 
-        if (state.culture === 'Indian' && ['festive-gifts', 'wedding-gifts', 'parent-gifts'].includes(product.categorySlug)) {
-          score += 2;
+        if (state.culture) {
+          if (cultureCategoryBoost[state.culture].includes(product.categorySlug)) {
+            score += 2;
+          }
+          score += countKeywordMatches(text, cultureKeywords[state.culture]);
         }
 
         return { product, score };
@@ -291,14 +312,14 @@ export function GiftFinder() {
       <section className="relative -mx-4 -mt-10 overflow-hidden bg-[#160606] px-4 py-16 text-white sm:-mx-6 sm:px-6 lg:-mx-8">
         <div
           className="absolute inset-0 bg-cover bg-center opacity-50"
-          style={{ backgroundImage: "url('/hero-gift.jpg.png')" }}
+          style={{ backgroundImage: "url('/hero-gift.webp')" }}
         />
         <div className="absolute inset-0 bg-[linear-gradient(90deg,#170405_0%,rgba(35,5,10,0.94)_45%,rgba(22,6,6,0.36)_100%)]" />
 
         <div className="relative mx-auto grid max-w-7xl gap-10 lg:grid-cols-[1.1fr_0.9fr]">
           <div>
             <div className="inline-flex items-center gap-3 rounded-full border border-[#d7a25d]/35 bg-white/10 px-4 py-2 text-xs font-bold uppercase tracking-[0.35em] text-[#f3c982] backdrop-blur">
-              <span>✦</span>
+              <span aria-hidden>✦</span>
               Gift Finder
             </div>
 
@@ -341,7 +362,7 @@ export function GiftFinder() {
                   key={key}
                   className="flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3 text-sm"
                 >
-                  <span className="capitalize text-white/60">{key}</span>
+                  <span className="capitalize text-white/80">{key}</span>
                   <span className="text-right font-semibold text-[#fff7ef]">
                     {value || 'Not selected'}
                   </span>
@@ -349,7 +370,10 @@ export function GiftFinder() {
               ))}
             </div>
 
-            <div className="mt-5 rounded-2xl border border-[#d7a25d]/25 bg-black/20 p-4 text-sm text-[#f6dfd0]/80">
+            <div
+              aria-live="polite"
+              className="mt-5 rounded-2xl border border-[#d7a25d]/25 bg-black/20 p-4 text-sm text-[#f6dfd0]/90"
+            >
               {activeCount ? (
                 <p>
                   {activeCount} preference{activeCount > 1 ? 's' : ''} selected.
@@ -368,7 +392,7 @@ export function GiftFinder() {
               )}
               target="_blank"
               rel="noreferrer"
-              className="mt-5 inline-flex w-full justify-center rounded-full bg-[#25D366] px-5 py-4 text-sm font-bold text-white transition hover:-translate-y-1 hover:bg-[#1ebe5d]"
+              className="mt-5 inline-flex w-full justify-center rounded-full bg-[#25D366] px-5 py-4 text-sm font-bold text-[#0c2b1c] transition hover:-translate-y-1 hover:bg-[#1ebe5d]"
             >
               Send my preferences on WhatsApp
             </a>
@@ -384,7 +408,10 @@ export function GiftFinder() {
               className="rounded-[2rem] border border-[#ead8c7] bg-[#fff7ef] p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-xl"
             >
               <div className="flex items-start gap-4">
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-[#d7a25d]/35 bg-white text-2xl shadow-sm">
+                <div
+                  aria-hidden
+                  className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-[#d7a25d]/35 bg-white text-2xl shadow-sm"
+                >
                   {step.icon}
                 </div>
 
@@ -407,6 +434,7 @@ export function GiftFinder() {
                       key={option}
                       type="button"
                       onClick={() => update(step.key, option)}
+                      aria-pressed={active}
                       className={`rounded-full border px-4 py-2 text-sm font-semibold transition ${
                         active
                           ? 'border-[#6f0f22] bg-[#6f0f22] text-white shadow-lg shadow-[#6f0f22]/20'
@@ -490,7 +518,7 @@ export function GiftFinder() {
                       )}
                       target="_blank"
                       rel="noreferrer"
-                      className="rounded-full bg-[#25D366] px-5 py-3 text-sm font-bold text-white transition hover:-translate-y-1 hover:bg-[#1ebe5d]"
+                      className="rounded-full bg-[#25D366] px-5 py-3 text-sm font-bold text-[#0c2b1c] transition hover:-translate-y-1 hover:bg-[#1ebe5d]"
                     >
                       Enquire on WhatsApp
                     </a>
@@ -519,7 +547,7 @@ export function GiftFinder() {
               <h2 className="mt-3 font-serif text-4xl leading-tight">
                 Thoughtful concepts for your gift
               </h2>
-              <p className="mt-3 max-w-2xl text-sm leading-7 text-white/70">
+              <p className="mt-3 max-w-2xl text-sm leading-7 text-white/85">
                 These ideas help you explain the emotion behind the gift. You can
                 share any idea directly on WhatsApp and ask for available options.
               </p>
@@ -550,7 +578,7 @@ export function GiftFinder() {
                   </span>
                 </div>
 
-                <p className="mt-4 text-sm leading-7 text-white/75">
+                <p className="mt-4 text-sm leading-7 text-white/85">
                   {idea.summary}
                 </p>
 
@@ -558,12 +586,12 @@ export function GiftFinder() {
                   <p className="text-xs font-bold uppercase tracking-[0.24em] text-[#e8b36f]">
                     Why it matters
                   </p>
-                  <p className="mt-2 text-sm leading-6 text-white/75">
+                  <p className="mt-2 text-sm leading-6 text-white/85">
                     {idea.meaning}
                   </p>
                 </div>
 
-                <p className="mt-5 text-xs leading-6 text-white/55">
+                <p className="mt-5 text-xs leading-6 text-white/80">
                   <span className="font-semibold text-[#e8b36f]">
                     Care note:
                   </span>{' '}
@@ -576,7 +604,7 @@ export function GiftFinder() {
                   )}
                   target="_blank"
                   rel="noreferrer"
-                  className="mt-auto inline-flex justify-center rounded-full bg-[#25D366] px-5 py-3 text-sm font-bold text-white transition hover:-translate-y-1 hover:bg-[#1ebe5d]"
+                  className="mt-auto inline-flex justify-center rounded-full bg-[#25D366] px-5 py-3 text-sm font-bold text-[#0c2b1c] transition hover:-translate-y-1 hover:bg-[#1ebe5d]"
                 >
                   Ask for this idea on WhatsApp
                 </a>

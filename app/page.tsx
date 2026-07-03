@@ -12,6 +12,16 @@ export default function HomePage() {
           className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(215,162,93,0.10),transparent_32%),radial-gradient(circle_at_50%_100%,rgba(143,20,49,0.18),transparent_55%)]"
         />
 
+        {/* Film grain, matched to the Moments section for one continuous atmosphere */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 opacity-[0.04] mix-blend-soft-light"
+          style={{
+            backgroundImage:
+              "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.6 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>\")",
+          }}
+        />
+
         <div className="relative mx-auto max-w-6xl">
           <div className="max-w-3xl">
             <p className="text-xs font-light uppercase tracking-[0.34em] text-gold-300/72">
@@ -115,8 +125,8 @@ export default function HomePage() {
           </p>
 
           <div className="mt-8 grid gap-5 md:grid-cols-3">
-            <article className="rounded-3xl border border-cream-50/10 bg-cream-50/[0.03] p-8 backdrop-blur-sm">
-              <p className="text-[0.65rem] font-light uppercase tracking-[0.28em] text-cream-50/42">
+            <article className="rounded-3xl border border-cream-50/10 bg-cream-50/[0.03] p-8 backdrop-blur-sm transition duration-500 hover:border-gold-300/30 hover:bg-cream-50/[0.05]">
+              <p className="text-[0.65rem] font-light uppercase tracking-[0.28em] text-cream-50/55">
                 For someone present
               </p>
               <h3 className="mt-4 font-display text-2xl font-light text-cream-50">
@@ -135,8 +145,8 @@ export default function HomePage() {
               </Link>
             </article>
 
-            <article className="rounded-3xl border border-cream-50/10 bg-cream-50/[0.03] p-8 backdrop-blur-sm">
-              <p className="text-[0.65rem] font-light uppercase tracking-[0.28em] text-cream-50/42">
+            <article className="rounded-3xl border border-cream-50/10 bg-cream-50/[0.03] p-8 backdrop-blur-sm transition duration-500 hover:border-gold-300/30 hover:bg-cream-50/[0.05]">
+              <p className="text-[0.65rem] font-light uppercase tracking-[0.28em] text-cream-50/55">
                 For time and distance
               </p>
               <h3 className="mt-4 font-display text-2xl font-light text-cream-50">
@@ -155,8 +165,8 @@ export default function HomePage() {
               </Link>
             </article>
 
-            <article className="rounded-3xl border border-cream-50/10 bg-cream-50/[0.03] p-8 backdrop-blur-sm">
-              <p className="text-[0.65rem] font-light uppercase tracking-[0.28em] text-cream-50/42">
+            <article className="rounded-3xl border border-cream-50/10 bg-cream-50/[0.03] p-8 backdrop-blur-sm transition duration-500 hover:border-gold-300/30 hover:bg-cream-50/[0.05]">
+              <p className="text-[0.65rem] font-light uppercase tracking-[0.28em] text-cream-50/55">
                 For what remains
               </p>
               <h3 className="mt-4 font-display text-2xl font-light text-cream-50">

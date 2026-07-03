@@ -5,68 +5,81 @@ const quickLinks = [
   ['Meaning Cards', '/meaning-cards'],
   ['Culture & Tradition', '/culture-tradition'],
   ['Messages', '/messages'],
-];
+] as const;
 
 const categories = [
-  'Anniversary Gifts',
-  'Birthday Gifts',
-  'Wedding Gifts',
-  'Festive Gifts',
-];
+  ['Anniversary Gifts', '/categories/anniversary-gifts'],
+  ['Birthday Gifts', '/categories/birthday-gifts'],
+  ['Wedding Gifts', '/categories/wedding-gifts'],
+  ['Festive Gifts', '/categories/festive-gifts'],
+] as const;
 
 export function Footer() {
   return (
-    <footer className="border-t border-[#d7a25d]/25 bg-[#160606] text-[#f7e6d8]">
+    <footer className="border-t border-gold-500/25 bg-ink-950 text-cream-50">
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-12 sm:px-6 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
         <div>
-          <Link href="/" className="flex items-center gap-3">
-            <span className="text-3xl text-[#d7a25d]">✦</span>
-            <span className="font-serif text-3xl font-bold text-[#f3c982]">
+          <Link href="/" className="inline-flex items-center gap-3 rounded-full">
+            <span aria-hidden className="text-3xl text-gold-500">✦</span>
+            <span className="font-display text-3xl text-gold-300">
               CadeauAura
             </span>
           </Link>
 
-          <p className="mt-4 max-w-sm text-sm leading-7 text-[#f7e6d8]/70">
-            Premium gifting experiences crafted with emotion, culture and thoughtful storytelling.
+          <p className="mt-4 max-w-sm text-sm leading-7 text-cream-50/75">
+            Premium gifting experiences crafted with emotion, culture and
+            thoughtful storytelling — wherever in the world your people are.
           </p>
 
-          <p className="mt-5 text-xs uppercase tracking-[0.28em] text-[#d7a25d]">
+          <p className="mt-5 text-xs uppercase tracking-[0.28em] text-gold-300/90">
             Make every moment memorable
           </p>
         </div>
 
         <div>
-          <h3 className="font-serif text-xl text-[#f3c982]">Explore</h3>
-          <div className="mt-4 space-y-3 text-sm text-[#f7e6d8]/75">
+          <h2 className="font-display text-xl text-gold-300">Explore</h2>
+          <ul className="mt-4 space-y-3 text-sm text-cream-50/80">
             {quickLinks.map(([label, href]) => (
-              <Link key={href} href={href} className="block transition hover:text-[#f3c982]">
-                {label}
-              </Link>
+              <li key={href}>
+                <Link
+                  href={href}
+                  className="rounded-sm transition hover:text-gold-300"
+                >
+                  {label}
+                </Link>
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
 
         <div>
-          <h3 className="font-serif text-xl text-[#f3c982]">Gift Categories</h3>
-          <div className="mt-4 space-y-3 text-sm text-[#f7e6d8]/75">
-            {categories.map((item) => (
-              <p key={item}>{item}</p>
+          <h2 className="font-display text-xl text-gold-300">Gift Categories</h2>
+          <ul className="mt-4 space-y-3 text-sm text-cream-50/80">
+            {categories.map(([label, href]) => (
+              <li key={href}>
+                <Link
+                  href={href}
+                  className="rounded-sm transition hover:text-gold-300"
+                >
+                  {label}
+                </Link>
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
 
         <div>
-          <h3 className="font-serif text-xl text-[#f3c982]">Trust</h3>
-          <div className="mt-4 space-y-3 text-sm text-[#f7e6d8]/75">
-            <p>Curated with care</p>
-            <p>Rooted in culture</p>
-            <p>Premium packaging</p>
-            <p>Secure gifting experience</p>
-          </div>
+          <h2 className="font-display text-xl text-gold-300">Trust</h2>
+          <ul className="mt-4 space-y-3 text-sm text-cream-50/80">
+            <li>Curated with care</li>
+            <li>Rooted in many cultures</li>
+            <li>Premium packaging</li>
+            <li>Secure gifting experience</li>
+          </ul>
         </div>
       </div>
 
-      <div className="border-t border-[#d7a25d]/15 px-4 py-5 text-center text-xs text-[#f7e6d8]/55">
+      <div className="border-t border-gold-500/15 px-4 py-5 text-center text-xs text-cream-50/65">
         © {new Date().getFullYear()} CadeauAura. Crafted for meaningful gifting.
       </div>
     </footer>

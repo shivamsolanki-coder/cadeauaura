@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 type Tone =
   | ''
@@ -114,16 +114,30 @@ export default function DemoRevealPage() {
   const [draft, setDraft] = useState<Draft | null>(null);
   const [hydrated, setHydrated] = useState(false);
   const [stage, setStage] = useState<Stage>('sealed');
+  const cardRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     setDraft(readDraft());
     setHydrated(true);
   }, []);
 
+  useEffect(() => {
+    if (stage === 'open') {
+      cardRef.current?.focus({ preventScroll: true });
+    }
+  }, [stage]);
+
   const choreo = draft ? CHOREO[draft.tone] : CHOREO[''];
 
   function handleOpen() {
     if (stage !== 'sealed') return;
+    const reduced = window.matchMedia(
+      '(prefers-reduced-motion: reduce)',
+    ).matches;
+    if (reduced) {
+      setStage('open');
+      return;
+    }
     setStage('opening');
     window.setTimeout(() => setStage('open'), choreo.envelopeFadeMs);
   }
@@ -173,7 +187,7 @@ export default function DemoRevealPage() {
       <div className="relative mx-auto w-full max-w-xl">
         <div className="relative flex min-h-[68svh] items-center justify-center">
           <div
-            aria-hidden={stage !== 'sealed'}
+            inert={stage === 'open'}
             style={{ transitionDuration: `${choreo.envelopeFadeMs}ms` }}
             className={`absolute inset-0 flex flex-col items-center justify-center transition-all ease-[cubic-bezier(0.22,1,0.36,1)] ${
               stage === 'sealed'
@@ -241,9 +255,11 @@ export default function DemoRevealPage() {
           </div>
 
           <div
-            aria-hidden={stage !== 'open'}
+            ref={cardRef}
+            tabIndex={-1}
+            inert={stage !== 'open'}
             style={{ transitionDuration: `${choreo.cardEnterMs}ms` }}
-            className={`absolute inset-0 flex flex-col items-center justify-center transition-all ease-[cubic-bezier(0.22,1,0.36,1)] ${
+            className={`w-full py-10 outline-none transition-all ease-[cubic-bezier(0.22,1,0.36,1)] ${
               stage === 'open'
                 ? 'translate-y-0 opacity-100 blur-0'
                 : 'pointer-events-none translate-y-4 opacity-0 blur-[6px]'
@@ -259,19 +275,20 @@ export default function DemoRevealPage() {
               </p>
 
               {draft.emotion ? (
-                <p className="mt-8 text-xs font-light uppercase tracking-[0.28em] text-cream-50/45">
+                <p className="mt-8 text-xs font-light uppercase tracking-[0.28em] text-cream-50/60">
                   With {draft.emotion.toLowerCase()}
                 </p>
               ) : null}
             </article>
 
-            <p className="mt-8 text-center font-display text-sm italic font-light text-cream-50/55 sm:text-base">
+            <p className="mt-8 text-center font-display text-sm italic font-light text-cream-50/70 sm:text-base">
               {choreo.closingLine}
             </p>
           </div>
         </div>
 
         <div
+          inert={stage !== 'open'}
           className={`mt-12 flex flex-wrap items-center gap-4 text-sm transition-opacity duration-1000 ${
             stage === 'open' ? 'opacity-100' : 'pointer-events-none opacity-0'
           }`}
@@ -284,13 +301,13 @@ export default function DemoRevealPage() {
           </Link>
           <Link
             href="/"
-            className="text-cream-50/45 underline-offset-4 hover:text-cream-50/80 hover:underline"
+            className="text-cream-50/70 underline-offset-4 hover:text-cream-50 hover:underline"
           >
             Return home
           </Link>
         </div>
 
-        <p className="mt-12 max-w-md text-xs leading-6 text-cream-50/30">
+        <p className="mt-12 max-w-md text-xs leading-6 text-cream-50/55">
           This is a private demo of the reveal. Real recipient links,
           scheduled openings and notifications come next.
         </p>

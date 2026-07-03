@@ -108,14 +108,14 @@ function CaptionList({ active, onSelect, activeMoment }: CaptionListProps) {
               >
                 <span
                   className={`block text-[0.6rem] font-light uppercase tracking-[0.32em] transition ${
-                    isActive ? 'text-gold-300/75' : 'text-cream-50/30'
+                    isActive ? 'text-gold-300/85' : 'text-cream-50/50'
                   }`}
                 >
                   {moment.label}
                 </span>
                 <span
                   className={`mt-1.5 block font-display text-base italic leading-7 transition sm:text-lg ${
-                    isActive ? 'text-cream-50/85' : 'text-cream-50/45'
+                    isActive ? 'text-cream-50/90' : 'text-cream-50/60'
                   }`}
                 >
                   {moment.caption}

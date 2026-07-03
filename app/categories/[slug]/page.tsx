@@ -130,7 +130,7 @@ export default async function CategoryDetailPage({
               href={getWhatsAppLink(categoryMessage)}
               target="_blank"
               rel="noreferrer"
-              className="rounded-full bg-[#25D366] px-7 py-4 text-sm font-bold text-white shadow-2xl shadow-black/20 transition hover:-translate-y-1 hover:bg-[#1ebe5d]"
+              className="rounded-full bg-[#25D366] px-7 py-4 text-sm font-bold text-[#0c2b1c] shadow-2xl shadow-black/20 transition hover:-translate-y-1 hover:bg-[#1ebe5d]"
             >
               Enquire on WhatsApp →
             </a>
@@ -172,7 +172,7 @@ export default async function CategoryDetailPage({
                   key={item}
                   className="rounded-2xl border border-[#ead8c7] bg-white p-4 text-sm font-semibold text-[#5a1722]"
                 >
-                  ✓ {item}
+                  <span aria-hidden>✓</span> {item}
                 </div>
               ))}
             </div>
@@ -197,7 +197,7 @@ export default async function CategoryDetailPage({
                 Simple enquiry flow before you finalize
               </h2>
 
-              <p className="mt-3 max-w-2xl text-sm leading-7 text-white/70">
+              <p className="mt-3 max-w-2xl text-sm leading-7 text-white/85">
                 No fake promises. First check product details, customization,
                 final price and timeline clearly on WhatsApp.
               </p>
@@ -227,7 +227,7 @@ export default async function CategoryDetailPage({
                   {item.title}
                 </h3>
 
-                <p className="mt-3 text-sm leading-7 text-white/65">
+                <p className="mt-3 text-sm leading-7 text-white/80">
                   {item.text}
                 </p>
               </div>
@@ -255,7 +255,7 @@ export default async function CategoryDetailPage({
             href={getWhatsAppLink(categoryMessage)}
             target="_blank"
             rel="noreferrer"
-            className="rounded-full bg-[#25D366] px-6 py-3 text-sm font-bold text-white transition hover:-translate-y-1 hover:bg-[#1ebe5d]"
+            className="rounded-full bg-[#25D366] px-6 py-3 text-sm font-bold text-[#0c2b1c] transition hover:-translate-y-1 hover:bg-[#1ebe5d]"
           >
             Category WhatsApp Enquiry →
           </a>
@@ -309,7 +309,7 @@ export default async function CategoryDetailPage({
                     )}
                     target="_blank"
                     rel="noreferrer"
-                    className="rounded-full bg-[#25D366] px-5 py-3 text-sm font-bold text-white transition hover:-translate-y-1 hover:bg-[#1ebe5d]"
+                    className="rounded-full bg-[#25D366] px-5 py-3 text-sm font-bold text-[#0c2b1c] transition hover:-translate-y-1 hover:bg-[#1ebe5d]"
                   >
                     Enquire on WhatsApp
                   </a>
@@ -368,7 +368,7 @@ export default async function CategoryDetailPage({
                     {item.title}
                   </h3>
 
-                  <p className="mt-3 text-sm leading-6 text-white/65">
+                  <p className="mt-3 text-sm leading-6 text-white/80">
                     {item.description}
                   </p>
 

@@ -57,7 +57,7 @@ export const metadata: Metadata = {
     description:
       'Reach CadeauAura for meaningful gifting ideas, product enquiries, message cards and premium gift guidance.',
     url: '/contact',
-    images: ['/hero-gift.jpg.png'],
+    images: ['/hero-gift.webp'],
   },
 };
 
@@ -70,7 +70,7 @@ export default function ContactPage() {
       <section className="relative -mx-4 -mt-10 overflow-hidden bg-[#160606] px-4 py-16 text-white sm:-mx-6 sm:px-6 lg:-mx-8">
         <div
           className="absolute inset-0 bg-cover bg-center opacity-45"
-          style={{ backgroundImage: "url('/culture-diya.jpg.png')" }}
+          style={{ backgroundImage: "url('/culture-diya.webp')" }}
         />
         <div className="absolute inset-0 bg-[linear-gradient(90deg,#170405_0%,rgba(35,5,10,0.94)_48%,rgba(22,6,6,0.35)_100%)]" />
 
@@ -93,7 +93,7 @@ export default function ContactPage() {
                 href={getWhatsAppLink(generalMessage)}
                 target="_blank"
                 rel="noreferrer"
-                className="rounded-full bg-[#25D366] px-7 py-4 text-sm font-bold text-white shadow-2xl shadow-black/20 transition hover:-translate-y-1 hover:bg-[#1ebe5d]"
+                className="rounded-full bg-[#25D366] px-7 py-4 text-sm font-bold text-[#0c2b1c] shadow-2xl shadow-black/20 transition hover:-translate-y-1 hover:bg-[#1ebe5d]"
               >
                 Message on WhatsApp →
               </a>
@@ -185,7 +185,7 @@ export default function ContactPage() {
                 href={getWhatsAppLink(item.message)}
                 target="_blank"
                 rel="noreferrer"
-                className="mt-6 inline-flex rounded-full bg-[#25D366] px-5 py-3 text-sm font-bold text-white transition hover:-translate-y-1 hover:bg-[#1ebe5d]"
+                className="mt-6 inline-flex rounded-full bg-[#25D366] px-5 py-3 text-sm font-bold text-[#0c2b1c] transition hover:-translate-y-1 hover:bg-[#1ebe5d]"
               >
                 WhatsApp this →
               </a>
@@ -210,7 +210,7 @@ export default function ContactPage() {
                 key={item}
                 className="rounded-2xl border border-[#ead8c7] bg-white p-4 text-sm font-semibold text-[#5a1722]"
               >
-                ✓ {item}
+                <span aria-hidden>✓</span> {item}
               </div>
             ))}
           </div>
@@ -225,7 +225,7 @@ export default function ContactPage() {
             Confirm details before finalizing
           </h2>
 
-          <p className="mt-5 text-sm leading-7 text-white/75">
+          <p className="mt-5 text-sm leading-7 text-white/85">
             CadeauAura currently works through enquiry-based gifting. Product
             photos, customization, final pricing and delivery timeline should be
             checked clearly on WhatsApp before confirmation.

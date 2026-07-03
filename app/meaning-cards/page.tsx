@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     description:
       'Pair every gift with sincere words that make the moment more personal and memorable.',
     url: '/meaning-cards',
-    images: ['/meaning-card.jpg.png'],
+    images: ['/meaning-card.webp'],
   },
 };
 
@@ -105,7 +105,7 @@ export default function MeaningCardsPage() {
       <section className="relative -mx-4 -mt-10 overflow-hidden bg-[#160606] px-4 py-16 text-white sm:-mx-6 sm:px-6 lg:-mx-8">
         <div
           className="absolute inset-0 bg-cover bg-center opacity-45"
-          style={{ backgroundImage: "url('/meaning-card.jpg.png')" }}
+          style={{ backgroundImage: "url('/meaning-card.webp')" }}
         />
         <div className="absolute inset-0 bg-[linear-gradient(90deg,#170405_0%,rgba(35,5,10,0.94)_48%,rgba(22,6,6,0.35)_100%)]" />
 
@@ -126,7 +126,7 @@ export default function MeaningCardsPage() {
               href={getWhatsAppLink(whatsappMessage)}
               target="_blank"
               rel="noreferrer"
-              className="rounded-full bg-[#25D366] px-7 py-4 text-sm font-bold text-white shadow-2xl shadow-black/20 transition hover:-translate-y-1 hover:bg-[#1ebe5d]"
+              className="rounded-full bg-[#25D366] px-7 py-4 text-sm font-bold text-[#0c2b1c] shadow-2xl shadow-black/20 transition hover:-translate-y-1 hover:bg-[#1ebe5d]"
             >
               Ask for Custom Message →
             </a>
@@ -176,7 +176,7 @@ export default function MeaningCardsPage() {
                 From emotion to message card
               </h2>
 
-              <p className="mt-3 max-w-2xl text-sm leading-7 text-white/70">
+              <p className="mt-3 max-w-2xl text-sm leading-7 text-white/85">
                 You can use these cards as inspiration or ask CadeauAura to
                 suggest a message based on your occasion.
               </p>
@@ -206,7 +206,7 @@ export default function MeaningCardsPage() {
                   {item.title}
                 </h3>
 
-                <p className="mt-3 text-sm leading-7 text-white/65">
+                <p className="mt-3 text-sm leading-7 text-white/80">
                   {item.text}
                 </p>
               </div>
@@ -218,7 +218,7 @@ export default function MeaningCardsPage() {
       <section className="mx-auto grid max-w-7xl gap-6 px-4 pb-10 sm:px-6 lg:grid-cols-[0.95fr_1.05fr]">
         <div
           className="min-h-[380px] rounded-[2rem] border border-[#ead8c7] bg-cover bg-center shadow-xl"
-          style={{ backgroundImage: "url('/story-unboxing.jpg.png')" }}
+          style={{ backgroundImage: "url('/story-unboxing.webp')" }}
         />
 
         <div className="rounded-[2rem] border border-[#ead8c7] bg-[#fff7ef] p-7 shadow-sm sm:p-10">
@@ -269,7 +269,7 @@ export default function MeaningCardsPage() {
               href={getWhatsAppLink(whatsappMessage)}
               target="_blank"
               rel="noreferrer"
-              className="rounded-full bg-[#25D366] px-7 py-4 text-sm font-bold text-white transition hover:-translate-y-1 hover:bg-[#1ebe5d]"
+              className="rounded-full bg-[#25D366] px-7 py-4 text-sm font-bold text-[#0c2b1c] transition hover:-translate-y-1 hover:bg-[#1ebe5d]"
             >
               Ask on WhatsApp
             </a>
