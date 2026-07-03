@@ -100,6 +100,9 @@ export default async function MomentRevealPage({
       />
 
       <div className="relative mx-auto w-full max-w-xl">
+        <h1 className="sr-only">
+          A moment for {moment.recipientDisplayName}
+        </h1>
         <BeatRenderer
           sequence={sequence}
           recipientName={moment.recipientDisplayName}

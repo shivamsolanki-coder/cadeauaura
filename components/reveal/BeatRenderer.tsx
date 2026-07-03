@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import type { BeatSequence } from '@/lib/domain/beats';
 
@@ -11,6 +11,14 @@ import type { BeatSequence } from '@/lib/domain/beats';
  * and closing line; the recipient name + message come from the
  * Moment itself. All transitions are CSS-only, no imperative
  * animation. Mobile-safe by design.
+ *
+ * Accessibility contract:
+ *   - the inactive stage is `inert`, so hidden controls are never
+ *     keyboard-reachable or exposed to assistive tech
+ *   - opening moves focus onto the revealed card
+ *   - prefers-reduced-motion skips the choreographed delay entirely
+ *   - the opened card renders in normal flow, so a long message can
+ *     never be clipped by the stage height
  *
  * choreographyVersion is read off the sequence; v1 is the only
  * version this renderer understands today. If a future Moment carries
@@ -48,6 +56,7 @@ export function BeatRenderer({
   emotion,
 }: BeatRendererProps) {
   const [stage, setStage] = useState<Stage>('sealed');
+  const cardRef = useRef<HTMLDivElement | null>(null);
 
   const supported = sequence.choreographyVersion <= SUPPORTED_CHOREOGRAPHY_VERSION;
 
@@ -69,16 +78,29 @@ export function BeatRenderer({
 
   function handleOpen() {
     if (stage !== 'sealed') return;
+    const reduced = window.matchMedia(
+      '(prefers-reduced-motion: reduce)',
+    ).matches;
+    if (reduced) {
+      setStage('open');
+      return;
+    }
     setStage('opening');
     window.setTimeout(() => setStage('open'), envelopeFadeMs);
   }
 
+  useEffect(() => {
+    if (stage === 'open') {
+      cardRef.current?.focus({ preventScroll: true });
+    }
+  }, [stage]);
+
   return (
     <>
       <div className="relative flex min-h-[68svh] items-center justify-center">
-        {/* Sealed envelope */}
+        {/* Sealed envelope — overlays the (still invisible) card */}
         <div
-          aria-hidden={stage !== 'sealed'}
+          inert={stage === 'open'}
           style={{ transitionDuration: `${envelopeFadeMs}ms` }}
           className={`absolute inset-0 flex flex-col items-center justify-center transition-all ease-[cubic-bezier(0.22,1,0.36,1)] ${
             stage === 'sealed'
@@ -133,7 +155,7 @@ export function BeatRenderer({
           <button
             type="button"
             onClick={handleOpen}
-            className="group mt-10 inline-flex items-center gap-2 rounded-full bg-rose-500 px-7 py-4 text-sm font-medium text-cream-50 shadow-[0_18px_50px_-18px_rgba(143,20,49,0.7)] transition hover:bg-rose-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gold-300"
+            className="group mt-10 inline-flex items-center gap-2 rounded-full bg-rose-500 px-7 py-4 text-sm font-medium text-cream-50 shadow-[0_18px_50px_-18px_rgba(143,20,49,0.7)] transition hover:bg-rose-600"
           >
             <span>{ctaLabel}</span>
             <span
@@ -145,11 +167,13 @@ export function BeatRenderer({
           </button>
         </div>
 
-        {/* Opened card */}
+        {/* Opened card — normal flow, so long messages are never clipped */}
         <div
-          aria-hidden={stage !== 'open'}
+          ref={cardRef}
+          tabIndex={-1}
+          inert={stage !== 'open'}
           style={{ transitionDuration: `${cardEnterMs}ms` }}
-          className={`absolute inset-0 flex flex-col items-center justify-center transition-all ease-[cubic-bezier(0.22,1,0.36,1)] ${
+          className={`w-full py-10 outline-none transition-all ease-[cubic-bezier(0.22,1,0.36,1)] ${
             stage === 'open'
               ? 'translate-y-0 opacity-100 blur-0'
               : 'pointer-events-none translate-y-4 opacity-0 blur-[6px]'
@@ -165,26 +189,27 @@ export function BeatRenderer({
             </p>
 
             {emotion ? (
-              <p className="mt-8 text-xs font-light uppercase tracking-[0.28em] text-cream-50/45">
+              <p className="mt-8 text-xs font-light uppercase tracking-[0.28em] text-cream-50/60">
                 With {emotion.toLowerCase()}
               </p>
             ) : null}
           </article>
 
-          <p className="mt-8 text-center font-display text-sm italic font-light text-cream-50/55 sm:text-base">
+          <p className="mt-8 text-center font-display text-sm italic font-light text-cream-50/70 sm:text-base">
             {closingLine}
           </p>
         </div>
       </div>
 
       <div
+        inert={stage !== 'open'}
         className={`mt-12 flex flex-wrap items-center justify-center gap-4 text-sm transition-opacity duration-1000 ${
           stage === 'open' ? 'opacity-100' : 'pointer-events-none opacity-0'
         }`}
       >
         <Link
           href="/"
-          className="text-cream-50/45 underline-offset-4 hover:text-cream-50/80 hover:underline"
+          className="text-cream-50/70 underline-offset-4 hover:text-cream-50 hover:underline"
         >
           About CadeauAura
         </Link>
