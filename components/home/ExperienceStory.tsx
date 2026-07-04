@@ -18,6 +18,11 @@ import { useEffect, useRef, useState } from 'react';
  * ordered list carries the same steps for assistive tech. Under
  * prefers-reduced-motion the pin is dropped entirely and the steps
  * render as a plain stacked sequence.
+ *
+ * The first slide carries a looping ambient video (stitched from
+ * licensed Adobe Stock clips — diya → dust drift → candle glow) with
+ * a poster fallback. The video only plays while its slide is active,
+ * and reduced-motion users get the static poster frame instead.
  */
 
 interface StoryStep {
@@ -26,6 +31,11 @@ interface StoryStep {
   line: string;
   image: string;
   alt: string;
+  video?: {
+    webm: string;
+    mp4: string;
+    poster: string;
+  };
 }
 
 const STEPS: StoryStep[] = [
@@ -33,8 +43,13 @@ const STEPS: StoryStep[] = [
     label: '01 — The telling',
     title: 'You tell us who they are',
     line: 'A few honest sentences about what they have held for you.',
-    image: '/story-unboxing.webp',
-    alt: 'Hands opening a wrapped gift box in warm light',
+    image: '/hero-poster.webp',
+    alt: 'A lit diya lamp resting on a bed of marigolds',
+    video: {
+      webm: '/hero-loop.webm',
+      mp4: '/hero-loop.mp4',
+      poster: '/hero-poster.jpg',
+    },
   },
   {
     label: '02 — The letter',
@@ -71,6 +86,47 @@ function usePrefersReducedMotion(): boolean {
   }, []);
 
   return reduced;
+}
+
+function VideoLayer({
+  video,
+  active,
+}: {
+  video: NonNullable<StoryStep['video']>;
+  active: boolean;
+}) {
+  const ref = useRef<HTMLVideoElement | null>(null);
+
+  // Only burn decode cycles while this slide is the visible one.
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (active) {
+      void el.play().catch(() => {
+        // Autoplay can be blocked (e.g. data-saver); the poster shows.
+      });
+    } else {
+      el.pause();
+    }
+  }, [active]);
+
+  return (
+    <video
+      ref={ref}
+      autoPlay
+      muted
+      loop
+      playsInline
+      preload="metadata"
+      poster={video.poster}
+      className={`absolute inset-0 h-full w-full object-cover transition-transform duration-[1200ms] ease-in-out ${
+        active ? 'scale-100' : 'scale-[1.06]'
+      }`}
+    >
+      <source src={video.webm} type="video/webm" />
+      <source src={video.mp4} type="video/mp4" />
+    </video>
+  );
 }
 
 function SlideText({ step }: { step: StoryStep }) {
@@ -164,15 +220,19 @@ export function ExperienceStory() {
                   active === index ? 'opacity-100' : 'opacity-0'
                 }`}
               >
-                <Image
-                  src={step.image}
-                  alt=""
-                  fill
-                  sizes="100vw"
-                  className={`object-cover transition-transform duration-[1200ms] ease-in-out ${
-                    active === index ? 'scale-100' : 'scale-[1.06]'
-                  }`}
-                />
+                {step.video ? (
+                  <VideoLayer video={step.video} active={active === index} />
+                ) : (
+                  <Image
+                    src={step.image}
+                    alt=""
+                    fill
+                    sizes="100vw"
+                    className={`object-cover transition-transform duration-[1200ms] ease-in-out ${
+                      active === index ? 'scale-100' : 'scale-[1.06]'
+                    }`}
+                  />
+                )}
                 <div className="absolute inset-0 bg-gradient-to-t from-ink-950/95 via-ink-950/40 to-ink-950/25" />
                 <SlideText step={step} />
               </div>
