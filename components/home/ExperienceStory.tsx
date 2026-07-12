@@ -19,10 +19,12 @@ import { useEffect, useRef, useState } from 'react';
  * prefers-reduced-motion the pin is dropped entirely and the steps
  * render as a plain stacked sequence.
  *
- * The first slide carries a looping ambient video (stitched from
- * licensed Adobe Stock clips — diya → dust drift → candle glow) with
- * a poster fallback. The video only plays while its slide is active,
- * and reduced-motion users get the static poster frame instead.
+ * Slides 1 (the telling) and 3 (the seal) carry looping ambient video
+ * with a poster fallback; slides 2 and 4 stay as stills, so the motion
+ * is paced rather than four videos in a row. A video only plays while
+ * its slide is active, is lazily mounted (never fetched on page load —
+ * it loads as its slide is approached), and reduced-motion users get
+ * the static poster frame instead.
  */
 
 interface StoryStep {
@@ -32,7 +34,7 @@ interface StoryStep {
   image: string;
   alt: string;
   video?: {
-    webm: string;
+    webm?: string;
     mp4: string;
     poster: string;
   };
@@ -55,22 +57,26 @@ const STEPS: StoryStep[] = [
     label: '02 — The letter',
     title: 'Your words find their shape',
     line: 'The studio listens, reflects, and helps the message sound like you.',
-    image: '/meaning-card.webp',
-    alt: 'A handwritten card resting among candles and petals',
+    image: '/story-letter-poster.webp',
+    alt: 'Two blank note cards settling onto a gift box among rose petals',
   },
   {
     label: '03 — The seal',
     title: 'The moment is sealed',
     line: 'A private link, held quietly until you choose to share it.',
-    image: '/hero-gift.webp',
-    alt: 'A gift box tied with ribbon beside soft candlelight',
+    image: '/story-seal-poster.webp',
+    alt: 'A gold ribbon drawing into a bow around a brocade gift box, diyas glowing behind',
+    video: {
+      mp4: '/story-seal.mp4',
+      poster: '/story-seal-poster.webp',
+    },
   },
   {
     label: '04 — The reveal',
     title: 'They open it slowly',
     line: 'An envelope, a breath, your words — in their own time.',
-    image: '/culture-diya.webp',
-    alt: 'A small lamp glowing in the dark beside flower petals',
+    image: '/story-reveal-poster.webp',
+    alt: 'Rose petals and marigolds drifting down around glowing diyas',
   },
 ];
 
@@ -123,7 +129,7 @@ function VideoLayer({
         active ? 'scale-100' : 'scale-[1.06]'
       }`}
     >
-      <source src={video.webm} type="video/webm" />
+      {video.webm ? <source src={video.webm} type="video/webm" /> : null}
       <source src={video.mp4} type="video/mp4" />
     </video>
   );
@@ -148,6 +154,10 @@ function SlideText({ step }: { step: StoryStep }) {
 export function ExperienceStory() {
   const reduced = usePrefersReducedMotion();
   const [active, setActive] = useState(0);
+  // Which slides may load their video yet. Empty on mount, so nothing
+  // is fetched on page load; a slide (and the next one, to pre-warm the
+  // upcoming clip) is unlocked only once it scrolls into the band.
+  const [loaded, setLoaded] = useState<Set<number>>(() => new Set<number>());
   const sentinelRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
@@ -160,6 +170,13 @@ export function ExperienceStory() {
               (entry.target as HTMLElement).dataset.index ?? 0,
             );
             setActive(index);
+            setLoaded((prev) => {
+              if (prev.has(index) && prev.has(index + 1)) return prev;
+              const next = new Set(prev);
+              next.add(index);
+              next.add(index + 1);
+              return next;
+            });
           }
         }
       },
@@ -220,7 +237,7 @@ export function ExperienceStory() {
                   active === index ? 'opacity-100' : 'opacity-0'
                 }`}
               >
-                {step.video ? (
+                {step.video && loaded.has(index) ? (
                   <VideoLayer video={step.video} active={active === index} />
                 ) : (
                   <Image
